@@ -1,0 +1,408 @@
+{
+  "settimana": [
+    {
+      "giorno": "lun",
+      "sedutaId": "lun"
+    },
+    {
+      "giorno": "mar",
+      "sedutaId": "mar"
+    },
+    {
+      "giorno": "mer",
+      "sedutaId": "mer"
+    },
+    {
+      "giorno": "gio",
+      "sedutaId": "gio"
+    },
+    {
+      "giorno": "ven",
+      "sedutaId": "ven"
+    }
+  ],
+  "fasi": [
+    {
+      "settimane": [
+        1,
+        2,
+        3
+      ],
+      "nome": "Base",
+      "scarico": false,
+      "rpeForza": "7",
+      "serieSoglia": 4
+    },
+    {
+      "settimane": [
+        4
+      ],
+      "nome": "Scarico",
+      "scarico": true,
+      "rpeForza": "6",
+      "serieSoglia": 0,
+      "test": false
+    },
+    {
+      "settimane": [
+        5,
+        6,
+        7
+      ],
+      "nome": "Forza",
+      "scarico": false,
+      "rpeForza": "8",
+      "serieSoglia": 5,
+      "ripetizioniForza": "3-4"
+    },
+    {
+      "settimane": [
+        8
+      ],
+      "nome": "Scarico e test",
+      "scarico": true,
+      "rpeForza": "6",
+      "serieSoglia": 0,
+      "test": true
+    },
+    {
+      "settimane": [
+        9,
+        10,
+        11
+      ],
+      "nome": "Potenza",
+      "scarico": false,
+      "rpeForza": "8",
+      "serieSoglia": 5,
+      "ripetizioniForza": "3"
+    },
+    {
+      "settimane": [
+        12
+      ],
+      "nome": "Scarico e test",
+      "scarico": true,
+      "rpeForza": "6",
+      "serieSoglia": 0,
+      "test": true
+    }
+  ],
+  "blocco_core": {
+    "nota_implementazione": "Blocco iniziale di ogni seduta di palestra (lun, mar, gio, ven), 8-10 minuti, ruota tra due varianti a settimane alterne",
+    "varianteA": [
+      {
+        "esercizioId": "plank",
+        "serie": 3,
+        "durataSec": 40,
+        "recuperoSec": 20
+      },
+      {
+        "esercizioId": "dead_bug",
+        "serie": 3,
+        "ripetizioni": "8 per lato",
+        "recuperoSec": 20
+      },
+      {
+        "esercizioId": "pallof_press",
+        "serie": 3,
+        "ripetizioni": "10 per lato",
+        "recuperoSec": 20
+      }
+    ],
+    "varianteB": [
+      {
+        "esercizioId": "side_plank",
+        "serie": 3,
+        "durataSec": "25 per lato",
+        "recuperoSec": 20
+      },
+      {
+        "esercizioId": "bird_dog",
+        "serie": 3,
+        "ripetizioni": "6 per lato, 10 s di tenuta",
+        "recuperoSec": 20
+      },
+      {
+        "esercizioId": "hollow_hold",
+        "serie": 3,
+        "durataSec": 25,
+        "recuperoSec": 20
+      }
+    ]
+  },
+  "sedute": {
+    "lun": {
+      "nome": "Velocita' + Forza A",
+      "pista": {
+        "esercizioId": "sprint_salita",
+        "prescrizione": "10 min riscaldamento, 8-10 sprint in salita da 10-15 s con recupero camminando in discesa, 4 allunghi da 80 m",
+        "scarico": "25 min corsa in Zona 2"
+      },
+      "palestra": [
+        {
+          "esercizioId": "trap_bar_deadlift",
+          "serie": 5,
+          "ripetizioni": "3-5",
+          "rpe": "fase",
+          "recuperoSec": 150
+        },
+        {
+          "esercizioId": "trazioni",
+          "serie": 4,
+          "ripetizioni": "4-6",
+          "recuperoSec": 120
+        },
+        {
+          "esercizioId": "hip_thrust",
+          "serie": 4,
+          "ripetizioni": "6-8",
+          "recuperoSec": 90
+        },
+        {
+          "esercizioId": "rematore_manubrio",
+          "serie": 3,
+          "ripetizioni": "8 per lato",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "farmer_carry",
+          "serie": 4,
+          "distanzaM": 35,
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "kettlebell_swing",
+          "serie": 6,
+          "durataSec": 15,
+          "recuperoSec": 45
+        }
+      ]
+    },
+    "mar": {
+      "nome": "Aerobico + Ricostruzione",
+      "pista": {
+        "esercizioId": "corsa_zona2",
+        "prescrizione": "25-30 min in Zona 2 (125-140 bpm), poi 10 min di drill: skip bassi e andature laterali",
+        "scarico": "20 min in Zona 2"
+      },
+      "palestra": [
+        {
+          "esercizioId": "spanish_squat",
+          "serie": 5,
+          "durataSec": 40,
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "terminal_knee_extension",
+          "serie": 3,
+          "ripetizioni": "15 per lato",
+          "recuperoSec": 30
+        },
+        {
+          "esercizioId": "reverse_sled_drag",
+          "serie": 6,
+          "distanzaM": 20,
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "step_up_basso",
+          "serie": 3,
+          "ripetizioni": "8 per lato",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "slider_leg_curl",
+          "serie": 3,
+          "ripetizioni": "6-8",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "polpacci_monopodalici",
+          "serie": 3,
+          "ripetizioni": "12 per lato",
+          "recuperoSec": 45,
+          "serieExtraSx": 1
+        },
+        {
+          "esercizioId": "tibialis_raise",
+          "serie": 3,
+          "ripetizioni": "15",
+          "recuperoSec": 30
+        },
+        {
+          "esercizioId": "mcgill_curl_up",
+          "serie": 3,
+          "ripetizioni": "5, 10 s di tenuta",
+          "recuperoSec": 20
+        },
+        {
+          "esercizioId": "side_plank",
+          "serie": 3,
+          "durataSec": "10 per lato x 5",
+          "recuperoSec": 20
+        },
+        {
+          "esercizioId": "bird_dog",
+          "serie": 3,
+          "ripetizioni": "5 per lato, 10 s di tenuta",
+          "recuperoSec": 20
+        }
+      ],
+      "sbloccabili": [
+        {
+          "esercizioId": "box_squat",
+          "serie": 3,
+          "ripetizioni": "6",
+          "recuperoSec": 90,
+          "sostituisce": "step_up_basso"
+        },
+        {
+          "esercizioId": "saltelli_sul_posto",
+          "serie": 3,
+          "durataSec": 20,
+          "recuperoSec": 60
+        }
+      ]
+    },
+    "mer": {
+      "nome": "Tennis + Mobilita'",
+      "attivita": {
+        "tipo": "tennis",
+        "durataMin": 60
+      },
+      "mobilita": [
+        {
+          "esercizioId": "cat_cow",
+          "ripetizioni": "10"
+        },
+        {
+          "esercizioId": "anche_90_90",
+          "durataSec": "60 per lato"
+        },
+        {
+          "esercizioId": "ginocchio_muro",
+          "durataSec": "60 per lato"
+        },
+        {
+          "esercizioId": "equilibrio_monopodalico",
+          "durataSec": "45 per lato, 2 serie"
+        },
+        {
+          "esercizioId": "rotazioni_esterne_elastico",
+          "serie": 2,
+          "ripetizioni": "15"
+        },
+        {
+          "esercizioId": "open_book",
+          "ripetizioni": "10 per lato"
+        },
+        {
+          "esercizioId": "respirazione_diaframmatica",
+          "durataSec": 300
+        }
+      ]
+    },
+    "gio": {
+      "nome": "Soglia + Forza B",
+      "pista": {
+        "esercizioId": "ripetute_soglia",
+        "prescrizione": "10 min riscaldamento, ripetute da 4 min all'85-90% FC max (160-168 bpm) con 2 min di corsa lenta; numero di ripetute dalla fase (serieSoglia)",
+        "scarico": "25 min corsa in Zona 2"
+      },
+      "palestra": [
+        {
+          "esercizioId": "lancio_palla_medica_petto",
+          "serie": 4,
+          "ripetizioni": "5",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "panca_piana",
+          "serie": 5,
+          "ripetizioni": "3-5",
+          "rpe": "fase",
+          "recuperoSec": 120
+        },
+        {
+          "esercizioId": "military_press",
+          "serie": 4,
+          "ripetizioni": "5-6",
+          "recuperoSec": 90,
+          "alternativa": "landmine_press"
+        },
+        {
+          "esercizioId": "stacco_rumeno_manubri",
+          "serie": 3,
+          "ripetizioni": "8",
+          "recuperoSec": 90
+        },
+        {
+          "esercizioId": "face_pull",
+          "serie": 3,
+          "ripetizioni": "15",
+          "recuperoSec": 30,
+          "superserieCon": "push_up"
+        },
+        {
+          "esercizioId": "push_up",
+          "serie": 3,
+          "ripetizioni": "max-2",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "copenhagen_plank",
+          "serie": 3,
+          "durataSec": "20 per lato",
+          "recuperoSec": 30
+        }
+      ]
+    },
+    "ven": {
+      "nome": "Resistenza + Potenza",
+      "pista": {
+        "esercizioId": "intervalli_30_30",
+        "prescrizione": "10 min riscaldamento, 2 blocchi da 8 x (30 s veloci / 30 s lenti) con 3 min tra i blocchi; in alternativa fartlek libero 20 min",
+        "scarico": "20 min in Zona 2 + 4 allunghi"
+      },
+      "palestra": [
+        {
+          "esercizioId": "lancio_rotazionale",
+          "serie": 4,
+          "ripetizioni": "5 per lato",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "overhead_back_toss",
+          "serie": 4,
+          "ripetizioni": "4",
+          "recuperoSec": 60
+        },
+        {
+          "esercizioId": "push_press_manubri",
+          "serie": 4,
+          "ripetizioni": "4",
+          "recuperoSec": 90
+        },
+        {
+          "esercizioId": "sled_push",
+          "serie": 6,
+          "distanzaM": 15,
+          "recuperoSec": 60
+        },
+        {
+          "circuito": true,
+          "giri": 4,
+          "lavoroSec": 40,
+          "pausaSec": 20,
+          "esercizi": [
+            "rematore_trx",
+            "turkish_get_up",
+            "battle_rope",
+            "suitcase_carry"
+          ]
+        }
+      ]
+    }
+  }
+}

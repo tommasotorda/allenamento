@@ -1,0 +1,32 @@
+[
+  {
+    "id": "trap_bar_3rm",
+    "nome": "Trap bar deadlift 3RM",
+    "unita": "kg",
+    "meglio": "alto"
+  },
+  {
+    "id": "trazioni_max",
+    "nome": "Trazioni massime pulite",
+    "unita": "ripetizioni",
+    "meglio": "alto"
+  },
+  {
+    "id": "lancio_petto_seduto",
+    "nome": "Lancio palla medica al petto da seduto (5 kg)",
+    "unita": "m",
+    "meglio": "alto"
+  },
+  {
+    "id": "sprint_salita_20m",
+    "nome": "Sprint in salita 20 m",
+    "unita": "s",
+    "meglio": "basso"
+  },
+  {
+    "id": "cooper",
+    "nome": "Test di Cooper 12 min",
+    "unita": "m",
+    "meglio": "alto"
+  }
+]

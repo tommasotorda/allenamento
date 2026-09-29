@@ -1,0 +1,63 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-accent: #f97316;
+  --color-accent-strong: #ea580c;
+  --font-sans: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: light dark;
+  --fig-prop: #64748b;
+  --fig-accent: #f97316;
+  --fig-floor: #cbd5e1;
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --fig-prop: #94a3b8;
+    --fig-floor: #475569;
+  }
+}
+
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  @apply bg-zinc-50 text-zinc-900 antialiased dark:bg-zinc-950 dark:text-zinc-100;
+  overscroll-behavior-y: none;
+}
+
+/* niente zoom con doppio tap sui pulsanti */
+button,
+a,
+input,
+select {
+  touch-action: manipulation;
+}
+
+.figura svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+input[type='number']::-webkit-inner-spin-button,
+input[type='number']::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type='number'] {
+  -moz-appearance: textfield;
+}

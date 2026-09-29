@@ -1,0 +1,709 @@
+[
+  {
+    "id": "plank",
+    "nome": "Plank",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Avambracci a terra sotto le spalle, gambe tese in appoggio sulle punte.",
+      "Glutei e addome contratti, corpo in linea dalla testa ai talloni.",
+      "Respira in modo regolare mantenendo la posizione."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "side_plank",
+    "nome": "Side plank",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Sul fianco, avambraccio a terra sotto la spalla, piedi sovrapposti o sfalsati.",
+      "Solleva il bacino fino ad allineare spalle, anche e caviglie.",
+      "Mantieni senza far cadere il bacino, poi cambia lato."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "dead_bug",
+    "nome": "Dead bug",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Supino, braccia verso il soffitto, anche e ginocchia a 90 gradi.",
+      "Zona lombare appoggiata a terra per tutto l'esercizio.",
+      "Estendi lentamente braccio e gamba opposti, torna e alterna."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "bird_dog",
+    "nome": "Bird dog",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In quadrupedia, mani sotto le spalle e ginocchia sotto le anche.",
+      "Estendi braccio e gamba opposti fino all'orizzontale senza ruotare il bacino.",
+      "Tieni 10 secondi, torna e alterna."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "pallof_press",
+    "nome": "Pallof press",
+    "categoria": "core",
+    "attrezzatura": [
+      "elastico o cavo"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi di fianco all'ancoraggio, elastico teso all'altezza dello sterno.",
+      "Spingi le mani in avanti fino a braccia tese senza lasciarti ruotare.",
+      "Tieni 2 secondi e riporta al petto."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "hollow_hold",
+    "nome": "Hollow hold",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Supino, zona lombare schiacciata a terra.",
+      "Solleva spalle e gambe tese di pochi centimetri, braccia oltre la testa.",
+      "Mantieni la forma a 'banana' respirando corto."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "mcgill_curl_up",
+    "nome": "Curl-up McGill",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Supino, una gamba piegata e una tesa, mani sotto la zona lombare.",
+      "Solleva di pochi centimetri testa e spalle come un blocco unico, senza flettere il collo.",
+      "Tieni 10 secondi e scendi; a meta' serie cambia gamba piegata."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "trap_bar_deadlift",
+    "nome": "Trap bar deadlift",
+    "categoria": "forza",
+    "attrezzatura": [
+      "trap bar"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi al centro della trap bar, piedi larghezza anche.",
+      "Anche indietro, prendi le maniglie, petto alto e schiena neutra.",
+      "Spingi il pavimento con le gambe ed estendi le anche fino in piedi; scendi con lo stesso percorso."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "trazioni",
+    "nome": "Trazioni alla sbarra",
+    "categoria": "forza",
+    "attrezzatura": [
+      "sbarra"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Presa prona poco piu' larga delle spalle, braccia tese.",
+      "Porta le scapole in basso e tira il petto verso la sbarra.",
+      "Scendi in 3 secondi fino a braccia tese."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "hip_thrust",
+    "nome": "Hip thrust con bilanciere",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere",
+      "panca"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Scapole appoggiate al bordo della panca, bilanciere imbottito sulle anche.",
+      "Piedi a terra con tibie verticali nella posizione alta.",
+      "Spingi i talloni ed estendi le anche fino all'allineamento busto-cosce, mento verso il petto."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "rematore_manubrio",
+    "nome": "Rematore con manubrio in appoggio",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubrio",
+      "panca"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Mano e ginocchio sulla panca, schiena parallela al pavimento.",
+      "Tira il manubrio verso l'anca portando il gomito indietro.",
+      "Scendi controllato fino a braccio teso."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "farmer_carry",
+    "nome": "Farmer carry",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri o kettlebell"
+    ],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "Un peso per mano, braccia lungo i fianchi.",
+      "Spalle basse, busto eretto, addome contratto.",
+      "Cammina a passi corti e regolari per la distanza prevista."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "kettlebell_swing",
+    "nome": "Kettlebell swing",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Piedi poco piu' larghi delle anche, kettlebell davanti a te.",
+      "Porta il kettlebell tra le gambe piegando le anche, schiena neutra.",
+      "Estendi le anche con forza e lascia salire il kettlebell all'altezza del petto."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "spanish_squat",
+    "nome": "Spanish squat isometrico",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "elastico pesante"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Elastico ancorato a un palo e passato dietro entrambe le ginocchia.",
+      "Arretra fino a tendere l'elastico, busto verticale.",
+      "Scendi con le tibie verticali fino a circa 60-90 gradi e mantieni."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "terminal_knee_extension",
+    "nome": "Terminal knee extension",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "elastico"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Elastico ancorato davanti a te e passato dietro il ginocchio.",
+      "Parti con il ginocchio leggermente piegato.",
+      "Stendi completamente il ginocchio contraendo il quadricipite, tieni 1 secondo e torna."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "reverse_sled_drag",
+    "nome": "Slitta trascinata all'indietro",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "slitta",
+      "cinghie"
+    ],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "Afferra le cinghie della slitta di fronte a te, braccia tese.",
+      "Busto leggermente inclinato indietro, ginocchia piegate.",
+      "Cammina all'indietro a passi corti spingendo dalla pianta del piede."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "step_up_basso",
+    "nome": "Step-up su box basso",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "box 20-30 cm"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Piede intero sul box, ginocchio in linea con il secondo dito.",
+      "Sali spingendo solo con la gamba sul box.",
+      "Scendi lentamente in 3 secondi toccando terra con il tallone."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "slider_leg_curl",
+    "nome": "Leg curl con slider",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "slider o asciugamano"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Supino, talloni sugli slider, bacino sollevato in ponte.",
+      "Porta i talloni verso i glutei mantenendo il bacino alto.",
+      "Allunga le gambe lentamente senza far cadere il bacino."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "polpacci_monopodalici",
+    "nome": "Polpacci monopodalici su gradino",
+    "categoria": "ricostruzione",
+    "attrezzatura": [
+      "gradino"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Avampiede sul bordo del gradino, una mano al muro.",
+      "Sali in punta il piu' in alto possibile.",
+      "Scendi in 3 secondi sotto il livello del gradino."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "tibialis_raise",
+    "nome": "Tibialis raise",
+    "categoria": "ricostruzione",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Schiena al muro, talloni a 30-40 cm dal muro.",
+      "Solleva le punte dei piedi il piu' possibile.",
+      "Scendi controllato senza appoggiare del tutto."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "box_squat",
+    "nome": "Box squat",
+    "categoria": "forza",
+    "attrezzatura": [
+      "box",
+      "bilanciere o kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "sbloccabile": true,
+    "esecuzione": [
+      "In piedi davanti al box, piedi larghezza spalle.",
+      "Siediti indietro sul box controllando la discesa.",
+      "Pausa di un secondo e rialzati spingendo con tutto il piede."
+    ]
+  },
+  {
+    "id": "saltelli_sul_posto",
+    "nome": "Saltelli sul posto",
+    "categoria": "potenza",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "sbloccabile": true,
+    "esecuzione": [
+      "In piedi, ginocchia morbide.",
+      "Saltelli rapidi e bassi sull'avampiede.",
+      "Atterra silenzioso con il ginocchio in linea con il piede."
+    ]
+  },
+  {
+    "id": "lancio_palla_medica_petto",
+    "nome": "Lancio palla medica al petto",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "palla medica"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi a 2-3 m dal muro, palla al petto.",
+      "Spingi la palla contro il muro alla massima velocita'.",
+      "Riprendi al rimbalzo e resetta la posizione prima del lancio successivo."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "panca_piana",
+    "nome": "Panca piana",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere o manubri",
+      "panca"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Supino, scapole addotte e depresse, piedi a terra.",
+      "Scendi con il bilanciere a meta' sterno, gomiti a circa 45 gradi.",
+      "Spingi verso l'alto fino a braccia tese."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "military_press",
+    "nome": "Military press in piedi",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Bilanciere sulle clavicole, presa poco piu' larga delle spalle.",
+      "Glutei e addome contratti, testa leggermente indietro.",
+      "Spingi sopra la testa e porta la testa sotto il bilanciere a fine movimento."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "landmine_press",
+    "nome": "Landmine press",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere",
+      "landmine"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Estremita' del bilanciere all'altezza della spalla, piedi sfalsati.",
+      "Spingi in avanti e in alto fino a braccio teso.",
+      "Torna controllato alla spalla."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "stacco_rumeno_manubri",
+    "nome": "Stacco rumeno con manubri",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi, manubri davanti alle cosce, ginocchia leggermente piegate.",
+      "Porta le anche indietro facendo scorrere i manubri lungo le gambe, schiena neutra.",
+      "Scendi fino a sentire tensione nei femorali e risali spingendo le anche avanti."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "face_pull",
+    "nome": "Face pull con elastico",
+    "categoria": "forza",
+    "attrezzatura": [
+      "elastico o cavo"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Elastico ancorato all'altezza del viso, presa con pollici indietro.",
+      "Tira verso la fronte aprendo i gomiti in alto e ruotando le mani indietro.",
+      "Tieni 1 secondo e torna."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "push_up",
+    "nome": "Push-up",
+    "categoria": "forza",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Mani poco piu' larghe delle spalle, corpo in linea.",
+      "Scendi fino a sfiorare il pavimento con il petto, gomiti a 45 gradi.",
+      "Spingi fino a braccia tese."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "copenhagen_plank",
+    "nome": "Copenhagen plank",
+    "categoria": "forza",
+    "attrezzatura": [
+      "panca"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Sul fianco, avambraccio a terra, gamba superiore appoggiata sulla panca (ginocchio o caviglia).",
+      "Solleva il bacino allineando il corpo; la gamba inferiore resta sospesa o a terra.",
+      "Mantieni e cambia lato."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "lancio_rotazionale",
+    "nome": "Lancio rotazionale palla medica",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "palla medica"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Di fianco al muro a 1-2 m, palla all'anca lontana dal muro.",
+      "Carica ruotando le anche indietro.",
+      "Ruota con forza anche e busto e lancia la palla contro il muro."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "overhead_back_toss",
+    "nome": "Lancio all'indietro sopra la testa",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "palla medica"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi, palla tra le gambe con braccia tese, anche piegate.",
+      "Estendi con forza anche, ginocchia e caviglie.",
+      "Lancia la palla all'indietro sopra la testa restando con i piedi a terra."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "push_press_manubri",
+    "nome": "Push press con manubri",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Manubri alle spalle, piedi larghezza anche.",
+      "Piccolo piegamento delle ginocchia e spinta rapida delle gambe.",
+      "Usa la spinta per portare i manubri sopra la testa a braccia tese."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "sled_push",
+    "nome": "Sled push",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "slitta"
+    ],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "Mani sui montanti della slitta, busto inclinato a circa 45 gradi.",
+      "Spingi con passi corti e potenti sull'avampiede.",
+      "Mantieni la schiena neutra per tutta la distanza."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "rematore_trx",
+    "nome": "Rematore TRX o anelli",
+    "categoria": "forza",
+    "attrezzatura": [
+      "TRX o anelli"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Impugna le maniglie, corpo inclinato indietro e in linea.",
+      "Tira il petto verso le mani avvicinando le scapole.",
+      "Torna controllato a braccia tese."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "turkish_get_up",
+    "nome": "Turkish get-up",
+    "categoria": "forza",
+    "attrezzatura": [
+      "kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Supino, kettlebell a braccio teso verso il soffitto, ginocchio dello stesso lato piegato.",
+      "Sali su gomito, poi mano, solleva il bacino e porta la gamba tesa sotto di te in ginocchio.",
+      "Alzati in piedi e ripercorri i passaggi al contrario, sguardo sul kettlebell."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "battle_rope",
+    "nome": "Battle rope",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "battle rope"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Un capo per mano, ginocchia piegate, busto leggermente inclinato.",
+      "Muovi le braccia alternate in modo rapido creando onde continue.",
+      "Mantieni il ritmo costante per tutto il tempo."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "suitcase_carry",
+    "nome": "Suitcase carry",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubrio o kettlebell"
+    ],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "Un solo peso in una mano, braccio lungo il fianco.",
+      "Busto dritto senza inclinarti verso il peso.",
+      "Cammina per la distanza prevista e cambia mano."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "sprint_salita",
+    "nome": "Sprint in salita",
+    "categoria": "pista",
+    "attrezzatura": [],
+    "tipoRegistrazione": "pista",
+    "esecuzione": [
+      "Salita del 5-10%, busto inclinato in avanti.",
+      "Braccia attive, spinta forte dall'avampiede.",
+      "Scendi camminando per il recupero."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "corsa_zona2",
+    "nome": "Corsa in Zona 2",
+    "categoria": "pista",
+    "attrezzatura": [
+      "cardiofrequenzimetro (opzionale)"
+    ],
+    "tipoRegistrazione": "pista",
+    "esecuzione": [
+      "Ritmo costante a 125-140 bpm.",
+      "Ritmo al quale riesci a parlare a frasi intere.",
+      "Passo corto e leggero, cadenza alta."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "ripetute_soglia",
+    "nome": "Ripetute da 4 minuti",
+    "categoria": "pista",
+    "attrezzatura": [
+      "cardiofrequenzimetro (opzionale)"
+    ],
+    "tipoRegistrazione": "pista",
+    "esecuzione": [
+      "Ripetute da 4 minuti a 160-168 bpm.",
+      "2 minuti di corsa lenta tra una ripetuta e l'altra.",
+      "Ritmo uniforme dalla prima all'ultima ripetuta."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "intervalli_30_30",
+    "nome": "Intervalli 30/30",
+    "categoria": "pista",
+    "attrezzatura": [],
+    "tipoRegistrazione": "pista",
+    "esecuzione": [
+      "30 secondi veloci, 30 secondi di corsa lenta.",
+      "8 ripetizioni per blocco.",
+      "3 minuti di corsa lenta tra i blocchi."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "cat_cow",
+    "nome": "Cat-cow",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In quadrupedia.",
+      "Inarca la schiena verso l'alto espirando, poi lasciala scendere guardando avanti inspirando.",
+      "Movimento lento vertebra per vertebra."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "anche_90_90",
+    "nome": "Mobilita' 90/90",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Seduto, una gamba davanti e una di lato, entrambe le ginocchia a 90 gradi.",
+      "Busto eretto, inclinati leggermente sulla gamba davanti.",
+      "Ruota le ginocchia dall'altra parte senza usare le mani e ripeti."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "ginocchio_muro",
+    "nome": "Mobilita' caviglia ginocchio-muro",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Piede a pochi centimetri dal muro, tallone a terra.",
+      "Porta il ginocchio a toccare il muro senza sollevare il tallone.",
+      "Allontana il piede di poco quando riesci facilmente."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "equilibrio_monopodalico",
+    "nome": "Equilibrio su una gamba",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In piedi su una gamba, ginocchio leggermente flesso.",
+      "Mantieni l'equilibrio a occhi aperti, poi chiusi.",
+      "Cambia gamba."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "rotazioni_esterne_elastico",
+    "nome": "Rotazioni esterne con elastico",
+    "categoria": "mobilita",
+    "attrezzatura": [
+      "elastico"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Gomito piegato a 90 gradi e aderente al fianco.",
+      "Ruota l'avambraccio verso l'esterno contro la resistenza dell'elastico.",
+      "Torna lentamente."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "open_book",
+    "nome": "Open book",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Sul fianco, ginocchia piegate a 90 gradi, braccia tese davanti.",
+      "Apri il braccio superiore verso l'altro lato seguendolo con lo sguardo.",
+      "Tieni 2 secondi e richiudi."
+    ],
+    "sbloccabile": false
+  },
+  {
+    "id": "respirazione_diaframmatica",
+    "nome": "Respirazione diaframmatica",
+    "categoria": "mobilita",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Supino, una mano sul petto e una sull'addome.",
+      "Inspira dal naso per 4 secondi gonfiando l'addome.",
+      "Espira lentamente per 6 secondi."
+    ],
+    "sbloccabile": false
+  }
+]

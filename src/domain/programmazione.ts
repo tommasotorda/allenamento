@@ -242,7 +242,7 @@ const MOBILITA_SUPERIORE = ['open_book', 'cat_cow', 'stretch_laterale']
  * Riscaldamento specifico: una o due mobilita' per le articolazioni del giorno e una o due
  * attivazioni leggere dei muscoli stabilizzatori, a basso carico.
  */
-export function riscaldamentoPer(voci: VocePalestra[], disponibile: (e: Esercizio) => boolean, esclusi: Set<string>): Prescrizione[] {
+export function riscaldamentoPer(voci: VocePalestra[], disponibile: (e: Esercizio) => boolean, esclusi: Set<string>, massimo = 4): Prescrizione[] {
   let sup = 0
   let inf = 0
   for (const v of voci) {
@@ -261,9 +261,89 @@ export function riscaldamentoPer(voci: VocePalestra[], disponibile: (e: Esercizi
   const mob = [...(inf ? scegli(MOBILITA_INFERIORE, entrambi ? 1 : 2) : []), ...(sup ? scegli(MOBILITA_SUPERIORE.filter((x) => !(inf && x === 'cat_cow')), entrambi ? 1 : 1) : [])]
   const att = [...(inf ? scegli(ATTIVAZIONE_INFERIORE, 1) : []), ...(sup ? scegli(ATTIVAZIONE_SUPERIORE, 1) : [])]
   const lista = [...mob, ...att].length ? [...mob, ...att] : scegli(['cat_cow', 'dead_bug'], 2)
-  return lista.map((e) =>
+  return lista.slice(0, massimo).map((e) =>
     e.tipoRegistrazione === 'tempo'
       ? { esercizioId: e.id, serie: 1, durataSec: /lato/.test(e.esecuzione.join(' ')) ? '30 per lato' : 30 }
       : { esercizioId: e.id, serie: att.includes(e) ? 2 : 1, ripetizioni: '10' },
   )
+}
+
+// ---------- riepilogo modificabile e carico per muscolo ----------
+
+const SERIE_MIN = 1
+const SERIE_MAX = 6
+
+/**
+ * Esercizi che lavorano il gruppo, con il contributo (1 primario, 0,5 secondario) e quante volte a settimana
+ * compare la seduta. Se ci sono esercizi dedicati si usano solo quelli.
+ */
+function vociDedicate(p: Programma, g: Gruppo): { v: Prescrizione; n: number; c: number }[] {
+  const volte = new Map<string, number>()
+  for (const { sedutaId } of p.settimana) volte.set(sedutaId, (volte.get(sedutaId) ?? 0) + 1)
+  const tutte = [...volte].flatMap(([id, n]) =>
+    (p.sedute[id]?.palestra ?? [])
+      .filter((v): v is Prescrizione => !isCircuito(v) && v.serie !== undefined)
+      .map((v) => ({ v, n, c: contributo(esercizio(v.esercizioId))[g] ?? 0 }))
+      .filter((x) => x.c > 0),
+  )
+  const dedicate = tutte.filter((x) => x.c === 1)
+  return dedicate.length ? dedicate : tutte
+}
+
+/** Serie settimanali raggiungibili per un gruppo cambiando solo le serie dei suoi esercizi (da 1 a 6). */
+export function limitiVolumeGruppo(p: Programma, g: Gruppo): [number, number] {
+  const vol = volumeSettimanaleGruppi(p)[g]
+  const ded = vociDedicate(p, g)
+  const giu = ded.reduce((t, { v, n, c }) => t + ((v.serie ?? 0) - SERIE_MIN) * n * c, 0)
+  const su = ded.reduce((t, { v, n, c }) => t + (SERIE_MAX - (v.serie ?? 0)) * n * c, 0)
+  return [Math.max(0, vol - giu), vol + su]
+}
+
+/**
+ * Porta il volume di un gruppo vicino a `obiettivo` aggiungendo o togliendo una serie alla volta.
+ * Si toccano prima gli esercizi piu' specifici (isolamento), cosi' gli altri gruppi cambiano il meno possibile.
+ */
+export function impostaVolumeGruppo(p: Programma, g: Gruppo, obiettivo: number): Programma {
+  const out = clonaProgramma(p)
+  for (let giro = 0; giro < 200; giro++) {
+    const diff = obiettivo - volumeSettimanaleGruppi(out)[g]
+    if (Math.abs(diff) < 0.25) break
+    const su = diff > 0
+    const specifici = (x: { v: Prescrizione }) => Object.keys(contributo(esercizio(x.v.esercizioId))).length
+    const scelta = vociDedicate(out, g)
+      .filter(({ v }) => (su ? (v.serie ?? 0) < SERIE_MAX : (v.serie ?? 0) > SERIE_MIN))
+      .sort((a, b) => specifici(a) - specifici(b) || (su ? (a.v.serie ?? 0) - (b.v.serie ?? 0) : (b.v.serie ?? 0) - (a.v.serie ?? 0)))[0]
+    // ci si ferma se il passo successivo allontanerebbe dal valore scelto
+    if (!scelta || Math.abs(diff) < (scelta.n * scelta.c) / 2) break
+    scelta.v.serie = (scelta.v.serie ?? 0) + (su ? 1 : -1)
+  }
+  return out
+}
+
+const clonaProgramma = (p: Programma): Programma => JSON.parse(JSON.stringify(p)) as Programma
+
+const PESO_LIVELLO: Record<number, number> = { 3: 1, 2: 0.5, 1: 0 }
+
+/**
+ * Carico settimanale per muscolo: serie x coinvolgimento (primario 1, secondario 0,5), da palestra,
+ * circuiti e blocco core (le due varianti si alternano, quindi meta' ciascuna).
+ */
+export function caricoMuscoli(p: Programma): Partial<Record<MuscoloId, number>> {
+  const out: Partial<Record<MuscoloId, number>> = {}
+  const somma = (id: string, serie: number) => {
+    for (const [m, l] of Object.entries(espandi(esercizio(id).muscoli)) as [MuscoloId, number][]) {
+      const w = PESO_LIVELLO[l] ?? 0
+      if (w) out[m] = (out[m] ?? 0) + serie * w
+    }
+  }
+  for (const { sedutaId } of p.settimana) {
+    const s = p.sedute[sedutaId]
+    if (!s) continue
+    for (const v of s.palestra ?? []) {
+      if (isCircuito(v)) v.esercizi.forEach((id) => somma(id, v.giri))
+      else somma(v.esercizioId, v.serie ?? 1)
+    }
+    if (s.core) for (const v of [...p.blocco_core.varianteA, ...p.blocco_core.varianteB]) somma(v.esercizioId, (v.serie ?? 1) / 2)
+  }
+  return out
 }

@@ -7,12 +7,12 @@ import { DESCR_DIREZIONI } from '../../domain/adattamento'
 import { lunediDi } from '../../domain/calendar'
 import { GIORNI, NOMI_GIORNI } from '../../domain/data'
 import { generaProgramma, modelliPer, nomeScheda, NOMI_ATTREZZI, NOMI_COMPONENTI, NOMI_FOCUS, NOMI_OBIETTIVI, NOMI_SUDDIVISIONI, RISPOSTE_VUOTE, type Componente, type Focus, type Risposte, type Sport, type Suddivisione } from '../../domain/generator'
-import { ELENCO_GRUPPI, FATTORE_GRUPPO, GRUPPI, volumeSettimanaleGruppi, volumeTarget } from '../../domain/programmazione'
 import { creaPiano } from '../../domain/plans'
 import { PROFILI } from '../../domain/profili'
-import type { Attrezzo, GiornoId, Obiettivo, Zona } from '../../domain/types'
+import type { Attrezzo, GiornoId, Obiettivo, Programma, Zona } from '../../domain/types'
 import { useOggi } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
+import { RiepilogoCarico } from './RiepilogoCarico'
 
 const OBIETTIVI: Obiettivo[] = ['forza', 'massa', 'potenza', 'resistenza', 'mobilita', 'stabilita']
 const ATTREZZI: Attrezzo[] = ['manubri', 'kettlebell', 'bilanciere', 'panca', 'sbarra', 'elastico', 'cavo', 'trap-bar', 'palla-medica', 'box', 'trx', 'slitta', 'landmine', 'battle-rope', 'slider', 'panca-iperestensioni']
@@ -46,7 +46,7 @@ const SPORT = ['Tennis', 'Padel', 'Calcio', 'Calcetto', 'Basket', 'Pallavolo', '
 const DURATE_SPORT = [30, 45, 60, 90, 120]
 const SUDDIVISIONI: Suddivisione[] = ['auto', 'fullbody', 'sup-inf', 'ppl', 'gruppi', 'libera']
 const COMPONENTI = Object.keys(NOMI_COMPONENTI) as Componente[]
-const N_ESERCIZI = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
+const N_ESERCIZI = [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
 const DESCR_SUDDIVISIONI: Record<Suddivisione, string> = {
   auto: 'Scelta in base al numero di giorni',
   fullbody: 'Tutto il corpo in ogni seduta, con varianti',
@@ -77,6 +77,12 @@ interface Stato {
   passo: number
   nome: string | null
   seduta: string | null
+  /** scheda ritoccata con gli slider, valida finche' le risposte restano quelle */
+  ritocchi?: Ritocchi | null
+}
+interface Ritocchi {
+  risposte: string
+  programma: Programma
 }
 const CHIAVE_STATO = 'questionario.stato'
 
@@ -110,14 +116,19 @@ export function QuestionarioPage() {
   const [passo, setPasso] = useState(salvato?.passo ?? (profilo ? PASSI.length - (profilo.risposte.suddivisione === 'libera' ? 1 : 2) : 0))
   const [nome, setNome] = useState<string | null>(salvato ? salvato.nome : (profilo?.nome ?? null))
   const [seduta, setSeduta] = useState<string | null>(salvato?.seduta ?? null)
-  useEffect(() => scriviStato({ profilo: profilo?.id ?? null, r, passo, nome, seduta }), [profilo, r, passo, nome, seduta])
+  const [ritocchi, setRitocchi] = useState<Ritocchi | null>(salvato?.ritocchi ?? null)
+  useEffect(() => scriviStato({ profilo: profilo?.id ?? null, r, passo, nome, seduta, ritocchi }), [profilo, r, passo, nome, seduta, ritocchi])
   const oggi = useOggi()
   const nav = useNavigate()
   // il passo Composizione c'e' solo con la suddivisione libera
   const passi = PASSI.filter((p) => p.id !== 'composizione' || r.suddivisione === 'libera')
   const set = (patch: Partial<Risposte> | ((r: Risposte) => Partial<Risposte>)) => setR((x) => ({ ...x, ...(typeof patch === 'function' ? patch(x) : patch) }))
   const ultimo = passi.length - 1
-  const programma = useMemo(() => (passo === ultimo && r.obiettivi.length && r.giorni.length ? generaProgramma(r) : null), [passo, ultimo, r])
+  const generato = useMemo(() => (passo === ultimo && r.obiettivi.length && r.giorni.length ? generaProgramma(r) : null), [passo, ultimo, r])
+  // i ritocchi valgono solo per le risposte con cui sono stati fatti
+  const chiaveRisposte = JSON.stringify(r)
+  const ritoccato = ritocchi?.risposte === chiaveRisposte ? ritocchi.programma : null
+  const programma = ritoccato ?? generato
 
   const passoId: PassoId = passi[Math.min(passo, ultimo)].id
   const valido: Record<PassoId, boolean> = {
@@ -204,7 +215,7 @@ export function QuestionarioPage() {
               </Scelta>
             ))}
           </div>
-          <div className="mt-2 px-1 text-xs text-zinc-500">Esclusi riscaldamento, core e defaticamento. Auto: in base alla durata.</div>
+          <div className="mt-2 px-1 text-xs text-zinc-500">Tutta la seduta: riscaldamento, core, esercizi e defaticamento. Auto: in base alla durata.</div>
         </div>
       )}
 
@@ -339,8 +350,14 @@ export function QuestionarioPage() {
               </Button>
             </Card>
           )}
+          <RiepilogoCarico
+            programma={programma}
+            obiettivo={r.obiettivi[0]}
+            livello={r.livello}
+            onChange={(p) => setRitocchi({ risposte: chiaveRisposte, programma: p })}
+            onRipristina={ritoccato ? () => setRitocchi(null) : undefined}
+          />
           <AnteprimaProgramma programma={programma} aperta={seduta} onApri={setSeduta} />
-          <VolumeGruppi volume={volumeSettimanaleGruppi(programma)} target={volumeTarget(r.obiettivi[0], r.livello)} />
           <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
             Attiva questa scheda
           </Button>
@@ -511,39 +528,5 @@ function Composizione({ r, set }: { r: Risposte; set: Imposta }) {
         )
       })}
     </div>
-  )
-}
-
-/** Serie settimanali per gruppo muscolare rispetto all'intervallo indicato per obiettivo e livello. */
-function VolumeGruppi({ volume, target }: { volume: Record<string, number>; target: [number, number] }) {
-  const gruppi = ELENCO_GRUPPI.filter((g) => g !== 'core' && volume[g] > 0)
-  if (!gruppi.length) return null
-  const max = Math.max(target[1] * 1.25, ...gruppi.map((g) => volume[g]))
-  return (
-    <Card className="mt-4 p-3">
-      <div className="flex items-baseline justify-between">
-        <span className="font-semibold">Serie settimanali</span>
-        <span className="text-xs text-zinc-500">
-          in grigio l'intervallo indicato
-        </span>
-      </div>
-      <div className="mt-2 space-y-1.5">
-        {gruppi.map((g) => {
-          const v = Math.round(volume[g] * 2) / 2
-          // braccia e polpacci: intervallo ridotto, lavorano gia' nei multiarticolari
-          const [min, mx] = target.map((x) => Math.round(x * FATTORE_GRUPPO[g]))
-          return (
-            <div key={g} className="flex items-center gap-2 text-sm">
-              <span className="w-24 shrink-0 text-zinc-600 dark:text-zinc-400">{GRUPPI[g].nome}</span>
-              <div className="relative h-2.5 flex-1 rounded-full bg-zinc-100 dark:bg-zinc-800">
-                <div className="absolute inset-y-0 rounded-full bg-zinc-300/70 dark:bg-zinc-600/60" style={{ left: `${(min / max) * 100}%`, width: `${((mx - min) / max) * 100}%` }} />
-                <div className="absolute inset-y-0.5 left-0 rounded-full bg-accent" style={{ width: `${(Math.min(v, max) / max) * 100}%` }} />
-              </div>
-              <span className="w-8 shrink-0 text-right tabular-nums font-semibold">{String(v).replace('.', ',')}</span>
-            </div>
-          )
-        })}
-      </div>
-    </Card>
   )
 }

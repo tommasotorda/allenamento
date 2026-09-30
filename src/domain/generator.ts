@@ -22,7 +22,7 @@ export interface Risposte {
   suddivisione?: Suddivisione
   /** altri sport praticati durante la settimana */
   sport?: Sport[]
-  /** esercizi per seduta (oltre a riscaldamento, core e defaticamento); assente = in base alla durata */
+  /** esercizi per seduta, compresi riscaldamento, core e defaticamento (`ripartisci`); assente = in base alla durata */
   eserciziPerSeduta?: number
   /** superserie: nessuna, alcune coppie per seduta, oppure tutta la scheda */
   superserie?: 'no' | 'alcune' | 'tutte'
@@ -328,6 +328,18 @@ function modelli(n: number): Modello[] {
 
 const SLOT_PER_DURATA: Record<Risposte['durataMin'], number> = { 30: 4, 45: 5, 60: 6, 75: 7, 90: 8, 105: 9, 120: 10 }
 
+/**
+ * Numero di esercizi scelto dall'utente: vale per tutta la seduta, quindi si divide tra riscaldamento,
+ * palestra e defaticamento (il core entra tra gli esercizi della palestra, senza blocco a parte).
+ * Le sedute di sola mobilita' sono tutte defaticamento. Piu' esercizi = mai meno lavoro in palestra.
+ */
+export function ripartisci(n: number, conPalestra: boolean, conMobilita: boolean) {
+  if (!conPalestra) return { riscaldamento: 0, palestra: 0, mobilita: n }
+  const riscaldamento = n >= 10 ? 2 : n >= 5 ? 1 : 0
+  const mobilita = conMobilita ? Math.max(2, Math.round(n * 0.3)) : n >= 7 ? 2 : 1
+  return { riscaldamento, palestra: Math.max(2, n - riscaldamento - mobilita), mobilita }
+}
+
 // ---------- scelta degli esercizi ----------
 
 const PALESTRA_CATEGORIE = new Set(['forza', 'potenza', 'core', 'ricostruzione'])
@@ -417,7 +429,7 @@ export function generaProgramma(r: Risposte): Programma {
   const secondario = r.obiettivi[1] ?? primario
   const sel = new Selettore(r)
   const soloMobilita = r.obiettivi.length > 0 && r.obiettivi.every((o) => o === 'mobilita' || o === 'stabilita') && r.obiettivi.includes('mobilita')
-  const nSlot = r.eserciziPerSeduta ?? SLOT_PER_DURATA[r.durataMin]
+  const nSlot = SLOT_PER_DURATA[r.durataMin]
   const principali = new Set<Prescrizione>()
   const sedute: Record<string, Seduta> = {}
   const settimana: Programma['settimana'] = []
@@ -434,6 +446,7 @@ export function generaProgramma(r: Risposte): Programma {
     const ctx = { ...r, ...(r.attrezziGiorno?.[giorno] ?? {}), senzaImpatto: sportOggi.length > 0 }
     const esclusi = new Set<string>()
     const palestra: VocePalestra[] = []
+    const quota = r.eserciziPerSeduta !== undefined ? ripartisci(r.eserciziPerSeduta, !!modello, conMobilita) : null
     const muscoliSeduta: Record<string, number> = {}
     const aggiungi = (p: Prescrizione) => {
       palestra.push(p)
@@ -449,8 +462,11 @@ export function generaProgramma(r: Risposte): Programma {
         if (e) aggiungi(prescrivi(e, 'potenza', 'accessorio', r.livello))
       }
       // esplosivi in apertura e circuito finale occupano il posto di un esercizio ciascuno
-      const conCircuito = r.obiettivi.includes('resistenza') && modello !== COND && r.durataMin >= 45
-      const posti = Math.max(3, nSlot - palestra.length - (conCircuito ? 1 : 0) - (sportOggi.length ? 1 : 0))
+      // con il numero di esercizi scelto il circuito conta per tutti i suoi esercizi (e serve spazio)
+      const conCircuito = r.obiettivi.includes('resistenza') && modello !== COND && r.durataMin >= 45 && (!quota || quota.palestra >= 6)
+      const posti = quota
+        ? Math.max(1, quota.palestra - palestra.length - (conCircuito ? 3 : 0))
+        : Math.max(3, nSlot - palestra.length - (conCircuito ? 1 : 0) - (sportOggi.length ? 1 : 0))
       // si scorrono gli slot finche' la seduta ha il numero di esercizi richiesto; al secondo giro sono complementari
       const totale = palestra.length + posti
       for (let k = 0; palestra.length < totale && k < modello.slot.length * 2; k++) {
@@ -479,15 +495,15 @@ export function generaProgramma(r: Risposte): Programma {
 
     // defaticamento: mobilita', stretching e yoga per i muscoli usati
     const lunga = r.durataMin >= 90 ? 2 : 0
-    const quanti = (soloMobilita || (composizione && !modello) ? 7 : conMobilita ? 4 : 2) + lunga
+    const quanti = quota ? quota.mobilita : (soloMobilita || (composizione && !modello) ? 7 : conMobilita ? 4 : 2) + lunga
     const categorie = conMobilita ? ['stretching', 'yoga', 'mobilita'] : ['stretching', 'mobilita']
     const recupero = sel.scegliRecupero(Object.keys(muscoliSeduta).length ? muscoliSeduta : { 'erettori-spinali': 2, femorali: 2, 'grande-gluteo': 2 }, quanti, categorie, esclusi, ctx)
     const mobilita = recupero.map((e) => prescrivi(e, 'mobilita', 'accessorio', r.livello)).map((p) => ({ ...p, serie: p.serie && p.serie > 2 ? 2 : p.serie, recuperoSec: undefined }))
 
     const nome = modello ? (soloMobilita && !composizione ? 'Forza e controllo' : modello.nome) : 'Mobilità e yoga'
-    const seduta: Seduta = { nome, palestra, mobilita, core: !!modello && r.durataMin >= 45 }
+    const seduta: Seduta = { nome, palestra, mobilita, core: !!modello && !quota && r.durataMin >= 45 }
     if (sportOggi.length) seduta.attivita = attivitaDi(sportOggi)
-    if (palestra.length) seduta.riscaldamento = riscaldamentoPer(palestra, (e) => disponibile(e, ctx), esclusi)
+    if (palestra.length && (!quota || quota.riscaldamento)) seduta.riscaldamento = riscaldamentoPer(palestra, (e) => disponibile(e, ctx), esclusi, quota?.riscaldamento)
     // corsa: Zona 2 nella prima seduta, lavoro di qualita' in una seduta a meta' settimana
     if (r.corsa) {
       const n = giorni.length

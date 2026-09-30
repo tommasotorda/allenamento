@@ -8,8 +8,10 @@ import { lunediDi } from '../../domain/calendar'
 import { NOMI_OBIETTIVI } from '../../domain/generator'
 import { creaPiano } from '../../domain/plans'
 import { importaSchedaLlm, modelloPerLlm, type RisultatoImport } from '../../domain/schedaLlm'
+import type { Programma } from '../../domain/types'
 import { useOggi } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
+import { RiepilogoCarico } from './RiepilogoCarico'
 
 const testoModello = () => JSON.stringify(modelloPerLlm(), null, 2)
 
@@ -28,6 +30,8 @@ interface Stato {
   importato: boolean
   nome: string
   seduta: string | null
+  /** scheda ritoccata con gli slider */
+  ritoccata?: Programma | null
 }
 const CHIAVE_STATO = 'schedaAi.stato'
 
@@ -59,7 +63,8 @@ export function SchedaAiPage() {
   const [esito, setEsito] = useState<RisultatoImport | null>(() => (salvato?.importato ? importaSchedaLlm(salvato.testo) : null))
   const [nome, setNome] = useState(salvato?.nome ?? '')
   const [seduta, setSeduta] = useState<string | null>(salvato?.seduta ?? null)
-  useEffect(() => scriviStato({ testo, importato: !!esito, nome, seduta }), [testo, esito, nome, seduta])
+  const [ritoccata, setRitoccata] = useState<Programma | null>(salvato?.ritoccata ?? null)
+  useEffect(() => scriviStato({ testo, importato: !!esito, nome, seduta, ritoccata }), [testo, esito, nome, seduta, ritoccata])
   const [copiato, setCopiato] = useState<'modello' | 'errori' | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -70,11 +75,12 @@ export function SchedaAiPage() {
   const controlla = (t: string) => {
     const r = importaSchedaLlm(t)
     setEsito(r)
+    setRitoccata(null)
     if (r.ok) setNome(r.nome)
   }
   const crea = async (attiva: boolean) => {
     if (!esito?.ok) return
-    const p = creaPiano({ nome: nome.trim() || esito.nome, origine: 'importata', obiettivi: esito.obiettivi, programma: esito.programma, inizio: lunediDi(oggi) })
+    const p = creaPiano({ nome: nome.trim() || esito.nome, origine: 'importata', obiettivi: esito.obiettivi, programma: ritoccata ?? esito.programma, inizio: lunediDi(oggi) })
     await salvaPiano(p, attiva)
     scriviStato(null)
     nav(attiva ? '/scheda' : '/schede', { replace: true })
@@ -103,6 +109,7 @@ export function SchedaAiPage() {
         onChange={(e) => {
           setTesto(e.target.value)
           setEsito(null)
+          setRitoccata(null)
         }}
         placeholder="Incolla qui il JSON generato"
         spellCheck={false}
@@ -165,7 +172,8 @@ export function SchedaAiPage() {
             ))}
             <Badge>{esito.programma.settimana.length} giorni</Badge>
           </div>
-          <AnteprimaProgramma programma={esito.programma} aperta={seduta} onApri={setSeduta} />
+          <RiepilogoCarico programma={ritoccata ?? esito.programma} obiettivo={esito.obiettivi[0]} livello={2} onChange={setRitoccata} onRipristina={ritoccata ? () => setRitoccata(null) : undefined} />
+          <AnteprimaProgramma programma={ritoccata ?? esito.programma} aperta={seduta} onApri={setSeduta} />
           <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
             Attiva questa scheda
           </Button>

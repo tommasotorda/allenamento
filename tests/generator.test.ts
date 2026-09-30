@@ -4,7 +4,7 @@ import { esercizio, programma as programmaJson } from '../src/domain/data'
 import { disponibile, generaProgramma, RISPOSTE_VUOTE, type Risposte } from '../src/domain/generator'
 import { espandi, type MuscoloId } from '../src/domain/muscles'
 import { creaPiano, pianoOriginale } from '../src/domain/plans'
-import { volumeSettimanaleGruppi, volumeTarget } from '../src/domain/programmazione'
+import { caricoMuscoli, impostaVolumeGruppo, limitiVolumeGruppo, volumeSettimanaleGruppi, volumeTarget } from '../src/domain/programmazione'
 import { PROFILI } from '../src/domain/profili'
 import { strutturaSeduta } from '../src/domain/session'
 import { isCircuito, type Prescrizione, type Programma, type SedutaLog, type Serie } from '../src/domain/types'
@@ -115,9 +115,12 @@ describe('generatore', () => {
   })
 
   it('numero di esercizi per seduta scelto', () => {
-    for (const n of [4, 8, 11]) {
-      const p = generaProgramma({ ...completa, eserciziPerSeduta: n })
-      for (const s of Object.values(p.sedute)) expect(s.palestra).toHaveLength(n)
+    // il numero comprende riscaldamento, core, palestra (anche gli esercizi dei circuiti) e defaticamento
+    const totale = (p: Programma, s: Programma['sedute'][string]) =>
+      (s.riscaldamento?.length ?? 0) + (s.core ? p.blocco_core.varianteA.length : 0) + (s.palestra ?? []).reduce((t, v) => t + (isCircuito(v) ? v.esercizi.length : 1), 0) + (s.mobilita?.length ?? 0)
+    for (const [r, n] of [[completa, 4], [completa, 9], [completa, 14], [{ ...completa, obiettivi: ['resistenza', 'mobilita'] }, 12]] as [Risposte, number][]) {
+      const p = generaProgramma({ ...r, eserciziPerSeduta: n })
+      for (const s of Object.values(p.sedute)) expect(totale(p, s), `${r.obiettivi} ${n}`).toBe(n)
     }
   })
 
@@ -215,5 +218,27 @@ describe('proposte di adattamento', () => {
     const p = creaPiano({ nome: 'x', origine: 'profilo', obiettivi: ['forza'], programma: programmaJson, inizio: '2026-08-03' })
     const test = [{ testId: 'cooper', data: '2026-09-22', valore: 2400 }, { testId: 'trazioni_max', data: '2026-09-23', valore: 8 }]
     expect(proposteAdattamento(p, '2026-09-28', [], [], test).map((x) => x.chiave)).toContain('test-8')
+  })
+})
+
+describe('riepilogo modificabile', () => {
+  const r: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['massa'], livello: 2, durataMin: 60, attrezzi: ['manubri', 'bilanciere', 'panca', 'sbarra', 'cavo'], giorni: ['lun', 'mer', 'ven'], suddivisione: 'fullbody' }
+
+  it('le serie di un gruppo seguono lo slider, entro i limiti', () => {
+    const p = generaProgramma(r)
+    const [min, max] = limitiVolumeGruppo(p, 'petto')
+    const prima = volumeSettimanaleGruppi(p).petto
+    const su = impostaVolumeGruppo(p, 'petto', prima + 4)
+    expect(volumeSettimanaleGruppi(su).petto).toBeCloseTo(prima + 4, 0)
+    expect(volumeSettimanaleGruppi(impostaVolumeGruppo(p, 'petto', 0)).petto).toBeCloseTo(min, 5)
+    expect(volumeSettimanaleGruppi(impostaVolumeGruppo(p, 'petto', 999)).petto).toBeCloseTo(max, 5)
+    // il programma di partenza non cambia
+    expect(volumeSettimanaleGruppi(p).petto).toBe(prima)
+  })
+
+  it('carico per muscolo: i fondamentali pesano, il totale e\' positivo', () => {
+    const c = caricoMuscoli(generaProgramma(r))
+    expect(Object.values(c).reduce((a, b) => a + (b ?? 0), 0)).toBeGreaterThan(0)
+    expect(c['grande-gluteo'] ?? 0).toBeGreaterThan(0)
   })
 })

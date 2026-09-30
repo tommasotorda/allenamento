@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { GearLink } from '../../components/GearLink'
 import { Icon } from '../../components/Icon'
 import { Badge, Card, formatData, PageHeader, Tabs } from '../../components/ui'
+import { aggiornaProgramma } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { aggiungiGiorni, faseDellaSettimana, lunediDi, SETTIMANE_CICLO } from '../../domain/calendar'
 import { GIORNI, NOMI_GIORNI } from '../../domain/data'
@@ -12,10 +13,11 @@ import { useCiclo } from '../../hooks'
 import { PropostaAdattamento } from '../adattamento/PropostaAdattamento'
 import { EsportaPdfButton } from '../pdf/EsportaPdfButton'
 import { Intestazione } from '../oggi/OggiPage'
+import { RiepilogoCarico } from '../piani/RiepilogoCarico'
 
 export function SchedaPage() {
   const c = useCiclo()
-  const [vista, setVista] = useState<'settimana' | 'ciclo'>('settimana')
+  const [vista, setVista] = useState<'settimana' | 'ciclo' | 'carico'>('settimana')
   const lun = c ? lunediDi(c.oggi) : ''
   const fatte =
     useLiveQuery(() => (lun ? db.sedute.where('data').between(lun, aggiungiGiorni(lun, 6), true, true).filter((s) => s.fine !== null).toArray() : []), [lun]) ?? []
@@ -41,8 +43,13 @@ export function SchedaPage() {
         options={[
           { id: 'settimana', label: 'Settimana' },
           { id: 'ciclo', label: 'Ciclo' },
+          { id: 'carico', label: 'Carico' },
         ]}
       />
+
+      {vista === 'carico' && (
+        <RiepilogoCarico programma={c.programma} obiettivo={c.piano.obiettivi[0] ?? 'forza'} livello={c.piano.risposte?.livello ?? 2} onChange={(p) => aggiornaProgramma(c.piano.id, p)} />
+      )}
 
       {vista === 'settimana' ? (
         <div className="mt-4 space-y-2">
@@ -76,7 +83,7 @@ export function SchedaPage() {
             )
           })}
         </div>
-      ) : (
+      ) : vista === 'ciclo' ? (
         <>
           <div className="mt-3 px-1 text-sm text-zinc-500">
             {formatData(c.piano.inizio, { day: 'numeric', month: 'long' })} → {formatData(scadenza(c.piano), { day: 'numeric', month: 'long', year: 'numeric' })}
@@ -99,7 +106,7 @@ export function SchedaPage() {
             })}
           </div>
         </>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -1,5 +1,5 @@
-import { useMemo, useState } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { useNavigate, useNavigationType, useSearchParams } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, PageHeader } from '../../components/ui'
 import { salvaPiano } from '../../db/repositories'
@@ -44,14 +44,47 @@ function Scelta({ attivo, onClick, children, ordine }: { attivo: boolean; onClic
   )
 }
 
+/** Stato del questionario salvato nella sessione: tornando indietro da un esercizio si riprende da dove si era. */
+interface Stato {
+  profilo: string | null
+  r: Risposte
+  passo: number
+  nome: string | null
+  seduta: string | null
+}
+const CHIAVE_STATO = 'questionario.stato'
+
+function leggiStato(profilo: string | null): Stato | null {
+  try {
+    const s = JSON.parse(sessionStorage.getItem(CHIAVE_STATO) ?? 'null') as Stato | null
+    return s && s.profilo === profilo ? s : null
+  } catch {
+    return null
+  }
+}
+
+function scriviStato(s: Stato | null) {
+  try {
+    if (s) sessionStorage.setItem(CHIAVE_STATO, JSON.stringify(s))
+    else sessionStorage.removeItem(CHIAVE_STATO)
+  } catch {
+    /* storage non disponibile: si riparte da zero */
+  }
+}
+
 const alterna = <T,>(arr: T[], v: T): T[] => (arr.includes(v) ? arr.filter((x) => x !== v) : [...arr, v])
 
 export function QuestionarioPage() {
   const [params] = useSearchParams()
   const profilo = PROFILI.find((p) => p.id === params.get('profilo'))
-  const [r, setR] = useState<Risposte>(profilo?.risposte ?? RISPOSTE_VUOTE)
-  const [passo, setPasso] = useState(profilo ? PASSI.length - 1 : 0)
-  const [nome, setNome] = useState<string | null>(profilo?.nome ?? null)
+  // ripristina solo tornando indietro (o ricaricando); un nuovo questionario parte da zero
+  const tipoNavigazione = useNavigationType()
+  const [salvato] = useState(() => (tipoNavigazione === 'POP' ? leggiStato(profilo?.id ?? null) : null))
+  const [r, setR] = useState<Risposte>(salvato?.r ?? profilo?.risposte ?? RISPOSTE_VUOTE)
+  const [passo, setPasso] = useState(salvato?.passo ?? (profilo ? PASSI.length - 1 : 0))
+  const [nome, setNome] = useState<string | null>(salvato ? salvato.nome : (profilo?.nome ?? null))
+  const [seduta, setSeduta] = useState<string | null>(salvato?.seduta ?? null)
+  useEffect(() => scriviStato({ profilo: profilo?.id ?? null, r, passo, nome, seduta }), [profilo, r, passo, nome, seduta])
   const oggi = useOggi()
   const nav = useNavigate()
   const set = (patch: Partial<Risposte>) => setR((x) => ({ ...x, ...patch }))
@@ -64,6 +97,7 @@ export function QuestionarioPage() {
     const p = creaPiano({ nome: nome?.trim() || nomeScheda(r), origine: profilo ? 'profilo' : 'questionario', obiettivi: r.obiettivi, programma, inizio: lunediDi(oggi) })
     p.risposte = r
     await salvaPiano(p, attiva)
+    scriviStato(null)
     nav(attiva ? '/scheda' : '/schede', { replace: true })
   }
 
@@ -192,7 +226,7 @@ export function QuestionarioPage() {
               </Button>
             </Card>
           )}
-          <AnteprimaProgramma programma={programma} />
+          <AnteprimaProgramma programma={programma} aperta={seduta} onApri={setSeduta} />
           <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
             Attiva questa scheda
           </Button>

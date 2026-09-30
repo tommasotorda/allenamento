@@ -26,7 +26,7 @@ export function testoPrescrizione(p: Prescrizione, fase: Fase, es: Esercizio): s
   const reps = ripetizioniEffettive(p, fase)
   let corpo = ''
   if (reps) corpo = reps
-  else if (p.durataSec !== undefined) corpo = typeof p.durataSec === 'number' ? formatSec(p.durataSec) : `${p.durataSec} s`
+  else if (p.durataSec !== undefined) corpo = typeof p.durataSec === 'number' ? formatSec(p.durataSec) : p.durataSec.replace(/^(\d+)/, '$1 s')
   else if (p.distanzaM !== undefined) corpo = `${p.distanzaM} m`
   if (p.serie) parti.push(corpo ? `${serieEffettive(p.serie, fase, es)} × ${corpo}` : `${serieEffettive(p.serie, fase, es)} serie`)
   else if (corpo) parti.push(corpo)

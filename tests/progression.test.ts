@@ -42,6 +42,12 @@ describe('progressione', () => {
     expect(testoPrescrizione(p, scarico, tb)).toBe('3 × 3-5 · RPE 6')
   })
 
+  it('durate testuali con l\'unita\' dopo il numero', () => {
+    const e = esercizio('side_plank')
+    expect(testoPrescrizione({ esercizioId: 'side_plank', serie: 3, durataSec: '40 per lato' }, base, e)).toBe('3 × 40 s per lato')
+    expect(testoPrescrizione({ esercizioId: 'side_plank', serie: 3, durataSec: 40 }, base, e)).toBe('3 × 40 s')
+  })
+
   it('primo numero da testo', () => {
     expect(primoNumero('8 per lato')).toBe(8)
     expect(primoNumero('3-5')).toBe(3)

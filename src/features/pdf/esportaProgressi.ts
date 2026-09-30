@@ -299,7 +299,6 @@ export async function esportaProgressi(opzioni: { onProgresso?: (x: number) => v
     for (const [k, nome, u] of [
       ['vitaCm', 'Circonferenza vita (cm)', 'cm'],
       ['fcRiposoBpm', 'FC a riposo (bpm)', 'bpm'],
-      ['doloreGinocchio', 'Dolore ginocchio (0-10)', ''],
     ] as const) {
       const pts = misure.filter((m) => m[k] !== null).map((m) => ({ data: m.data, y: m[k] as number }))
       if (pts.length < 2) continue

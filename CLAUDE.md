@@ -26,6 +26,10 @@ React 19 + TypeScript + Vite, Tailwind v4, Dexie (IndexedDB), React Router (Hash
 - `src/figures/` – `engine.ts` + `poses.ts`: pose A e B di ogni esercizio (2D, cinematica diretta/inversa); `pose3d.ts` le porta in 3D per il visore; `muscleGeometry.ts` + `muscleMap.ts`: mappa muscolare stile Technogym
 - `src/features/` – schermate: oggi, scheda, progressi, esercizi, impostazioni, piani (questionario, le mie schede, profili), adattamento
 
+## Scostamenti dalla specifica
+
+- Il campo "dolore ginocchio" delle misure non è più mostrato (modulo, grafici, PDF): troppo specifico. Il dato resta in `Misura.doloreGinocchio` per compatibilità.
+
 ## Vincoli sui testi (dalla specifica)
 
 - Nessuna sezione su dieta, calorie, macronutrienti.

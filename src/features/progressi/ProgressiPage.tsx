@@ -77,8 +77,7 @@ function Misure() {
         <div className="grid grid-cols-2 gap-y-4">
           <Stepper label="peso" unit="kg" value={m.pesoKg} onChange={set('pesoKg')} step={0.1} decimals={1} start={ultima?.pesoKg ?? 80} max={300} />
           <Stepper label="vita" unit="cm" value={m.vitaCm} onChange={set('vitaCm')} step={0.5} decimals={1} start={ultima?.vitaCm ?? 100} max={250} />
-          <Stepper label="FC riposo" unit="bpm" value={m.fcRiposoBpm} onChange={set('fcRiposoBpm')} step={1} start={ultima?.fcRiposoBpm ?? 50} max={150} />
-          <Stepper label="dolore ginocchio" unit="0-10" value={m.doloreGinocchio} onChange={set('doloreGinocchio')} step={1} max={10} start={0} />
+          <div className="col-span-2 flex justify-center"><Stepper label="FC riposo" unit="bpm" value={m.fcRiposoBpm} onChange={set('fcRiposoBpm')} step={1} start={ultima?.fcRiposoBpm ?? 50} max={150} /></div>
         </div>
         <Button
           variant="primary"
@@ -107,7 +106,6 @@ function Misure() {
         [
           ['vitaCm', 'Circonferenza vita (cm)', 'cm'],
           ['fcRiposoBpm', 'FC a riposo (bpm)', 'bpm'],
-          ['doloreGinocchio', 'Dolore ginocchio (0-10)', ''],
         ] as const
       ).map(([k, t, u]) => {
         const d = serieSemplice(k)
@@ -130,7 +128,6 @@ function Misure() {
                     x.pesoKg !== null && `${numIt(x.pesoKg)} kg`,
                     x.vitaCm !== null && `${numIt(x.vitaCm)} cm`,
                     x.fcRiposoBpm !== null && `${x.fcRiposoBpm} bpm`,
-                    x.doloreGinocchio !== null && `dolore ${x.doloreGinocchio}`,
                   ]
                     .filter(Boolean)
                     .join(' · ')}

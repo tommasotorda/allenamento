@@ -162,6 +162,7 @@ export interface Misura {
   pesoKg: number | null
   vitaCm: number | null
   fcRiposoBpm: number | null
+  /** non piu' mostrato nell'app: resta per i dati e i backup gia' esistenti */
   doloreGinocchio: number | null
 }
 

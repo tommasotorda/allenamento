@@ -60,6 +60,10 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 - `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.
 - Deterministico: stesse risposte, stessa scheda (c'è un test).
 
+## PDF della scheda
+
+`src/features/pdf/esportaPdf.ts` (jsPDF + svg2pdf.js, caricati solo al clic): indice con un pulsante per giorno e, per ogni giorno, tre viste (Scheda, Muscoli, Dettaglio) collegate da linguette e segnalibri. Solo link interni tra pagine, perché il JavaScript nei PDF funziona solo in Acrobat. Le figure 2D (`figuraSvg`, posizione iniziale e finale) e le mappe muscolari (`mappaSvg` con `inline: true`) sono vettoriali. Il testo passa per `t()` perché il font standard è Windows-1252.
+
 ## Deploy
 
 GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`; `BASE_PATH` viene impostato al nome del repo.

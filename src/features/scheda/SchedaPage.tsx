@@ -10,6 +10,7 @@ import { GIORNI, NOMI_GIORNI } from '../../domain/data'
 import { scadenza } from '../../domain/plans'
 import { useCiclo } from '../../hooks'
 import { PropostaAdattamento } from '../adattamento/PropostaAdattamento'
+import { EsportaPdfButton } from '../pdf/EsportaPdfButton'
 import { Intestazione } from '../oggi/OggiPage'
 
 export function SchedaPage() {
@@ -32,6 +33,7 @@ export function SchedaPage() {
           <Icon name="book" className="size-5" /> Le mie schede
         </Link>
       </div>
+      <EsportaPdfButton piano={c.piano} settimana={c.settimana} sbloccati={c.impostazioni.sbloccati} className="mb-3 w-full" />
       <PropostaAdattamento c={c} />
       <Tabs
         value={vista}

@@ -11,6 +11,7 @@ import type { Piano } from '../../domain/types'
 import { uuid } from '../../domain/util'
 import { useImpostazioni, useOggi, usePianoAttivo } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
+import { EsportaPdfButton } from '../pdf/EsportaPdfButton'
 
 const ORIGINI: Record<Piano['origine'], string> = {
   originale: 'Piano iniziale',
@@ -120,6 +121,7 @@ function SchedaCard({
               Rinomina
             </Button>
           </div>
+          <EsportaPdfButton piano={p} settimana={attiva ? Math.min(settimanaAssoluta(p, oggi), p.settimane) : 1} sbloccati={[]} className="w-full" />
           <div className="grid grid-cols-2 gap-2">
             {!attiva && (
               <Button variant="primary" onClick={() => attivaPiano(p.id).then(() => nav('/scheda'))}>

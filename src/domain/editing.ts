@@ -96,11 +96,14 @@ export interface Suggerimento {
  * Esercizi affini per coinvolgimento muscolare (somiglianza coseno), con un piccolo bonus
  * per stessa categoria e stesso modo di registrazione.
  */
+/** Gli esercizi si sostituiscono dentro lo stesso gruppo: allenamento, recupero (mobilita', stretching, yoga), pista. */
+const gruppo = (e: Esercizio) => (e.categoria === 'pista' ? 'pista' : ['mobilita', 'stretching', 'yoga'].includes(e.categoria) ? 'recupero' : 'allenamento')
+
 export function suggerisciSostituti(id: string, esclusi: string[] = [], n = 6): Suggerimento[] {
   const orig = esercizio(id)
   const mo = espandi(orig.muscoli)
   return esercizi
-    .filter((e) => e.id !== id && !esclusi.includes(e.id) && (e.categoria === 'pista') === (orig.categoria === 'pista'))
+    .filter((e) => e.id !== id && !esclusi.includes(e.id) && gruppo(e) === gruppo(orig))
     .map((e) => {
       const me = espandi(e.muscoli)
       const cos = somiglianza(mo, me)

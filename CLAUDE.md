@@ -74,4 +74,4 @@ Chi apre un esercizio passa nello stato della navigazione una lista (`features/e
 
 ## Deploy
 
-GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`. Il repo è `tommasotorda.github.io`, quindi l'app sta alla radice (`BASE_PATH=/`); `public/allenamento/` rimanda il vecchio indirizzo.
+GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`. Il repo si chiama `allenamento`, quindi l'app sta in `/allenamento/` (`BASE_PATH` impostato dal workflow; diventerebbe `/` con un repo `<utente>.github.io`).

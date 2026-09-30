@@ -2,7 +2,7 @@
 
 App personale per seguire una scheda di allenamento, registrare le sedute e vedere i progressi. Funziona su iPhone e Mac come app installata (PWA), anche offline, e non ha server né account: i dati restano sul dispositivo.
 
-**Apri l'app:** https://tommasotorda.github.io
+**Apri l'app:** https://tommasotorda.github.io/allenamento/
 
 <p>
   <img src="docs/oggi.png" width="180" alt="Seduta di oggi">

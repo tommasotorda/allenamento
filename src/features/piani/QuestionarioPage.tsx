@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useNavigationType, useSearchParams } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, Chip, PageHeader } from '../../components/ui'
-import { salvaPiano } from '../../db/repositories'
+import { salvaPiano, salvaProfilo } from '../../db/repositories'
 import { DESCR_DIREZIONI } from '../../domain/adattamento'
 import { lunediDi } from '../../domain/calendar'
 import { GIORNI, NOMI_GIORNI } from '../../domain/data'
@@ -10,6 +10,7 @@ import { generaProgramma, modelliPer, nomeScheda, NOMI_ATTREZZI, NOMI_COMPONENTI
 import { creaPiano } from '../../domain/plans'
 import { PROFILI } from '../../domain/profili'
 import type { Attrezzo, GiornoId, Obiettivo, Programma, Zona } from '../../domain/types'
+import { uuid } from '../../domain/util'
 import { useOggi } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
 import { RiepilogoCarico } from './RiepilogoCarico'
@@ -109,6 +110,8 @@ const alterna = <T,>(arr: T[], v: T): T[] => (arr.includes(v) ? arr.filter((x) =
 export function QuestionarioPage() {
   const [params] = useSearchParams()
   const profilo = PROFILI.find((p) => p.id === params.get('profilo'))
+  // aperto dal "+" dei profili: il risultato diventa un profilo personale
+  const perProfilo = params.get('per') === 'profilo'
   // ripristina solo tornando indietro (o ricaricando); un nuovo questionario parte da zero
   const tipoNavigazione = useNavigationType()
   const [salvato] = useState(() => (tipoNavigazione === 'POP' ? leggiStato(profilo?.id ?? null) : null))
@@ -152,9 +155,22 @@ export function QuestionarioPage() {
     nav(attiva ? '/scheda' : '/schede', { replace: true })
   }
 
+  const creaProfilo = async (attiva: boolean) => {
+    if (!programma) return
+    const n = nome?.trim() || nomeScheda(r)
+    await salvaProfilo({ id: uuid(), nome: n, obiettivi: r.obiettivi, creato: new Date().toISOString(), programma })
+    if (attiva) {
+      const p = creaPiano({ nome: n, origine: 'profilo', obiettivi: r.obiettivi, programma, inizio: lunediDi(oggi) })
+      p.risposte = r
+      await salvaPiano(p, true)
+    }
+    scriviStato(null)
+    nav(attiva ? '/scheda' : '/profili', { replace: true })
+  }
+
   return (
     <div>
-      <PageHeader back="/schede" title={profilo ? profilo.nome : 'Nuova scheda'} subtitle={`${passo + 1}/${passi.length} · ${passi[Math.min(passo, ultimo)].nome}`} />
+      <PageHeader back={perProfilo ? '/profili' : '/schede'} title={profilo ? profilo.nome : perProfilo ? 'Nuovo profilo' : 'Nuova scheda'} subtitle={`${passo + 1}/${passi.length} · ${passi[Math.min(passo, ultimo)].nome}`} />
       <div className="mb-4 flex gap-1">
         {passi.map((p, i) => (
           <button key={p.id} type="button" onClick={() => i < passo && setPasso(i)} className={`h-1.5 flex-1 rounded-full ${i <= passo ? 'bg-accent' : 'bg-zinc-200 dark:bg-zinc-800'}`} aria-label={p.nome} />
@@ -358,12 +374,25 @@ export function QuestionarioPage() {
             onRipristina={ritoccato ? () => setRitocchi(null) : undefined}
           />
           <AnteprimaProgramma programma={programma} aperta={seduta} onApri={setSeduta} />
-          <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
-            Attiva questa scheda
-          </Button>
-          <Button variant="ghost" className="mt-2 w-full" onClick={() => crea(false)}>
-            Salva senza attivare
-          </Button>
+          {perProfilo ? (
+            <>
+              <Button variant="primary" big className="mt-6 w-full" onClick={() => creaProfilo(false)}>
+                Salva profilo
+              </Button>
+              <Button variant="ghost" className="mt-2 w-full" onClick={() => creaProfilo(true)}>
+                Salva profilo e attiva la scheda
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
+                Attiva questa scheda
+              </Button>
+              <Button variant="ghost" className="mt-2 w-full" onClick={() => crea(false)}>
+                Salva senza attivare
+              </Button>
+            </>
+          )}
         </div>
       )}
 

@@ -8,7 +8,8 @@ import { db } from '../../db/schema'
 import { prossimaSeduta, sedutaDelGiorno, SETTIMANE_CICLO } from '../../domain/calendar'
 import { NOMI_GIORNI } from '../../domain/data'
 import { elencoSedute, strutturaSeduta } from '../../domain/session'
-import { useCiclo, type Ciclo } from '../../hooks'
+import { useCiclo, useSenzaSchede, type Ciclo } from '../../hooks'
+import { InvitoScheda } from '../piani/NuovaScheda'
 import { SessionPreview } from '../scheda/SessionPreview'
 import { Riepilogo } from './Riepilogo'
 import { SessioneAttiva } from './SessioneAttiva'
@@ -29,7 +30,9 @@ export function OggiPage() {
   const c = useCiclo()
   const aperta = useLiveQuery(() => (c ? sedutaAperta(c.oggi) : undefined), [c?.oggi], 'loading' as const)
   const [finita, setFinita] = useState<string | null>(null)
+  const senzaSchede = useSenzaSchede()
 
+  if (senzaSchede) return <InvitoScheda titolo="Oggi" />
   if (!c || aperta === 'loading') return null
   if (finita) return <Riepilogo sedutaId={finita} onChiudi={() => setFinita(null)} />
   if (aperta) return <SessioneAttiva seduta={aperta} ciclo={c} onFine={setFinita} />

@@ -43,7 +43,7 @@ export function ImpostazioniPage() {
   const [nuovoCiclo, setNuovoCiclo] = useState(false)
   const [reset, setReset] = useState<'no' | 'conferma' | 'fatto'>('no')
   const ricordati = useLiveQuery(() => db.memoria.filter((m) => !m.azzerata).count()) ?? 0
-  if (!imp || !piano) return null
+  if (!imp) return null
 
   const esportaFile = async () => {
     const dati = await esporta(db)
@@ -54,38 +54,42 @@ export function ImpostazioniPage() {
     <div>
       <PageHeader back="/" title="Impostazioni" />
 
-      <SectionTitle>Ciclo · {piano.nome}</SectionTitle>
-      <Card className="space-y-3">
-        <label className="flex items-center justify-between gap-3">
-          <span className="font-medium">Inizio ciclo</span>
-          <input
-            type="date"
-            value={piano.inizio}
-            onChange={(e) => e.target.value && aggiornaPiano(piano.id, { inizio: lunediDi(e.target.value) })}
-            className="h-11 rounded-lg bg-zinc-100 px-2 dark:bg-zinc-800"
-          />
-        </label>
-        <div className="text-sm text-zinc-500">{formatData(piano.inizio, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
-        {nuovoCiclo ? (
-          <div className="flex gap-2">
-            <Button
-              variant="primary"
-              className="flex-1"
-              onClick={async () => {
-                await aggiornaPiano(piano.id, { inizio: lunediDi(oggi) })
-                setNuovoCiclo(false)
-              }}
-            >
-              Inizia da {formatData(lunediDi(oggi), { day: 'numeric', month: 'short' })}
-            </Button>
-            <Button onClick={() => setNuovoCiclo(false)}>Annulla</Button>
-          </div>
-        ) : (
-          <Button className="w-full" onClick={() => setNuovoCiclo(true)}>
-            Nuovo ciclo
-          </Button>
-        )}
-      </Card>
+      {piano && (
+        <>
+          <SectionTitle>Ciclo · {piano.nome}</SectionTitle>
+          <Card className="space-y-3">
+            <label className="flex items-center justify-between gap-3">
+              <span className="font-medium">Inizio ciclo</span>
+              <input
+                type="date"
+                value={piano.inizio}
+                onChange={(e) => e.target.value && aggiornaPiano(piano.id, { inizio: lunediDi(e.target.value) })}
+                className="h-11 rounded-lg bg-zinc-100 px-2 dark:bg-zinc-800"
+              />
+            </label>
+            <div className="text-sm text-zinc-500">{formatData(piano.inizio, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+            {nuovoCiclo ? (
+              <div className="flex gap-2">
+                <Button
+                  variant="primary"
+                  className="flex-1"
+                  onClick={async () => {
+                    await aggiornaPiano(piano.id, { inizio: lunediDi(oggi) })
+                    setNuovoCiclo(false)
+                  }}
+                >
+                  Inizia da {formatData(lunediDi(oggi), { day: 'numeric', month: 'short' })}
+                </Button>
+                <Button onClick={() => setNuovoCiclo(false)}>Annulla</Button>
+              </div>
+            ) : (
+              <Button className="w-full" onClick={() => setNuovoCiclo(true)}>
+                Nuovo ciclo
+              </Button>
+            )}
+          </Card>
+        </>
+      )}
 
       <SectionTitle>Esercizi sbloccabili</SectionTitle>
       <Card className="divide-y divide-zinc-100 py-1 dark:divide-zinc-800">

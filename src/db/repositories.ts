@@ -1,5 +1,4 @@
 import { isoLocale, lunediDi } from '../domain/calendar'
-import { pianoOriginale } from '../domain/plans'
 import type { Bozza } from '../domain/progression'
 import type { Impostazioni, Memoria, Misura, Piano, ProfiloUtente, Programma, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 import { db } from './schema'
@@ -129,13 +128,13 @@ async function ridimensiona(file: Blob, lato: number): Promise<Blob> {
 
 // ---- Piani e profili ----
 
-/** Piano attivo; al primo avvio crea il "Piano originale" dal JSON. */
-export async function assicuraPianoAttivo(): Promise<Piano> {
+/** Piano attivo; se manca attiva il primo non archiviato. Senza piani non crea nulla: l'utente ne sceglie o crea uno. */
+export async function assicuraPianoAttivo(): Promise<Piano | undefined> {
   const imp = await leggiImpostazioni()
   const attivo = imp.pianoAttivo ? await db.piani.get(imp.pianoAttivo) : undefined
   if (attivo) return attivo
-  const primo = (await db.piani.filter((p) => !p.archiviato).first()) ?? pianoOriginale(imp.cicloInizio)
-  await db.piani.put(primo)
+  const primo = await db.piani.filter((p) => !p.archiviato).first()
+  if (!primo) return undefined
   await aggiornaImpostazioni({ pianoAttivo: primo.id })
   return primo
 }

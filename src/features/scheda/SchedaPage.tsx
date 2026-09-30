@@ -9,7 +9,8 @@ import { db } from '../../db/schema'
 import { aggiungiGiorni, faseDellaSettimana, lunediDi, SETTIMANE_CICLO } from '../../domain/calendar'
 import { GIORNI, NOMI_GIORNI } from '../../domain/data'
 import { scadenza } from '../../domain/plans'
-import { useCiclo } from '../../hooks'
+import { useCiclo, useSenzaSchede } from '../../hooks'
+import { InvitoScheda } from '../piani/NuovaScheda'
 import { PropostaAdattamento } from '../adattamento/PropostaAdattamento'
 import { EsportaPdfButton } from '../pdf/EsportaPdfButton'
 import { Intestazione } from '../oggi/OggiPage'
@@ -21,6 +22,8 @@ export function SchedaPage() {
   const lun = c ? lunediDi(c.oggi) : ''
   const fatte =
     useLiveQuery(() => (lun ? db.sedute.where('data').between(lun, aggiungiGiorni(lun, 6), true, true).filter((s) => s.fine !== null).toArray() : []), [lun]) ?? []
+  const senzaSchede = useSenzaSchede()
+  if (senzaSchede) return <InvitoScheda titolo="Scheda" />
   if (!c) return null
   const mie = fatte.filter((s) => (s.pianoId ?? 'originale') === c.piano.id)
 

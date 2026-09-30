@@ -54,13 +54,14 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 - Le sedute hanno ID liberi (`s1`, `lun`…) e `programma.settimana` le assegna ai giorni, weekend compresi. `Seduta.core` indica il blocco core iniziale.
 - `useCiclo()` restituisce piano attivo, programma, settimana, fase e `scaduto`: è la fonte da usare nelle schermate. Le sedute registrate salvano `pianoId` e `nomeSeduta`.
 - Migrazione: la versione 3 del database crea il "Piano originale" dal JSON con le modifiche fatte nella v2; i backup v1/v2 si importano allo stesso modo.
+- Primo avvio: nessun piano creato in automatico. Senza schede (`useSenzaSchede()`) Oggi e Scheda mostrano `InvitoScheda` (`piani/NuovaScheda.tsx`) con i modi per crearne una; il "Piano originale" resta tra i profili.
 
 ## Generatore, profili e adattamenti
 
 - Ogni esercizio ha `schemi` di movimento, `attrezzi` (gruppi AND di alternative OR, `[]` = corpo libero), `livello`, `impatto`, `sollecita` (zone), `funzionale`.
 - `Risposte.corpoLibero`: se falso (e ci sono attrezzi) esclude gli esercizi di forza/potenza a corpo libero; se vero li preferisce leggermente. Assente = vero. Durate da 30 min a 2 ore (4-10 esercizi).
 - `generaProgramma(risposte)`: split in base ai giorni (total body, gambe/superiore, condizionamento), slot per schema scelti per disponibilità (attrezzi, livello, zone da evitare) e punteggio (funzionale, focus, obiettivo). Parametri e fasi dipendono dagli obiettivi (il primo per i principali e le fasi, il secondo per gli accessori); potenza aggiunge un esplosivo in apertura, resistenza un circuito finale, mobilità più stretching/yoga.
-- Profili standard = risposte preimpostate (`profili.ts`) che aprono il questionario precompilato; i profili salvati dall'utente (`profili` in Dexie) sono copie di programmi.
+- Profili standard = risposte preimpostate (`profili.ts`) che aprono il questionario precompilato; i profili salvati dall'utente (`profili` in Dexie) sono copie di programmi. Il "+ Nuovo profilo" in fondo a Profili li crea con il questionario o da un'AI (`?per=profilo`: si salva un profilo invece di una scheda) oppure da una scheda esistente.
 - `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.
 - Deterministico: stesse risposte, stessa scheda (c'è un test).
 - Questionario dettagliato: `suddivisione` (auto, full body, superiore/inferiore, spinta/tirata/gambe, gruppi muscolari — `modelliPer`), `attrezziGiorno` (attrezzi e corpo libero per singolo giorno), `sport` (tipo, giorni, durata). Gli slot `Mu(...)` scelgono esercizi in cui quei muscoli sono primari: gli esercizi di isolamento (schema `isolamento`) entrano solo così. Nei giorni con sport la seduta ha l'attività, un esercizio in meno e niente salti; i giorni di solo sport diventano sedute con l'attività e un defaticamento.

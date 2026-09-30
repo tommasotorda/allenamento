@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { aggiornaPiano, attivaPiano, eliminaPiano, salvaPiano, salvaProfilo } from '../../db/repositories'
@@ -12,6 +12,7 @@ import { uuid } from '../../domain/util'
 import { useImpostazioni, useOggi, usePianoAttivo } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
 import { EsportaPdfButton } from '../pdf/EsportaPdfButton'
+import { ModiNuovaScheda } from './NuovaScheda'
 
 const ORIGINI: Record<Piano['origine'], string> = {
   originale: 'Piano iniziale',
@@ -27,7 +28,7 @@ const ORIGINI: Record<Piano['origine'], string> = {
 export function SchedePage() {
   const piani = useLiveQuery(() => db.piani.toArray()) ?? []
   const imp = useImpostazioni()
-  // al primo avvio crea il piano iniziale anche se si arriva direttamente qui
+  // se manca il piano attivo attiva il primo disponibile
   usePianoAttivo()
   const oggi = useOggi()
   // stato di apertura nell'indirizzo: tornando da un esercizio si ritrova tutto com'era
@@ -43,26 +44,10 @@ export function SchedePage() {
   return (
     <div>
       <PageHeader back="/scheda" title="Le mie schede" />
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-        <Link to="/questionario" className="flex h-24 flex-col justify-center rounded-2xl bg-accent px-3 font-semibold leading-tight text-white">
-          <Icon name="plus" className="mb-1 size-6" />
-          Questionario
-        </Link>
-        <Link to="/profili" className="flex h-24 flex-col justify-center rounded-2xl bg-zinc-900 px-3 font-semibold leading-tight text-white dark:bg-white dark:text-zinc-900">
-          <Icon name="book" className="mb-1 size-6" />
-          Da un profilo
-        </Link>
-        <Link to="/scheda-libera" className="flex h-24 flex-col justify-center rounded-2xl bg-white px-3 font-semibold leading-tight ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-white/10">
-          <Icon name="swap" className="mb-1 size-6 text-accent" />
-          Scheda libera
-        </Link>
-        <Link to="/scheda-ai" className="flex h-24 flex-col justify-center rounded-2xl bg-white px-3 font-semibold leading-tight ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-white/10">
-          <Icon name="spark" className="mb-1 size-6 text-accent" />
-          Da un'AI
-        </Link>
-      </div>
+      <ModiNuovaScheda />
 
       <SectionTitle>Schede</SectionTitle>
+      {piani.length === 0 && <div className="px-1 text-sm text-zinc-400">Nessuna scheda</div>}
       <div className="space-y-2">
         {ordinati.map((p) => (
           <SchedaCard key={p.id} p={p} attiva={p.id === imp?.pianoAttivo} aperta={aperto === p.id} onApri={() => aggiorna({ scheda: aperto === p.id ? null : p.id, sedute: null, seduta: null })} oggi={oggi} vista={params} aggiorna={aggiorna} />

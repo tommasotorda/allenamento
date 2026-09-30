@@ -1,14 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate, useNavigationType } from 'react-router-dom'
+import { useNavigate, useNavigationType, useSearchParams } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, PageHeader, SectionTitle } from '../../components/ui'
 import { consegnaFile } from '../../condividi'
-import { salvaPiano } from '../../db/repositories'
+import { salvaPiano, salvaProfilo } from '../../db/repositories'
 import { lunediDi } from '../../domain/calendar'
 import { NOMI_OBIETTIVI } from '../../domain/generator'
 import { creaPiano } from '../../domain/plans'
 import { importaSchedaLlm, modelloPerLlm, type RisultatoImport } from '../../domain/schedaLlm'
 import type { Programma } from '../../domain/types'
+import { uuid } from '../../domain/util'
 import { useOggi } from '../../hooks'
 import { AnteprimaProgramma } from './AnteprimaProgramma'
 import { RiepilogoCarico } from './RiepilogoCarico'
@@ -56,6 +57,9 @@ function scriviStato(s: Stato | null) {
 export function SchedaAiPage() {
   const oggi = useOggi()
   const nav = useNavigate()
+  // aperto dal "+" dei profili: il risultato diventa un profilo personale
+  const [params] = useSearchParams()
+  const perProfilo = params.get('per') === 'profilo'
   // ripristina solo tornando indietro (o ricaricando); entrando dalle schede si parte da zero
   const tipoNavigazione = useNavigationType()
   const [salvato] = useState(() => (tipoNavigazione === 'POP' ? leggiStato() : null))
@@ -85,10 +89,19 @@ export function SchedaAiPage() {
     scriviStato(null)
     nav(attiva ? '/scheda' : '/schede', { replace: true })
   }
+  const creaProfilo = async (attiva: boolean) => {
+    if (!esito?.ok) return
+    const n = nome.trim() || esito.nome
+    const programma = ritoccata ?? esito.programma
+    await salvaProfilo({ id: uuid(), nome: n, obiettivi: esito.obiettivi, creato: new Date().toISOString(), programma })
+    if (attiva) await salvaPiano(creaPiano({ nome: n, origine: 'importata', obiettivi: esito.obiettivi, programma, inizio: lunediDi(oggi) }), true)
+    scriviStato(null)
+    nav(attiva ? '/scheda' : '/profili', { replace: true })
+  }
 
   return (
     <div>
-      <PageHeader back="/schede" title="Scheda da un'AI" />
+      <PageHeader back={perProfilo ? '/profili' : '/schede'} title={perProfilo ? "Profilo da un'AI" : "Scheda da un'AI"} />
 
       <SectionTitle>1 · Modello</SectionTitle>
       <Card className="p-3">
@@ -174,11 +187,11 @@ export function SchedaAiPage() {
           </div>
           <RiepilogoCarico programma={ritoccata ?? esito.programma} obiettivo={esito.obiettivi[0]} livello={2} onChange={setRitoccata} onRipristina={ritoccata ? () => setRitoccata(null) : undefined} />
           <AnteprimaProgramma programma={ritoccata ?? esito.programma} aperta={seduta} onApri={setSeduta} />
-          <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
-            Attiva questa scheda
+          <Button variant="primary" big className="mt-6 w-full" onClick={() => (perProfilo ? creaProfilo(false) : crea(true))}>
+            {perProfilo ? 'Salva profilo' : 'Attiva questa scheda'}
           </Button>
-          <Button variant="ghost" className="mt-2 w-full" onClick={() => crea(false)}>
-            Salva senza attivare
+          <Button variant="ghost" className="mt-2 w-full" onClick={() => (perProfilo ? creaProfilo(true) : crea(false))}>
+            {perProfilo ? 'Salva profilo e attiva la scheda' : 'Salva senza attivare'}
           </Button>
         </div>
       )}

@@ -57,6 +57,11 @@ export function useCiclo(): Ciclo | undefined {
   return { oggi, settimana, fase: faseDellaSettimana(piano.programma, settimana), impostazioni: imp, piano, programma: piano.programma, scaduto: scaduto(piano, oggi) }
 }
 
+/** true quando il database e' pronto e non c'e' ancora nessuna scheda (primo avvio). */
+export function useSenzaSchede(): boolean {
+  return useLiveQuery(() => db.piani.count()) === 0
+}
+
 /** URL dell'ultima foto dell'utente per un esercizio, se presente. */
 export function useFotoUrl(esercizioId: string): string | null {
   const foto = useLiveQuery(() => db.fotoEsercizi.where('esercizioId').equals(esercizioId).last(), [esercizioId])

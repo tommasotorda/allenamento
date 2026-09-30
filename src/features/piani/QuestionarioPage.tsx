@@ -26,7 +26,8 @@ const LIVELLI: [1 | 2 | 3, string][] = [
   [2, 'Intermedio'],
   [3, 'Avanzato'],
 ]
-const DURATE: Risposte['durataMin'][] = [30, 45, 60, 75]
+const DURATE: Risposte['durataMin'][] = [30, 45, 60, 75, 90, 105, 120]
+export const testoDurata = (m: number) => (m < 60 ? `${m}′` : `${Math.floor(m / 60)}h${m % 60 ? ` ${m % 60}′` : ''}`)
 const PASSI = ['Obiettivi', 'Livello', 'Giorni', 'Attrezzatura', 'Preferenze', 'Anteprima'] as const
 
 function Scelta({ attivo, onClick, children, ordine }: { attivo: boolean; onClick: () => void; children: React.ReactNode; ordine?: number }) {
@@ -56,7 +57,7 @@ export function QuestionarioPage() {
   const set = (patch: Partial<Risposte>) => setR((x) => ({ ...x, ...patch }))
   const programma = useMemo(() => (passo === PASSI.length - 1 && r.obiettivi.length && r.giorni.length ? generaProgramma(r) : null), [passo, r])
 
-  const valido = [r.obiettivi.length > 0, true, r.giorni.length >= 1, true, true, !!programma][passo]
+  const valido = [r.obiettivi.length > 0, true, r.giorni.length >= 1, r.corpoLibero !== false || r.attrezzi.length > 0, true, !!programma][passo]
 
   const crea = async (attiva: boolean) => {
     if (!programma) return
@@ -114,7 +115,7 @@ export function QuestionarioPage() {
           <div className="grid grid-cols-4 gap-2">
             {DURATE.map((d) => (
               <Scelta key={d} attivo={r.durataMin === d} onClick={() => set({ durataMin: d })}>
-                {d}′
+                {testoDurata(d)}
               </Scelta>
             ))}
           </div>
@@ -123,8 +124,11 @@ export function QuestionarioPage() {
 
       {passo === 3 && (
         <div>
-          <div className="mb-2 px-1 text-sm text-zinc-500">Nessuna selezione = corpo libero</div>
+          <div className="mb-2 px-1 text-sm text-zinc-500">Una o più scelte</div>
           <div className="grid grid-cols-2 gap-2">
+            <Scelta attivo={r.corpoLibero !== false} onClick={() => set({ corpoLibero: r.corpoLibero === false })}>
+              Corpo libero
+            </Scelta>
             {ATTREZZI.map((a) => (
               <Scelta key={a} attivo={r.attrezzi.includes(a)} onClick={() => set({ attrezzi: alterna(r.attrezzi, a) })}>
                 {NOMI_ATTREZZI[a]}
@@ -177,7 +181,7 @@ export function QuestionarioPage() {
               </Badge>
             ))}
             <Badge>{r.giorni.length} giorni</Badge>
-            <Badge>{r.durataMin} min</Badge>
+            <Badge>{testoDurata(r.durataMin)}</Badge>
             <Badge>{LIVELLI.find(([l]) => l === r.livello)![1]}</Badge>
           </div>
           {profilo && (

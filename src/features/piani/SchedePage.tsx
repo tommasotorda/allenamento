@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { aggiornaPiano, attivaPiano, eliminaPiano, salvaPiano, salvaProfilo } from '../../db/repositories'
@@ -9,7 +9,8 @@ import { NOMI_OBIETTIVI } from '../../domain/generator'
 import { creaPiano, scadenza, scaduto, settimanaAssoluta } from '../../domain/plans'
 import type { Piano } from '../../domain/types'
 import { uuid } from '../../domain/util'
-import { useImpostazioni, useOggi } from '../../hooks'
+import { useImpostazioni, useOggi, usePianoAttivo } from '../../hooks'
+import { AnteprimaProgramma } from './AnteprimaProgramma'
 
 const ORIGINI: Record<Piano['origine'], string> = {
   originale: 'Piano iniziale',
@@ -23,8 +24,17 @@ const ORIGINI: Record<Piano['origine'], string> = {
 export function SchedePage() {
   const piani = useLiveQuery(() => db.piani.toArray()) ?? []
   const imp = useImpostazioni()
+  // al primo avvio crea il piano iniziale anche se si arriva direttamente qui
+  usePianoAttivo()
   const oggi = useOggi()
-  const [aperto, setAperto] = useState<string | null>(null)
+  // stato di apertura nell'indirizzo: tornando da un esercizio si ritrova tutto com'era
+  const [params, setParams] = useSearchParams()
+  const aperto = params.get('scheda')
+  const aggiorna = (patch: Record<string, string | null>) => {
+    const n = new URLSearchParams(params)
+    for (const [k, v] of Object.entries(patch)) (v === null ? n.delete(k) : n.set(k, v))
+    setParams(n, { replace: true })
+  }
   const ordinati = [...piani].sort((a, b) => Number(b.id === imp?.pianoAttivo) - Number(a.id === imp?.pianoAttivo) || b.creato.localeCompare(a.creato))
 
   return (
@@ -44,18 +54,35 @@ export function SchedePage() {
       <SectionTitle>Schede</SectionTitle>
       <div className="space-y-2">
         {ordinati.map((p) => (
-          <SchedaCard key={p.id} p={p} attiva={p.id === imp?.pianoAttivo} aperta={aperto === p.id} onApri={() => setAperto(aperto === p.id ? null : p.id)} oggi={oggi} />
+          <SchedaCard key={p.id} p={p} attiva={p.id === imp?.pianoAttivo} aperta={aperto === p.id} onApri={() => aggiorna({ scheda: aperto === p.id ? null : p.id, sedute: null, seduta: null })} oggi={oggi} vista={params} aggiorna={aggiorna} />
         ))}
       </div>
     </div>
   )
 }
 
-function SchedaCard({ p, attiva, aperta, onApri, oggi }: { p: Piano; attiva: boolean; aperta: boolean; onApri: () => void; oggi: string }) {
+function SchedaCard({
+  p,
+  attiva,
+  aperta,
+  onApri,
+  oggi,
+  vista,
+  aggiorna,
+}: {
+  p: Piano
+  attiva: boolean
+  aperta: boolean
+  onApri: () => void
+  oggi: string
+  vista: URLSearchParams
+  aggiorna: (patch: Record<string, string | null>) => void
+}) {
   const nav = useNavigate()
   const [nome, setNome] = useState(p.nome)
   const [conferma, setConferma] = useState(false)
   const [salvato, setSalvato] = useState(false)
+  const esercizi = vista.get('sedute') === '1'
   const concluso = scaduto(p, oggi)
 
   return (
@@ -83,6 +110,10 @@ function SchedaCard({ p, attiva, aperta, onApri, oggi }: { p: Piano; attiva: boo
       </button>
       {aperta && (
         <div className="mt-3 space-y-2 border-t border-zinc-100 pt-3 dark:border-zinc-800">
+          <Button className="w-full" onClick={() => aggiorna({ sedute: esercizi ? null : '1', seduta: null })}>
+            <Icon name="book" className="size-5" /> {esercizi ? 'Nascondi sedute' : 'Sedute ed esercizi'}
+          </Button>
+          {esercizi && <AnteprimaProgramma programma={p.programma} settimana={attiva ? Math.min(settimanaAssoluta(p, oggi), p.settimane) : 1} aperta={vista.get('seduta')} onApri={(id) => aggiorna({ seduta: id })} />}
           <div className="flex gap-2">
             <input value={nome} onChange={(e) => setNome(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl bg-zinc-100 px-3 dark:bg-zinc-800" aria-label="Nome della scheda" />
             <Button disabled={!nome.trim() || nome === p.nome} onClick={() => aggiornaPiano(p.id, { nome: nome.trim() })}>

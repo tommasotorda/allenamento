@@ -54,6 +54,7 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 ## Generatore, profili e adattamenti
 
 - Ogni esercizio ha `schemi` di movimento, `attrezzi` (gruppi AND di alternative OR, `[]` = corpo libero), `livello`, `impatto`, `sollecita` (zone), `funzionale`.
+- `Risposte.corpoLibero`: se falso (e ci sono attrezzi) esclude gli esercizi di forza/potenza a corpo libero; se vero li preferisce leggermente. Assente = vero. Durate da 30 min a 2 ore (4-10 esercizi).
 - `generaProgramma(risposte)`: split in base ai giorni (total body, gambe/superiore, condizionamento), slot per schema scelti per disponibilità (attrezzi, livello, zone da evitare) e punteggio (funzionale, focus, obiettivo). Parametri e fasi dipendono dagli obiettivi (il primo per i principali e le fasi, il secondo per gli accessori); potenza aggiunge un esplosivo in apertura, resistenza un circuito finale, mobilità più stretching/yoga.
 - Profili standard = risposte preimpostate (`profili.ts`) che aprono il questionario precompilato; i profili salvati dall'utente (`profili` in Dexie) sono copie di programmi.
 - `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.

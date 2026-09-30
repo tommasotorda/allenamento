@@ -11,8 +11,10 @@ export interface Risposte {
   obiettivi: Obiettivo[]
   livello: 1 | 2 | 3
   giorni: GiornoId[]
-  durataMin: 30 | 45 | 60 | 75
+  durataMin: 30 | 45 | 60 | 75 | 90 | 105 | 120
   attrezzi: Attrezzo[]
+  /** esercizi a corpo libero insieme (o al posto) degli attrezzi; assente = si' (schede precedenti) */
+  corpoLibero?: boolean
   corsa: boolean
   evitare: Zona[]
   focus: Focus[]
@@ -67,9 +69,16 @@ export const NOMI_ATTREZZI: Record<Attrezzo, string> = {
 
 // ---------- disponibilita' degli esercizi ----------
 
-export function disponibile(e: Esercizio, r: Pick<Risposte, 'attrezzi' | 'evitare' | 'livello'>): boolean {
+/** L'esercizio non richiede attrezzi (al massimo il tappetino). */
+export const aCorpoLibero = (e: Esercizio) => e.attrezzi.every((g) => g.includes('tappetino'))
+
+const CATEGORIE_CON_CARICO = new Set(['forza', 'potenza', 'ricostruzione'])
+
+export function disponibile(e: Esercizio, r: Pick<Risposte, 'attrezzi' | 'evitare' | 'livello' | 'corpoLibero'>): boolean {
   const ha = new Set<Attrezzo>([...r.attrezzi, 'tappetino'])
   if (!e.attrezzi.every((gruppo) => gruppo.some((a) => ha.has(a)))) return false
+  // senza "corpo libero" gli esercizi di forza e potenza usano gli attrezzi scelti
+  if (r.corpoLibero === false && r.attrezzi.length > 0 && aCorpoLibero(e) && CATEGORIE_CON_CARICO.has(e.categoria)) return false
   if (e.livello > r.livello) return false
   if (e.sollecita.some((z) => r.evitare.includes(z))) return false
   if (e.impatto && r.evitare.includes('ginocchia')) return false
@@ -176,14 +185,14 @@ interface Modello {
   slot: Slot[]
 }
 
-const TOTAL_A: Modello = { nome: 'Total body A', slot: [P('squat'), P('spinta-orizzontale'), A('tirata-orizzontale'), A('hinge'), A('trasporto'), A('spinta-verticale'), A('polpacci')] }
-const TOTAL_B: Modello = { nome: 'Total body B', slot: [P('hinge'), P('tirata-verticale', 'tirata-orizzontale'), A('spinta-verticale'), A('affondo'), A('scapole'), A('spinta-orizzontale'), A('trasporto')] }
-const TOTAL_C: Modello = { nome: 'Total body C', slot: [P('affondo', 'squat'), P('tirata-orizzontale'), A('spinta-orizzontale'), A('hinge'), A('trasporto'), A('scapole'), A('tirata-verticale')] }
-const INF_A: Modello = { nome: 'Gambe e anche A', slot: [P('squat'), A('hinge'), A('affondo'), A('trasporto'), A('polpacci'), A('ginocchio')] }
-const INF_B: Modello = { nome: 'Gambe e anche B', slot: [P('hinge'), A('affondo'), A('squat'), A('hinge'), A('trasporto'), A('polpacci')] }
-const SUP_A: Modello = { nome: 'Parte superiore A', slot: [P('spinta-orizzontale'), P('tirata-orizzontale'), A('spinta-verticale'), A('scapole'), A('tirata-verticale'), A('trasporto')] }
-const SUP_B: Modello = { nome: 'Parte superiore B', slot: [P('tirata-verticale'), P('spinta-verticale'), A('tirata-orizzontale'), A('spinta-orizzontale'), A('scapole'), A('trasporto')] }
-const COND: Modello = { nome: 'Condizionamento', slot: [A('balistico'), A('locomozione'), A('trasporto'), A('pliometria', 'balistico'), A('cardio')] }
+const TOTAL_A: Modello = { nome: 'Total body A', slot: [P('squat'), P('spinta-orizzontale'), A('tirata-orizzontale'), A('hinge'), A('trasporto'), A('spinta-verticale'), A('polpacci'), A('affondo'), A('scapole'), A('tirata-verticale')] }
+const TOTAL_B: Modello = { nome: 'Total body B', slot: [P('hinge'), P('tirata-verticale', 'tirata-orizzontale'), A('spinta-verticale'), A('affondo'), A('scapole'), A('spinta-orizzontale'), A('trasporto'), A('squat'), A('tirata-orizzontale'), A('polpacci')] }
+const TOTAL_C: Modello = { nome: 'Total body C', slot: [P('affondo', 'squat'), P('tirata-orizzontale'), A('spinta-orizzontale'), A('hinge'), A('trasporto'), A('scapole'), A('tirata-verticale'), A('spinta-verticale'), A('squat'), A('ginocchio')] }
+const INF_A: Modello = { nome: 'Gambe e anche A', slot: [P('squat'), A('hinge'), A('affondo'), A('trasporto'), A('polpacci'), A('ginocchio'), A('squat'), A('hinge'), A('affondo'), A('polpacci')] }
+const INF_B: Modello = { nome: 'Gambe e anche B', slot: [P('hinge'), A('affondo'), A('squat'), A('hinge'), A('trasporto'), A('polpacci'), A('affondo'), A('ginocchio'), A('squat'), A('hinge')] }
+const SUP_A: Modello = { nome: 'Parte superiore A', slot: [P('spinta-orizzontale'), P('tirata-orizzontale'), A('spinta-verticale'), A('scapole'), A('tirata-verticale'), A('trasporto'), A('spinta-orizzontale'), A('tirata-orizzontale'), A('scapole'), A('spinta-verticale')] }
+const SUP_B: Modello = { nome: 'Parte superiore B', slot: [P('tirata-verticale'), P('spinta-verticale'), A('tirata-orizzontale'), A('spinta-orizzontale'), A('scapole'), A('trasporto'), A('tirata-verticale'), A('spinta-orizzontale'), A('scapole'), A('tirata-orizzontale')] }
+const COND: Modello = { nome: 'Condizionamento', slot: [A('balistico'), A('locomozione'), A('trasporto'), A('pliometria', 'balistico'), A('cardio'), A('anti-rotazione'), A('balistico'), A('trasporto'), A('locomozione'), A('rotazione')] }
 
 function modelli(n: number): Modello[] {
   switch (n) {
@@ -202,7 +211,7 @@ function modelli(n: number): Modello[] {
   }
 }
 
-const SLOT_PER_DURATA: Record<Risposte['durataMin'], number> = { 30: 4, 45: 5, 60: 6, 75: 7 }
+const SLOT_PER_DURATA: Record<Risposte['durataMin'], number> = { 30: 4, 45: 5, 60: 6, 75: 7, 90: 8, 105: 9, 120: 10 }
 
 // ---------- scelta degli esercizi ----------
 
@@ -229,6 +238,7 @@ class Selettore {
     }
     if (e.categoria === 'potenza' && !r.obiettivi.includes('potenza')) s -= 1.5
     if (e.impatto) s -= 1
+    if (r.corpoLibero !== false && r.attrezzi.length > 0 && aCorpoLibero(e)) s += 0.5
     s -= Math.abs(e.livello - r.livello) * 0.5
     for (const fo of r.focus) if (e.schemi.some((x) => FOCUS_SCHEMI[fo].includes(x))) s += 1
     if (r.focus.includes('catena-posteriore') && (espandi(e.muscoli).lombari ?? 0) >= 2) s += 1
@@ -329,7 +339,8 @@ export function generaProgramma(r: Risposte): Programma {
     }
 
     // defaticamento: mobilita', stretching e yoga per i muscoli usati
-    const quanti = soloMobilita ? 7 : r.obiettivi.includes('mobilita') ? 4 : 2
+    const lunga = r.durataMin >= 90 ? 2 : 0
+    const quanti = (soloMobilita ? 7 : r.obiettivi.includes('mobilita') ? 4 : 2) + lunga
     const categorie = soloMobilita || r.obiettivi.includes('mobilita') ? ['stretching', 'yoga', 'mobilita'] : ['stretching', 'mobilita']
     const recupero = sel.scegliRecupero(Object.keys(muscoliSeduta).length ? muscoliSeduta : { 'erettori-spinali': 2, femorali: 2, 'grande-gluteo': 2 }, quanti, categorie, esclusi)
     const mobilita = recupero.map((e) => prescrivi(e, 'mobilita', 'accessorio', r.livello)).map((p) => ({ ...p, serie: p.serie && p.serie > 2 ? 2 : p.serie, recuperoSec: undefined }))
@@ -377,6 +388,7 @@ export const RISPOSTE_VUOTE: Risposte = {
   giorni: ['lun', 'mer', 'ven'],
   durataMin: 45,
   attrezzi: [],
+  corpoLibero: true,
   corsa: false,
   evitare: [],
   focus: [],

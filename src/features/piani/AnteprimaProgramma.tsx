@@ -7,8 +7,21 @@ import type { Programma } from '../../domain/types'
 import { SessionPreview } from '../scheda/SessionPreview'
 
 /** Sedute di un programma non ancora attivo, espandibili una alla volta. */
-export function AnteprimaProgramma({ programma, settimana = 1 }: { programma: Programma; settimana?: number }) {
-  const [aperta, setAperta] = useState<string | null>(null)
+export function AnteprimaProgramma({
+  programma,
+  settimana = 1,
+  aperta: apertaEsterna,
+  onApri,
+}: {
+  programma: Programma
+  settimana?: number
+  /** stato controllato dall'esterno (es. nell'indirizzo, per ritrovarlo tornando indietro) */
+  aperta?: string | null
+  onApri?: (id: string | null) => void
+}) {
+  const [apertaInterna, setApertaInterna] = useState<string | null>(null)
+  const aperta = onApri ? (apertaEsterna ?? null) : apertaInterna
+  const setAperta = onApri ?? setApertaInterna
   const fase = programma.fasi.find((f) => f.settimane.includes(settimana)) ?? programma.fasi[0]
   return (
     <div className="mt-4 space-y-2">

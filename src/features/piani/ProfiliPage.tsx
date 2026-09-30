@@ -11,6 +11,7 @@ import { creaPiano } from '../../domain/plans'
 import { PROFILI } from '../../domain/profili'
 import type { ProfiloUtente } from '../../domain/types'
 import { useOggi } from '../../hooks'
+import { testoDurata } from './QuestionarioPage'
 
 /** Profili standard (aprono il questionario precompilato) e profili salvati dall'utente. */
 export function ProfiliPage() {
@@ -41,10 +42,10 @@ export function ProfiliPage() {
                     </Badge>
                   ))}
                   <Badge>{p.risposte.giorni.length} giorni</Badge>
-                  <Badge>{p.risposte.durataMin} min</Badge>
+                  <Badge>{testoDurata(p.risposte.durataMin)}</Badge>
                   {p.risposte.corsa && <Badge tone="blue">corsa</Badge>}
                 </div>
-                <div className="mt-1 truncate text-xs text-zinc-500">{p.risposte.attrezzi.length ? p.risposte.attrezzi.map((a) => NOMI_ATTREZZI[a]).join(', ') : 'Corpo libero'}</div>
+                <div className="mt-1 truncate text-xs text-zinc-500">{[...(p.risposte.corpoLibero !== false ? ['Corpo libero'] : []), ...p.risposte.attrezzi.map((a) => NOMI_ATTREZZI[a])].join(', ')}</div>
               </div>
               <Icon name="chevron" className="size-5 shrink-0 text-zinc-400" />
             </Card>

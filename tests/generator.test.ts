@@ -46,6 +46,24 @@ describe('generatore', () => {
     expect(Object.values(mob.sedute).every((s) => (s.mobilita?.length ?? 0) >= 4)).toBe(true)
   })
 
+  it('corpo libero selezionabile insieme agli attrezzi', () => {
+    const base: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['forza'], livello: 2, attrezzi: ['manubri', 'kettlebell'] }
+    const conCL = ids(generaProgramma({ ...base, corpoLibero: true }))
+    const senzaCL = ids(generaProgramma({ ...base, corpoLibero: false }))
+    const cl = (id: string) => ['forza', 'potenza', 'ricostruzione'].includes(esercizio(id).categoria) && esercizio(id).attrezzi.every((g) => g.includes('tappetino'))
+    expect(conCL.some(cl)).toBe(true)
+    expect(senzaCL.some(cl)).toBe(false)
+    // i manubri restano usati anche con il corpo libero
+    expect(conCL.some((id) => esercizio(id).attrezzi.flat().includes('manubri'))).toBe(true)
+  })
+
+  it('sedute fino a 2 ore hanno piu\' esercizi', () => {
+    const base: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['forza'], livello: 2, attrezzi: ['manubri', 'kettlebell', 'bilanciere', 'panca', 'sbarra', 'cavo', 'elastico'] }
+    const n = (d: Risposte['durataMin']) => (generaProgramma({ ...base, durataMin: d }).sedute.s1.palestra ?? []).length
+    expect(n(120)).toBeGreaterThan(n(60))
+    expect(n(120)).toBeGreaterThanOrEqual(9)
+  })
+
   it('la corsa aggiunge la pista', () => {
     const p = generaProgramma({ ...RISPOSTE_VUOTE, obiettivi: ['resistenza'], corsa: true, giorni: ['lun', 'mer', 'ven', 'sab'] })
     expect(Object.values(p.sedute).filter((s) => s.pista).length).toBe(2)

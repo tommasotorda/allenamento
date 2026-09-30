@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useNavigationType } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, PageHeader, SectionTitle } from '../../components/ui'
 import { consegnaFile } from '../../condividi'
@@ -22,13 +22,44 @@ async function copia(testo: string): Promise<boolean> {
   }
 }
 
+/** Stato salvato nella sessione: tornando indietro da un esercizio si ritrova la scheda importata. */
+interface Stato {
+  testo: string
+  importato: boolean
+  nome: string
+  seduta: string | null
+}
+const CHIAVE_STATO = 'schedaAi.stato'
+
+function leggiStato(): Stato | null {
+  try {
+    return JSON.parse(sessionStorage.getItem(CHIAVE_STATO) ?? 'null') as Stato | null
+  } catch {
+    return null
+  }
+}
+
+function scriviStato(s: Stato | null) {
+  try {
+    if (s) sessionStorage.setItem(CHIAVE_STATO, JSON.stringify(s))
+    else sessionStorage.removeItem(CHIAVE_STATO)
+  } catch {
+    /* storage non disponibile: si riparte da zero */
+  }
+}
+
 /** Scheda da un assistente AI: modello da consegnare e importazione della risposta. */
 export function SchedaAiPage() {
   const oggi = useOggi()
   const nav = useNavigate()
-  const [testo, setTesto] = useState('')
-  const [esito, setEsito] = useState<RisultatoImport | null>(null)
-  const [nome, setNome] = useState('')
+  // ripristina solo tornando indietro (o ricaricando); entrando dalle schede si parte da zero
+  const tipoNavigazione = useNavigationType()
+  const [salvato] = useState(() => (tipoNavigazione === 'POP' ? leggiStato() : null))
+  const [testo, setTesto] = useState(salvato?.testo ?? '')
+  const [esito, setEsito] = useState<RisultatoImport | null>(() => (salvato?.importato ? importaSchedaLlm(salvato.testo) : null))
+  const [nome, setNome] = useState(salvato?.nome ?? '')
+  const [seduta, setSeduta] = useState<string | null>(salvato?.seduta ?? null)
+  useEffect(() => scriviStato({ testo, importato: !!esito, nome, seduta }), [testo, esito, nome, seduta])
   const [copiato, setCopiato] = useState<'modello' | 'errori' | null>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -45,6 +76,7 @@ export function SchedaAiPage() {
     if (!esito?.ok) return
     const p = creaPiano({ nome: nome.trim() || esito.nome, origine: 'importata', obiettivi: esito.obiettivi, programma: esito.programma, inizio: lunediDi(oggi) })
     await salvaPiano(p, attiva)
+    scriviStato(null)
     nav(attiva ? '/scheda' : '/schede', { replace: true })
   }
 
@@ -133,7 +165,7 @@ export function SchedaAiPage() {
             ))}
             <Badge>{esito.programma.settimana.length} giorni</Badge>
           </div>
-          <AnteprimaProgramma programma={esito.programma} />
+          <AnteprimaProgramma programma={esito.programma} aperta={seduta} onApri={setSeduta} />
           <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
             Attiva questa scheda
           </Button>

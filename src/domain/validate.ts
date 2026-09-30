@@ -1,3 +1,4 @@
+import { chiaviValide } from './muscles'
 import type { Esercizio, Programma } from './types'
 
 /** Id di tutti gli esercizi referenziati dal programma. */
@@ -33,7 +34,12 @@ export function validaDati(esercizi: Esercizio[], p: Programma, figure: string[]
     if (ids.has(e.id)) errori.push(`id duplicato: ${e.id}`)
     ids.add(e.id)
     if (!e.esecuzione?.length) errori.push(`${e.id}: manca la descrizione dell'esecuzione`)
-    if (!figure.includes(e.id)) errori.push(`${e.id}: manca la figura SVG`)
+    if (!figure.includes(e.id)) errori.push(`${e.id}: manca la figura animata`)
+    if (!e.muscoli || Object.keys(e.muscoli).length === 0) errori.push(`${e.id}: mancano i muscoli coinvolti`)
+    else {
+      for (const k of chiaviValide(e.muscoli)) errori.push(`${e.id}: muscolo sconosciuto "${k}"`)
+      for (const v of Object.values(e.muscoli)) if (![1, 2, 3].includes(v)) errori.push(`${e.id}: livello muscolare ${v} non valido`)
+    }
   }
   for (const { id, dove } of idUsati(p)) {
     if (!ids.has(id)) errori.push(`${dove}: esercizio inesistente "${id}"`)

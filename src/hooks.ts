@@ -4,7 +4,8 @@ import { leggiImpostazioni } from './db/repositories'
 import { db } from './db/schema'
 import { faseDellaSettimana, isoLocale, settimanaCiclo } from './domain/calendar'
 import { programma } from './domain/data'
-import type { Fase, Impostazioni } from './domain/types'
+import { programmaEffettivo, type SchedaUtente } from './domain/editing'
+import type { Fase, Impostazioni, Programma } from './domain/types'
 
 export function useImpostazioni(): Impostazioni | undefined {
   useEffect(() => {
@@ -33,14 +34,24 @@ export interface Ciclo {
   settimana: number
   fase: Fase
   impostazioni: Impostazioni
+  /** programma con le modifiche dell'utente */
+  programma: Programma
+  schedaUtente: SchedaUtente | undefined
+}
+
+/** Scheda personalizzata: undefined finche' carica, null se non esiste. */
+export function useSchedaUtente(): SchedaUtente | null | undefined {
+  return useLiveQuery(async () => (await db.schede.get('singleton')) ?? null)
 }
 
 export function useCiclo(): Ciclo | undefined {
   const imp = useImpostazioni()
   const oggi = useOggi()
-  if (!imp) return undefined
+  const scheda = useSchedaUtente()
+  if (!imp || scheda === undefined) return undefined
   const settimana = settimanaCiclo(oggi, imp.cicloInizio)
-  return { oggi, settimana, fase: faseDellaSettimana(programma, settimana), impostazioni: imp }
+  const u = scheda ?? undefined
+  return { oggi, settimana, fase: faseDellaSettimana(programma, settimana), impostazioni: imp, programma: programmaEffettivo(programma, u), schedaUtente: u }
 }
 
 /** URL dell'ultima foto dell'utente per un esercizio, se presente. */

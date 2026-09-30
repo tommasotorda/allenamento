@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useFotoUrl } from '../hooks'
-import { ExerciseFigure } from './ExerciseFigure'
+import { MuscleMap } from './MuscleMap'
 import { Icon } from './Icon'
 
 export function Card({ children, className = '' }: { children: ReactNode; className?: string }) {
@@ -44,19 +44,27 @@ export function ExerciseThumb({ id, className = 'size-16' }: { id: string; class
   const foto = useFotoUrl(id)
   return (
     <div className={`shrink-0 overflow-hidden rounded-xl bg-zinc-100 dark:bg-zinc-800 ${className}`}>
-      {foto ? <img src={foto} alt="" className="size-full object-cover" /> : <ExerciseFigure id={id} className="size-full p-0.5" />}
+      {foto ? <img src={foto} alt="" className="size-full object-cover" /> : <MuscleMap id={id} className="size-full p-1" />}
     </div>
+  )
+}
+
+/** Torna alla schermata precedente dell'app; se si e' entrati direttamente da un link usa `fallback`. */
+function BackButton({ fallback }: { fallback: string }) {
+  const nav = useNavigate()
+  const loc = useLocation()
+  const haStoria = loc.key !== 'default'
+  return (
+    <button type="button" onClick={() => (haStoria ? nav(-1) : nav(fallback, { replace: true }))} className="-ml-2 flex size-11 items-center justify-center rounded-xl active:bg-zinc-200 dark:active:bg-zinc-800" aria-label="Indietro">
+      <Icon name="back" />
+    </button>
   )
 }
 
 export function PageHeader({ title, subtitle, back, right }: { title: ReactNode; subtitle?: ReactNode; back?: string; right?: ReactNode }) {
   return (
     <header className="mb-2 flex items-center gap-2 pt-2">
-      {back && (
-        <Link to={back} className="-ml-2 flex size-11 items-center justify-center rounded-xl active:bg-zinc-200 dark:active:bg-zinc-800" aria-label="Indietro">
-          <Icon name="back" />
-        </Link>
-      )}
+      {back && <BackButton fallback={back} />}
       <div className="min-w-0 flex-1">
         <h1 className="truncate text-2xl font-bold">{title}</h1>
         {subtitle && <div className="text-sm text-zinc-500">{subtitle}</div>}

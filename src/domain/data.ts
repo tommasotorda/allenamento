@@ -3,7 +3,7 @@ import programJson from '../data/program.json'
 import testsJson from '../data/tests.json'
 import type { Esercizio, GiornoId, Programma, TestDef } from './types'
 
-export const esercizi = exercisesJson as Esercizio[]
+export const esercizi = exercisesJson as unknown as Esercizio[]
 export const programma = programJson as unknown as Programma
 export const tests = testsJson as TestDef[]
 

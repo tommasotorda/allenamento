@@ -12,6 +12,8 @@ export interface Esercizio {
   tipoRegistrazione: TipoRegistrazione
   esecuzione: string[]
   sbloccabile: boolean
+  /** muscolo o alias -> livello 1-3 (vedi domain/muscles.ts) */
+  muscoli: Record<string, number>
 }
 
 /** Prescrizione di un esercizio all'interno di una seduta. */

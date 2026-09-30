@@ -1,7 +1,8 @@
+import type { SchedaUtente } from '../domain/editing'
 import type { FotoEsercizio, Impostazioni, Misura, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 import { AllenamentoDB } from './schema'
 
-export const VERSIONE_BACKUP = 1
+export const VERSIONE_BACKUP = 2
 
 export interface Backup {
   app: 'allenamento'
@@ -13,6 +14,8 @@ export interface Backup {
   serie: Serie[]
   risultatiTest: RisultatoTest[]
   fotoEsercizi: (Omit<FotoEsercizio, 'blob'> & { tipo: string; base64: string })[]
+  /** dalla versione 2 */
+  schede?: SchedaUtente[]
 }
 
 async function blobInBase64(b: Blob): Promise<string> {
@@ -41,6 +44,7 @@ export async function esporta(db: AllenamentoDB): Promise<Backup> {
     sedute: await db.sedute.toArray(),
     serie: await db.serie.toArray(),
     risultatiTest: await db.risultatiTest.toArray(),
+    schede: await db.schede.toArray(),
     fotoEsercizi: await Promise.all(
       foto.map(async ({ blob, ...resto }) => ({ ...resto, tipo: blob.type || 'image/jpeg', base64: await blobInBase64(blob) })),
     ),
@@ -59,13 +63,14 @@ export function validaBackup(x: unknown): asserts x is Backup {
 /** Sostituisce tutti i dati con quelli del backup. */
 export async function importa(db: AllenamentoDB, dati: unknown) {
   validaBackup(dati)
-  await db.transaction('rw', [db.impostazioni, db.misure, db.sedute, db.serie, db.risultatiTest, db.fotoEsercizi], async () => {
+  await db.transaction('rw', [db.impostazioni, db.misure, db.sedute, db.serie, db.risultatiTest, db.fotoEsercizi, db.schede], async () => {
     await Promise.all(db.tables.map((t) => t.clear()))
     await db.impostazioni.bulkAdd(dati.impostazioni)
     await db.misure.bulkAdd(dati.misure)
     await db.sedute.bulkAdd(dati.sedute)
     await db.serie.bulkAdd(dati.serie)
     await db.risultatiTest.bulkAdd(dati.risultatiTest)
+    await db.schede.bulkAdd(dati.schede ?? [])
     await db.fotoEsercizi.bulkAdd(dati.fotoEsercizi.map(({ tipo, base64, ...resto }) => ({ ...resto, blob: base64InBlob(base64, tipo) })))
   })
 }

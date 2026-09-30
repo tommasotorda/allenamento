@@ -14,7 +14,7 @@ import { PistaLog, TennisLog } from './PistaLog'
 
 export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo; onFine: (id: string) => void }) {
   const fase = faseDellaSettimana(programma, seduta.settimanaCiclo)
-  const s = strutturaSeduta(programma, seduta.templateId, seduta.settimanaCiclo, fase, ciclo.impostazioni.sbloccati)
+  const s = strutturaSeduta(ciclo.programma, seduta.templateId, seduta.settimanaCiclo, fase, ciclo.impostazioni.sbloccati)
   const serie = useLiveQuery(() => db.serie.where('sedutaId').equals(seduta.id).toArray(), [seduta.id]) ?? []
   const [annulla, setAnnulla] = useState(false)
   const inc = ciclo.impostazioni.incrementoCaricoKg

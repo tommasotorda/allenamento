@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
+import type { SchedaUtente } from '../domain/editing'
 import type { FotoEsercizio, Impostazioni, Misura, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 
 export class AllenamentoDB extends Dexie {
@@ -8,6 +9,7 @@ export class AllenamentoDB extends Dexie {
   serie!: EntityTable<Serie, 'id'>
   risultatiTest!: EntityTable<RisultatoTest, 'id'>
   fotoEsercizi!: EntityTable<FotoEsercizio, 'id'>
+  schede!: EntityTable<SchedaUtente, 'chiave'>
 
   constructor(nome = 'allenamento') {
     super(nome)
@@ -19,6 +21,8 @@ export class AllenamentoDB extends Dexie {
       risultatiTest: '++id, testId, data',
       fotoEsercizi: '++id, esercizioId',
     })
+    // v2: scheda personalizzata
+    this.version(2).stores({ schede: 'chiave' })
   }
 }
 

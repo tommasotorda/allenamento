@@ -1,5 +1,6 @@
 import { isoLocale, lunediDi } from '../domain/calendar'
 import type { GiornoId, Impostazioni, Misura, RisultatoTest, SedutaLog, Serie } from '../domain/types'
+import type { SchedaUtente } from '../domain/editing'
 import { db } from './schema'
 
 /** randomUUID esiste solo in contesti sicuri (HTTPS o localhost): in anteprima via Wi-Fi si usa getRandomValues. */
@@ -123,4 +124,14 @@ async function ridimensiona(file: Blob, lato: number): Promise<Blob> {
   canvas.getContext('2d')!.drawImage(bmp, 0, 0, w, h)
   bmp.close()
   return new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('toBlob'))), 'image/jpeg', 0.85))
+}
+
+// ---- Scheda personalizzata ----
+
+export async function salvaScheda(u: SchedaUtente) {
+  await db.schede.put(u)
+}
+
+export async function eliminaScheda() {
+  await db.schede.delete('singleton')
 }

@@ -1,14 +1,24 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useEffect, useRef, useState } from 'react'
+import { lazy, Suspense, useEffect, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { ExerciseFigure } from '../../components/ExerciseFigure'
+import { MuscleMap } from '../../components/MuscleMap'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { aggiungiFoto, eliminaFoto } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizi, NOMI_CATEGORIE } from '../../domain/data'
+import { espandi, MUSCOLI, perLivello, type Livello } from '../../domain/muscles'
 import type { FotoEsercizio } from '../../domain/types'
 import { riassunto } from '../oggi/SetRow'
+
+// three.js e' pesante: il visore si carica solo aprendo un esercizio
+const Viewer3D = lazy(() => import('./Viewer3D'))
+
+const LIVELLI: [Livello, string, string][] = [
+  [3, 'Primari', 'bg-[#ff3b30]'],
+  [2, 'Secondari', 'bg-[#c0322b]'],
+  [1, 'Stabilizzatori', 'bg-[#7a2e29]'],
+]
 
 function FotoThumb({ f }: { f: FotoEsercizio }) {
   const [url, setUrl] = useState<string>()
@@ -56,7 +66,29 @@ export function EsercizioPage() {
       <PageHeader back="/esercizi" title={es.nome} subtitle={NOMI_CATEGORIE[es.categoria]} />
 
       <Card className="p-2">
-        <ExerciseFigure id={es.id} animate className="aspect-[240/196] w-full" />
+        <Suspense fallback={<div className="aspect-square w-full rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:aspect-[4/3]" />}>
+          <Viewer3D id={es.id} />
+        </Suspense>
+      </Card>
+
+      <SectionTitle>Muscoli coinvolti</SectionTitle>
+      <Card>
+        <MuscleMap id={es.id} className="mx-auto aspect-[204/204] w-full max-w-sm" />
+        <div className="mt-3 space-y-2">
+          {LIVELLI.map(([l, nome, colore]) => {
+            const ms = perLivello(espandi(es.muscoli), l)
+            if (!ms.length) return null
+            return (
+              <div key={l} className="flex gap-2 text-sm">
+                <span className={`mt-1 size-3 shrink-0 rounded-sm ${colore}`} />
+                <div>
+                  <span className="font-semibold">{nome}: </span>
+                  <span className="text-zinc-600 dark:text-zinc-400">{ms.map((m) => MUSCOLI[m].nome).join(', ')}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </Card>
 
       {foto.length > 0 && (

@@ -1,4 +1,4 @@
-import { HashRouter, NavLink, Route, Routes, useLocation } from 'react-router-dom'
+import { HashRouter, NavLink, Route, Routes, useLocation, useNavigationType } from 'react-router-dom'
 import { Icon, type IconName } from './components/Icon'
 import { RestTimerProvider } from './components/RestTimer'
 import { EsercizioPage } from './features/esercizi/EsercizioPage'
@@ -20,9 +20,22 @@ const NAV: { to: string; label: string; icon: IconName }[] = [
   { to: '/esercizi', label: 'Esercizi', icon: 'book' },
 ]
 
+/** In avanti la pagina parte dall'alto; tornando indietro si ritrova la posizione di scorrimento. */
+const scrollPerPagina = new Map<string, number>()
 function ScrollTop() {
-  const { pathname } = useLocation()
-  useEffect(() => window.scrollTo(0, 0), [pathname])
+  const loc = useLocation()
+  const tipo = useNavigationType()
+  useEffect(() => {
+    const y = tipo === 'POP' ? (scrollPerPagina.get(loc.key) ?? 0) : 0
+    // attende il rendering dei dati (IndexedDB) prima di ripristinare
+    const t = setTimeout(() => window.scrollTo(0, y), tipo === 'POP' ? 60 : 0)
+    const salva = () => scrollPerPagina.set(loc.key, window.scrollY)
+    window.addEventListener('scroll', salva, { passive: true })
+    return () => {
+      clearTimeout(t)
+      window.removeEventListener('scroll', salva)
+    }
+  }, [loc.key, tipo])
   return null
 }
 

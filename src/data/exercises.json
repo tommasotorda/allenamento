@@ -10,7 +10,14 @@
       "Glutei e addome contratti, corpo in linea dalla testa ai talloni.",
       "Respira in modo regolare mantenendo la posizione."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "deltoide-anteriore": 1,
+      "grande-gluteo": 1,
+      "retto-femorale": 1
+    }
   },
   {
     "id": "side_plank",
@@ -23,7 +30,14 @@
       "Solleva il bacino fino ad allineare spalle, anche e caviglie.",
       "Mantieni senza far cadere il bacino, poi cambia lato."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "addome": 2,
+      "medio-gluteo": 2,
+      "deltoide-anteriore": 1,
+      "deltoide-posteriore": 1
+    }
   },
   {
     "id": "dead_bug",
@@ -36,7 +50,12 @@
       "Zona lombare appoggiata a terra per tutto l'esercizio.",
       "Estendi lentamente braccio e gamba opposti, torna e alterna."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "retto-femorale": 1
+    }
   },
   {
     "id": "bird_dog",
@@ -49,7 +68,14 @@
       "Estendi braccio e gamba opposti fino all'orizzontale senza ruotare il bacino.",
       "Tieni 10 secondi, torna e alterna."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "erettori-spinali": 3,
+      "lombari": 2,
+      "grande-gluteo": 2,
+      "deltoide-posteriore": 1,
+      "addome": 1
+    }
   },
   {
     "id": "pallof_press",
@@ -64,7 +90,13 @@
       "Spingi le mani in avanti fino a braccia tese senza lasciarti ruotare.",
       "Tieni 2 secondi e riporta al petto."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "addome": 2,
+      "deltoide-anteriore": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "hollow_hold",
@@ -77,7 +109,12 @@
       "Solleva spalle e gambe tese di pochi centimetri, braccia oltre la testa.",
       "Mantieni la forma a 'banana' respirando corto."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "retto-femorale": 2
+    }
   },
   {
     "id": "mcgill_curl_up",
@@ -90,7 +127,11 @@
       "Solleva di pochi centimetri testa e spalle come un blocco unico, senza flettere il collo.",
       "Tieni 10 secondi e scendi; a meta' serie cambia gamba piegata."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 1
+    }
   },
   {
     "id": "trap_bar_deadlift",
@@ -105,7 +146,17 @@
       "Anche indietro, prendi le maniglie, petto alto e schiena neutra.",
       "Spingi il pavimento con le gambe ed estendi le anche fino in piedi; scendi con lo stesso percorso."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "erettori-spinali": 2,
+      "lombari": 2,
+      "trapezio-alto": 2,
+      "avambraccio-flessori": 2,
+      "gran-dorsale": 1
+    }
   },
   {
     "id": "trazioni",
@@ -120,7 +171,16 @@
       "Porta le scapole in basso e tira il petto verso la sbarra.",
       "Scendi in 3 secondi fino a braccia tese."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "bicipite": 2,
+      "trapezio-medio": 2,
+      "trapezio-basso": 2,
+      "avambraccio-flessori": 2,
+      "deltoide-posteriore": 1,
+      "addome": 1
+    }
   },
   {
     "id": "hip_thrust",
@@ -136,7 +196,14 @@
       "Piedi a terra con tibie verticali nella posizione alta.",
       "Spingi i talloni ed estendi le anche fino all'allineamento busto-cosce, mento verso il petto."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "medio-gluteo": 1,
+      "quadricipiti": 1,
+      "lombari": 1
+    }
   },
   {
     "id": "rematore_manubrio",
@@ -152,7 +219,15 @@
       "Tira il manubrio verso l'anca portando il gomito indietro.",
       "Scendi controllato fino a braccio teso."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-medio": 2,
+      "deltoide-posteriore": 2,
+      "bicipite": 2,
+      "avambraccio-flessori": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "farmer_carry",
@@ -167,7 +242,16 @@
       "Spalle basse, busto eretto, addome contratto.",
       "Cammina a passi corti e regolari per la distanza prevista."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "avambraccio-flessori": 3,
+      "trapezio-alto": 3,
+      "addome": 1,
+      "obliqui": 1,
+      "quadricipiti": 1,
+      "polpacci": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "kettlebell_swing",
@@ -182,7 +266,16 @@
       "Porta il kettlebell tra le gambe piegando le anche, schiena neutra.",
       "Estendi le anche con forza e lascia salire il kettlebell all'altezza del petto."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 3,
+      "erettori-spinali": 2,
+      "lombari": 2,
+      "deltoide-anteriore": 1,
+      "avambraccio-flessori": 1,
+      "addome": 1
+    }
   },
   {
     "id": "spanish_squat",
@@ -197,7 +290,11 @@
       "Arretra fino a tendere l'elastico, busto verticale.",
       "Scendi con le tibie verticali fino a circa 60-90 gradi e mantieni."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 1
+    }
   },
   {
     "id": "terminal_knee_extension",
@@ -212,7 +309,12 @@
       "Parti con il ginocchio leggermente piegato.",
       "Stendi completamente il ginocchio contraendo il quadricipite, tieni 1 secondo e torna."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "vasto-mediale": 3,
+      "retto-femorale": 2,
+      "vasto-laterale": 2
+    }
   },
   {
     "id": "reverse_sled_drag",
@@ -228,7 +330,13 @@
       "Busto leggermente inclinato indietro, ginocchia piegate.",
       "Cammina all'indietro a passi corti spingendo dalla pianta del piede."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "tibiale-anteriore": 1,
+      "polpacci": 1,
+      "avambraccio-flessori": 1
+    }
   },
   {
     "id": "step_up_basso",
@@ -243,7 +351,13 @@
       "Sali spingendo solo con la gamba sul box.",
       "Scendi lentamente in 3 secondi toccando terra con il tallone."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 2,
+      "medio-gluteo": 2,
+      "polpacci": 1
+    }
   },
   {
     "id": "slider_leg_curl",
@@ -258,7 +372,13 @@
       "Porta i talloni verso i glutei mantenendo il bacino alto.",
       "Allunga le gambe lentamente senza far cadere il bacino."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "grande-gluteo": 2,
+      "gastrocnemio": 1,
+      "lombari": 1
+    }
   },
   {
     "id": "polpacci_monopodalici",
@@ -273,7 +393,11 @@
       "Sali in punta il piu' in alto possibile.",
       "Scendi in 3 secondi sotto il livello del gradino."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "gastrocnemio": 3,
+      "soleo": 2
+    }
   },
   {
     "id": "tibialis_raise",
@@ -286,7 +410,10 @@
       "Solleva le punte dei piedi il piu' possibile.",
       "Scendi controllato senza appoggiare del tutto."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "tibiale-anteriore": 3
+    }
   },
   {
     "id": "box_squat",
@@ -302,7 +429,14 @@
       "In piedi davanti al box, piedi larghezza spalle.",
       "Siediti indietro sul box controllando la discesa.",
       "Pausa di un secondo e rialzati spingendo con tutto il piede."
-    ]
+    ],
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 3,
+      "adduttori": 2,
+      "femorali": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "saltelli_sul_posto",
@@ -315,7 +449,12 @@
       "In piedi, ginocchia morbide.",
       "Saltelli rapidi e bassi sull'avampiede.",
       "Atterra silenzioso con il ginocchio in linea con il piede."
-    ]
+    ],
+    "muscoli": {
+      "polpacci": 3,
+      "quadricipiti": 1,
+      "tibiale-anteriore": 1
+    }
   },
   {
     "id": "lancio_palla_medica_petto",
@@ -330,7 +469,13 @@
       "Spingi la palla contro il muro alla massima velocita'.",
       "Riprendi al rimbalzo e resetta la posizione prima del lancio successivo."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "pettorali": 3,
+      "deltoide-anteriore": 2,
+      "tricipite": 2,
+      "addome": 1
+    }
   },
   {
     "id": "panca_piana",
@@ -346,7 +491,12 @@
       "Scendi con il bilanciere a meta' sterno, gomiti a circa 45 gradi.",
       "Spingi verso l'alto fino a braccia tese."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "pettorali": 3,
+      "deltoide-anteriore": 2,
+      "tricipite": 2
+    }
   },
   {
     "id": "military_press",
@@ -361,7 +511,15 @@
       "Glutei e addome contratti, testa leggermente indietro.",
       "Spingi sopra la testa e porta la testa sotto il bilanciere a fine movimento."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "tricipite": 2,
+      "trapezio-alto": 2,
+      "pettorale-alto": 1,
+      "addome": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "landmine_press",
@@ -377,7 +535,14 @@
       "Spingi in avanti e in alto fino a braccio teso.",
       "Torna controllato alla spalla."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "pettorale-alto": 2,
+      "tricipite": 2,
+      "obliqui": 1,
+      "addome": 1
+    }
   },
   {
     "id": "stacco_rumeno_manubri",
@@ -392,7 +557,15 @@
       "Porta le anche indietro facendo scorrere i manubri lungo le gambe, schiena neutra.",
       "Scendi fino a sentire tensione nei femorali e risali spingendo le anche avanti."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "grande-gluteo": 3,
+      "erettori-spinali": 2,
+      "lombari": 2,
+      "avambraccio-flessori": 1,
+      "trapezio-alto": 1
+    }
   },
   {
     "id": "face_pull",
@@ -407,7 +580,14 @@
       "Tira verso la fronte aprendo i gomiti in alto e ruotando le mani indietro.",
       "Tieni 1 secondo e torna."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-posteriore": 3,
+      "trapezio-medio": 3,
+      "trapezio-basso": 2,
+      "trapezio-alto": 1,
+      "bicipite": 1
+    }
   },
   {
     "id": "push_up",
@@ -420,7 +600,13 @@
       "Scendi fino a sfiorare il pavimento con il petto, gomiti a 45 gradi.",
       "Spingi fino a braccia tese."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "pettorali": 3,
+      "tricipite": 2,
+      "deltoide-anteriore": 2,
+      "addome": 1
+    }
   },
   {
     "id": "copenhagen_plank",
@@ -435,7 +621,13 @@
       "Solleva il bacino allineando il corpo; la gamba inferiore resta sospesa o a terra.",
       "Mantieni e cambia lato."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "adduttori": 3,
+      "obliqui": 2,
+      "addome": 1,
+      "medio-gluteo": 1
+    }
   },
   {
     "id": "lancio_rotazionale",
@@ -450,7 +642,14 @@
       "Carica ruotando le anche indietro.",
       "Ruota con forza anche e busto e lancia la palla contro il muro."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "addome": 2,
+      "grande-gluteo": 1,
+      "deltoide-anteriore": 1,
+      "pettorali": 1
+    }
   },
   {
     "id": "overhead_back_toss",
@@ -465,7 +664,16 @@
       "Estendi con forza anche, ginocchia e caviglie.",
       "Lancia la palla all'indietro sopra la testa restando con i piedi a terra."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "erettori-spinali": 2,
+      "quadricipiti": 2,
+      "deltoide-anteriore": 2,
+      "trapezio-alto": 1,
+      "polpacci": 1
+    }
   },
   {
     "id": "push_press_manubri",
@@ -480,7 +688,15 @@
       "Piccolo piegamento delle ginocchia e spinta rapida delle gambe.",
       "Usa la spinta per portare i manubri sopra la testa a braccia tese."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "tricipite": 2,
+      "quadricipiti": 2,
+      "grande-gluteo": 1,
+      "trapezio-alto": 1,
+      "polpacci": 1
+    }
   },
   {
     "id": "sled_push",
@@ -495,7 +711,16 @@
       "Spingi con passi corti e potenti sull'avampiede.",
       "Mantieni la schiena neutra per tutta la distanza."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 2,
+      "polpacci": 2,
+      "pettorali": 1,
+      "tricipite": 1,
+      "deltoide-anteriore": 1,
+      "addome": 1
+    }
   },
   {
     "id": "rematore_trx",
@@ -510,7 +735,15 @@
       "Tira il petto verso le mani avvicinando le scapole.",
       "Torna controllato a braccia tese."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-medio": 2,
+      "deltoide-posteriore": 2,
+      "bicipite": 2,
+      "addome": 1,
+      "grande-gluteo": 1
+    }
   },
   {
     "id": "turkish_get_up",
@@ -525,7 +758,17 @@
       "Sali su gomito, poi mano, solleva il bacino e porta la gamba tesa sotto di te in ginocchio.",
       "Alzati in piedi e ripercorri i passaggi al contrario, sguardo sul kettlebell."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 2,
+      "obliqui": 2,
+      "addome": 2,
+      "grande-gluteo": 2,
+      "quadricipiti": 2,
+      "tricipite": 1,
+      "trapezio-alto": 1,
+      "medio-gluteo": 1
+    }
   },
   {
     "id": "battle_rope",
@@ -540,7 +783,15 @@
       "Muovi le braccia alternate in modo rapido creando onde continue.",
       "Mantieni il ritmo costante per tutto il tempo."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "avambraccio-flessori": 2,
+      "addome": 2,
+      "bicipite": 1,
+      "tricipite": 1,
+      "quadricipiti": 1
+    }
   },
   {
     "id": "suitcase_carry",
@@ -555,7 +806,14 @@
       "Busto dritto senza inclinarti verso il peso.",
       "Cammina per la distanza prevista e cambia mano."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "avambraccio-flessori": 3,
+      "trapezio-alto": 2,
+      "medio-gluteo": 2,
+      "addome": 1
+    }
   },
   {
     "id": "sprint_salita",
@@ -568,7 +826,14 @@
       "Braccia attive, spinta forte dall'avampiede.",
       "Scendi camminando per il recupero."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 3,
+      "quadricipiti": 3,
+      "polpacci": 3,
+      "addome": 1
+    }
   },
   {
     "id": "corsa_zona2",
@@ -583,7 +848,14 @@
       "Ritmo al quale riesci a parlare a frasi intere.",
       "Passo corto e leggero, cadenza alta."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 2,
+      "polpacci": 2,
+      "femorali": 2,
+      "grande-gluteo": 2,
+      "tibiale-anteriore": 1
+    }
   },
   {
     "id": "ripetute_soglia",
@@ -598,7 +870,13 @@
       "2 minuti di corsa lenta tra una ripetuta e l'altra.",
       "Ritmo uniforme dalla prima all'ultima ripetuta."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "polpacci": 2,
+      "femorali": 2,
+      "glutei": 2
+    }
   },
   {
     "id": "intervalli_30_30",
@@ -611,7 +889,13 @@
       "8 ripetizioni per blocco.",
       "3 minuti di corsa lenta tra i blocchi."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "femorali": 2,
+      "grande-gluteo": 2,
+      "polpacci": 2
+    }
   },
   {
     "id": "cat_cow",
@@ -624,7 +908,12 @@
       "Inarca la schiena verso l'alto espirando, poi lasciala scendere guardando avanti inspirando.",
       "Movimento lento vertebra per vertebra."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "erettori-spinali": 3,
+      "lombari": 3,
+      "addome": 1
+    }
   },
   {
     "id": "anche_90_90",
@@ -637,7 +926,12 @@
       "Busto eretto, inclinati leggermente sulla gamba davanti.",
       "Ruota le ginocchia dall'altra parte senza usare le mani e ripeti."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "medio-gluteo": 3,
+      "grande-gluteo": 2,
+      "adduttori": 2
+    }
   },
   {
     "id": "ginocchio_muro",
@@ -650,7 +944,12 @@
       "Porta il ginocchio a toccare il muro senza sollevare il tallone.",
       "Allontana il piede di poco quando riesci facilmente."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "soleo": 3,
+      "gastrocnemio": 2,
+      "tibiale-anteriore": 1
+    }
   },
   {
     "id": "equilibrio_monopodalico",
@@ -663,7 +962,13 @@
       "Mantieni l'equilibrio a occhi aperti, poi chiusi.",
       "Cambia gamba."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "medio-gluteo": 2,
+      "soleo": 2,
+      "tibiale-anteriore": 2,
+      "addome": 1
+    }
   },
   {
     "id": "rotazioni_esterne_elastico",
@@ -678,7 +983,11 @@
       "Ruota l'avambraccio verso l'esterno contro la resistenza dell'elastico.",
       "Torna lentamente."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-posteriore": 3,
+      "trapezio-medio": 1
+    }
   },
   {
     "id": "open_book",
@@ -691,7 +1000,13 @@
       "Apri il braccio superiore verso l'altro lato seguendolo con lo sguardo.",
       "Tieni 2 secondi e richiudi."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 2,
+      "trapezio-medio": 2,
+      "pettorali": 1,
+      "erettori-spinali": 1
+    }
   },
   {
     "id": "respirazione_diaframmatica",
@@ -704,6 +1019,10 @@
       "Inspira dal naso per 4 secondi gonfiando l'addome.",
       "Espira lentamente per 6 secondi."
     ],
-    "sbloccabile": false
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 2,
+      "obliqui": 1
+    }
   }
 ]

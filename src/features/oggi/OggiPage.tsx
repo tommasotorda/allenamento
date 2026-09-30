@@ -6,7 +6,7 @@ import { Badge, Button, Chip, formatData, PageHeader } from '../../components/ui
 import { iniziaSeduta, sedutaAperta } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { giornoSettimana, prossimaSeduta, SETTIMANE_CICLO } from '../../domain/calendar'
-import { GIORNI, NOMI_GIORNI, programma } from '../../domain/data'
+import { GIORNI, NOMI_GIORNI } from '../../domain/data'
 import { strutturaSeduta } from '../../domain/session'
 import type { GiornoId } from '../../domain/types'
 import { useCiclo, type Ciclo } from '../../hooks'
@@ -42,7 +42,7 @@ function Anteprima({ c }: { c: Ciclo }) {
   const oggiGiorno = giornoSettimana(c.oggi)
   const prossima = prossimaSeduta(c.oggi)
   const scelto = (params.get('seduta') as GiornoId | null) ?? oggiGiorno ?? prossima.giorno
-  const s = strutturaSeduta(programma, scelto, c.settimana, c.fase, c.impostazioni.sbloccati)
+  const s = strutturaSeduta(c.programma, scelto, c.settimana, c.fase, c.impostazioni.sbloccati)
   const fatteOggi = useLiveQuery(() => db.sedute.where('data').equals(c.oggi).filter((x) => x.fine !== null).toArray(), [c.oggi]) ?? []
 
   return (

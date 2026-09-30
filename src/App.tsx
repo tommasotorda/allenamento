@@ -11,6 +11,7 @@ import { SedutaDettaglioPage } from './features/scheda/SedutaDettaglioPage'
 import { AdattaPage } from './features/adattamento/AdattaPage'
 import { ProfiliPage } from './features/piani/ProfiliPage'
 import { QuestionarioPage } from './features/piani/QuestionarioPage'
+import { SchedaAiPage } from './features/piani/SchedaAiPage'
 import { SchedePage } from './features/piani/SchedePage'
 import { SchedaLiberaPage } from './features/piani/SchedaLiberaPage'
 import { lazy, Suspense, useEffect } from 'react'
@@ -88,6 +89,7 @@ export default function App() {
               <Route path="/profili" element={<ProfiliPage />} />
               <Route path="/scheda-libera" element={<SchedaLiberaPage />} />
               <Route path="/questionario" element={<QuestionarioPage />} />
+              <Route path="/scheda-ai" element={<SchedaAiPage />} />
               <Route path="/adatta" element={<AdattaPage />} />
               <Route path="/progressi" element={<Suspense fallback={null}><ProgressiPage /></Suspense>} />
               <Route path="/progressi/seduta/:id" element={<SedutaStoricoPage />} />

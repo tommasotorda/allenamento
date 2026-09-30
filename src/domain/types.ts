@@ -113,7 +113,7 @@ export type Obiettivo = 'forza' | 'massa' | 'potenza' | 'resistenza' | 'mobilita
 export interface Piano {
   id: string
   nome: string
-  origine: 'originale' | 'profilo' | 'questionario' | 'adattamento' | 'copia' | 'libera'
+  origine: 'originale' | 'profilo' | 'questionario' | 'adattamento' | 'copia' | 'libera' | 'importata'
   obiettivi: Obiettivo[]
   /** lunedi' di inizio del ciclo */
   inizio: string

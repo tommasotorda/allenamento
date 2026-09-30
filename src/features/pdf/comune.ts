@@ -1,5 +1,6 @@
 /** Stile e utilità condivise dai PDF (scheda e progressi). */
 import type { jsPDF } from 'jspdf'
+import { consegnaFile } from '../../condividi'
 
 export const A4 = { w: 210, h: 297 }
 export const M = 14
@@ -55,20 +56,7 @@ export const nomeFilePdf = (prefisso: string, nome: string) =>
     .replace(/^-|-$/g, '')
     .slice(0, 50)}.pdf`
 
-/** Condivide (iPhone) o scarica (Mac) un PDF. */
-export async function consegnaPdf(blob: Blob, nome: string, titolo: string) {
-  const file = new File([blob], nome, { type: 'application/pdf' })
-  if (navigator.canShare?.({ files: [file] })) {
-    try {
-      await navigator.share({ files: [file], title: titolo })
-      return
-    } catch (e) {
-      if ((e as Error).name === 'AbortError') return
-    }
-  }
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = nome
-  a.click()
-  setTimeout(() => URL.revokeObjectURL(a.href), 2000)
+/** Condivide (telefono) o scarica (computer) un PDF. */
+export function consegnaPdf(blob: Blob, nome: string, titolo: string) {
+  return consegnaFile(blob, nome, titolo)
 }

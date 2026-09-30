@@ -10,6 +10,7 @@ import { lunediDi } from '../../domain/calendar'
 import { esercizi, esercizio, NOMI_GIORNI, programma } from '../../domain/data'
 import type { FotoEsercizio } from '../../domain/types'
 import { useImpostazioni, useOggi, usePianoAttivo } from '../../hooks'
+import { consegnaFile } from '../../condividi'
 
 const sbloccabili = esercizi.filter((e) => e.sbloccabile)
 
@@ -46,23 +47,7 @@ export function ImpostazioniPage() {
 
   const esportaFile = async () => {
     const dati = await esporta(db)
-    const blob = new Blob([JSON.stringify(dati)], { type: 'application/json' })
-    const nome = nomeFileBackup()
-    const file = new File([blob], nome, { type: 'application/json' })
-    // su iPhone il foglio di condivisione permette di salvare in File o inviare al Mac
-    if (navigator.canShare?.({ files: [file] })) {
-      try {
-        await navigator.share({ files: [file] })
-        return
-      } catch (e) {
-        if ((e as Error).name === 'AbortError') return
-      }
-    }
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = nome
-    a.click()
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000)
+    await consegnaFile(new Blob([JSON.stringify(dati)], { type: 'application/json' }), nomeFileBackup(), 'Backup Allenamento')
   }
 
   return (

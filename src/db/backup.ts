@@ -1,8 +1,8 @@
 import { pianoOriginale, type SchedaLegacy } from '../domain/plans'
-import type { FotoEsercizio, Impostazioni, Misura, Piano, ProfiloUtente, RisultatoTest, SedutaLog, Serie } from '../domain/types'
+import type { FotoEsercizio, Impostazioni, Memoria, Misura, Piano, ProfiloUtente, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 import { AllenamentoDB } from './schema'
 
-export const VERSIONE_BACKUP = 3
+export const VERSIONE_BACKUP = 4
 
 export interface Backup {
   app: 'allenamento'
@@ -19,6 +19,8 @@ export interface Backup {
   /** dalla versione 3 */
   piani?: Piano[]
   profili?: ProfiloUtente[]
+  /** dalla versione 4 */
+  memoria?: Memoria[]
 }
 
 async function blobInBase64(b: Blob): Promise<string> {
@@ -49,6 +51,7 @@ export async function esporta(db: AllenamentoDB): Promise<Backup> {
     risultatiTest: await db.risultatiTest.toArray(),
     piani: await db.piani.toArray(),
     profili: await db.profili.toArray(),
+    memoria: await db.memoria.toArray(),
     fotoEsercizi: await Promise.all(
       foto.map(async ({ blob, ...resto }) => ({ ...resto, tipo: blob.type || 'image/jpeg', base64: await blobInBase64(blob) })),
     ),
@@ -67,7 +70,7 @@ export function validaBackup(x: unknown): asserts x is Backup {
 /** Sostituisce tutti i dati con quelli del backup. */
 export async function importa(db: AllenamentoDB, dati: unknown) {
   validaBackup(dati)
-  await db.transaction('rw', [db.impostazioni, db.misure, db.sedute, db.serie, db.risultatiTest, db.fotoEsercizi, db.schede, db.piani, db.profili], async () => {
+  await db.transaction('rw', [db.impostazioni, db.misure, db.sedute, db.serie, db.risultatiTest, db.fotoEsercizi, db.schede, db.piani, db.profili, db.memoria], async () => {
     await Promise.all(db.tables.map((t) => t.clear()))
     await db.impostazioni.bulkAdd(dati.impostazioni)
     await db.misure.bulkAdd(dati.misure)
@@ -86,6 +89,7 @@ export async function importa(db: AllenamentoDB, dati: unknown) {
     }
     await db.piani.bulkAdd(piani)
     await db.profili.bulkAdd(dati.profili ?? [])
+    await db.memoria.bulkAdd(dati.memoria ?? [])
     await db.fotoEsercizi.bulkAdd(dati.fotoEsercizi.map(({ tipo, base64, ...resto }) => ({ ...resto, blob: base64InBlob(base64, tipo) })))
   })
 }

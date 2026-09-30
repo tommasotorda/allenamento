@@ -19,6 +19,7 @@ const ORIGINI: Record<Piano['origine'], string> = {
   questionario: 'Da questionario',
   adattamento: 'Adattamento',
   copia: 'Copia',
+  libera: 'Scheda libera',
 }
 
 /** Le mie schede: attiva, archivio, duplica, salva come profilo, elimina. */
@@ -41,14 +42,18 @@ export function SchedePage() {
   return (
     <div>
       <PageHeader back="/scheda" title="Le mie schede" />
-      <div className="grid grid-cols-2 gap-2">
-        <Link to="/questionario" className="flex h-24 flex-col justify-center rounded-2xl bg-accent px-4 font-semibold text-white">
+      <div className="grid grid-cols-3 gap-2">
+        <Link to="/questionario" className="flex h-24 flex-col justify-center rounded-2xl bg-accent px-3 font-semibold leading-tight text-white">
           <Icon name="plus" className="mb-1 size-6" />
           Questionario
         </Link>
-        <Link to="/profili" className="flex h-24 flex-col justify-center rounded-2xl bg-zinc-900 px-4 font-semibold text-white dark:bg-white dark:text-zinc-900">
+        <Link to="/profili" className="flex h-24 flex-col justify-center rounded-2xl bg-zinc-900 px-3 font-semibold leading-tight text-white dark:bg-white dark:text-zinc-900">
           <Icon name="book" className="mb-1 size-6" />
           Da un profilo
+        </Link>
+        <Link to="/scheda-libera" className="flex h-24 flex-col justify-center rounded-2xl bg-white px-3 font-semibold leading-tight ring-1 ring-zinc-900/10 dark:bg-zinc-900 dark:ring-white/10">
+          <Icon name="swap" className="mb-1 size-6 text-accent" />
+          Scheda libera
         </Link>
       </div>
 

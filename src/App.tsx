@@ -12,6 +12,7 @@ import { AdattaPage } from './features/adattamento/AdattaPage'
 import { ProfiliPage } from './features/piani/ProfiliPage'
 import { QuestionarioPage } from './features/piani/QuestionarioPage'
 import { SchedePage } from './features/piani/SchedePage'
+import { SchedaLiberaPage } from './features/piani/SchedaLiberaPage'
 import { lazy, Suspense, useEffect } from 'react'
 
 // i grafici (Recharts) sono pesanti: caricati solo aprendo Progressi
@@ -85,6 +86,7 @@ export default function App() {
               <Route path="/scheda/:giorno" element={<SedutaDettaglioPage />} />
               <Route path="/schede" element={<SchedePage />} />
               <Route path="/profili" element={<ProfiliPage />} />
+              <Route path="/scheda-libera" element={<SchedaLiberaPage />} />
               <Route path="/questionario" element={<QuestionarioPage />} />
               <Route path="/adatta" element={<AdattaPage />} />
               <Route path="/progressi" element={<Suspense fallback={null}><ProgressiPage /></Suspense>} />

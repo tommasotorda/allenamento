@@ -1,6 +1,7 @@
 import { isoLocale, lunediDi } from '../domain/calendar'
 import { pianoOriginale } from '../domain/plans'
-import type { Impostazioni, Misura, Piano, ProfiloUtente, Programma, RisultatoTest, SedutaLog, Serie } from '../domain/types'
+import type { Bozza } from '../domain/progression'
+import type { Impostazioni, Memoria, Misura, Piano, ProfiloUtente, Programma, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 import { db } from './schema'
 
 import { uuid } from '../domain/util'
@@ -160,3 +161,50 @@ export async function eliminaPiano(id: string) {
 
 export const salvaProfilo = (p: ProfiloUtente) => db.profili.put(p)
 export const eliminaProfilo = (id: string) => db.profili.delete(id)
+
+// ---- Memoria dell'autocompilazione ----
+
+export const chiaveEs = (id: string) => `es:${id}`
+export const chiavePista = (id: string) => `pista:${id}`
+export const CHIAVE_TENNIS = 'tennis'
+
+/** Registra una serie e la ricorda come valore precompilato per la prossima volta. */
+export async function salvaSerieRicordando(s: Serie) {
+  await db.transaction('rw', db.serie, db.memoria, async () => {
+    await db.serie.put(s)
+    const m = await db.memoria.get(chiaveEs(s.esercizioId))
+    const serie = m && !m.azzerata ? [...(m.serie ?? [])] : []
+    const { ripetizioni, caricoKg, durataSec, distanzaM, rpe } = s
+    serie[s.numero - 1] = { ripetizioni, caricoKg, durataSec, distanzaM, rpe }
+    // eventuali buchi (serie saltate) prendono il valore precedente
+    for (let i = 0; i < serie.length; i++) if (!serie[i]) serie[i] = serie[i - 1] ?? serie[s.numero - 1]
+    await db.memoria.put({ chiave: chiaveEs(s.esercizioId), serie, aggiornata: new Date().toISOString() })
+  })
+}
+
+export async function ricordaPista(esercizioId: string, pista: SedutaLog['pista']) {
+  if (Object.values(pista).every((v) => v === null)) return
+  await db.memoria.put({ chiave: chiavePista(esercizioId), pista, aggiornata: new Date().toISOString() })
+}
+
+export async function ricordaTennis(minuti: number) {
+  await db.memoria.put({ chiave: CHIAVE_TENNIS, minuti, aggiornata: new Date().toISOString() })
+}
+
+/** Reset di un esercizio: la prossima seduta riparte dai valori della scheda. */
+export async function azzeraMemoria(esercizioId: string) {
+  await db.memoria.put({ chiave: chiaveEs(esercizioId), azzerata: true, aggiornata: new Date().toISOString() })
+}
+
+/** Reset di tutta l'autocompilazione. */
+export async function azzeraTuttaMemoria() {
+  const ids = new Set<string>([...(await db.serie.orderBy('esercizioId').uniqueKeys()).map(String)])
+  for (const m of await db.memoria.toArray()) if (m.chiave.startsWith('es:')) ids.add(m.chiave.slice(3))
+  const ora = new Date().toISOString()
+  await db.transaction('rw', db.memoria, async () => {
+    await db.memoria.clear()
+    await db.memoria.bulkPut([...ids].map((id): Memoria => ({ chiave: chiaveEs(id), azzerata: true, aggiornata: ora })))
+  })
+}
+
+export type { Bozza }

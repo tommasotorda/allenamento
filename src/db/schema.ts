@@ -1,7 +1,7 @@
 import Dexie, { type EntityTable } from 'dexie'
 import { isoLocale } from '../domain/calendar'
 import { pianoOriginale, type SchedaLegacy } from '../domain/plans'
-import type { FotoEsercizio, Impostazioni, Misura, Piano, ProfiloUtente, RisultatoTest, SedutaLog, Serie } from '../domain/types'
+import type { FotoEsercizio, Impostazioni, Memoria, Misura, Piano, ProfiloUtente, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 
 export class AllenamentoDB extends Dexie {
   impostazioni!: EntityTable<Impostazioni, 'chiave'>
@@ -14,6 +14,7 @@ export class AllenamentoDB extends Dexie {
   schede!: EntityTable<SchedaLegacy & { chiave: string }, 'chiave'>
   piani!: EntityTable<Piano, 'id'>
   profili!: EntityTable<ProfiloUtente, 'id'>
+  memoria!: EntityTable<Memoria, 'chiave'>
 
   constructor(nome = 'allenamento') {
     super(nome)
@@ -38,6 +39,8 @@ export class AllenamentoDB extends Dexie {
         if (imp) await tx.table('impostazioni').put({ ...imp, pianoAttivo: p.id })
         await tx.table('schede').clear()
       })
+    // v4: memoria per l'autocompilazione
+    this.version(4).stores({ memoria: 'chiave' })
   }
 }
 

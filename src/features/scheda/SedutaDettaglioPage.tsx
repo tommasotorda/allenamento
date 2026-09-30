@@ -1,9 +1,11 @@
-import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button, Card, PageHeader } from '../../components/ui'
-import { iniziaSeduta, sedutaAperta } from '../../db/repositories'
+import { aggiornaProgramma, iniziaSeduta, sedutaAperta } from '../../db/repositories'
 import { NOMI_GIORNI } from '../../domain/data'
-import { strutturaSeduta } from '../../domain/session'
-import { useCiclo } from '../../hooks'
+import { elencoSedute, strutturaSeduta } from '../../domain/session'
+import type { Seduta } from '../../domain/types'
+import { useCiclo, type Ciclo } from '../../hooks'
 import { BlockEditor } from './BlockEditor'
 import { SessionPreview } from './SessionPreview'
 
@@ -34,6 +36,7 @@ export function SedutaDettaglioPage() {
 
       {modifica ? (
         <>
+          <ImpostaSeduta c={c} sedutaId={g} />
           {sed.core && (
             <>
               <BlockEditor titolo="Core · variante A" blocco={{ tipo: 'core', variante: 'A' }} c={c} />
@@ -45,8 +48,8 @@ export function SedutaDettaglioPage() {
               <b className="text-zinc-900 dark:text-zinc-100">Pista:</b> {s.pista.testo}
             </Card>
           )}
-          {(sed.palestra || !sed.mobilita) && <BlockEditor titolo="Palestra" blocco={{ tipo: 'palestra', sedutaId: g }} c={c} />}
-          {sed.mobilita && <BlockEditor titolo="Mobilità" blocco={{ tipo: 'mobilita', sedutaId: g }} c={c} />}
+          <BlockEditor titolo="Palestra" blocco={{ tipo: 'palestra', sedutaId: g }} c={c} />
+          <BlockEditor titolo="Mobilità e defaticamento" blocco={{ tipo: 'mobilita', sedutaId: g }} c={c} />
         </>
       ) : (
         <>
@@ -64,6 +67,43 @@ export function SedutaDettaglioPage() {
           <SessionPreview s={s} fase={c.fase} programma={c.programma} pianoId={c.piano.id} />
         </>
       )}
+    </div>
+  )
+}
+
+/** Modifica: passaggio rapido tra le sedute, nome della seduta, blocco core. */
+function ImpostaSeduta({ c, sedutaId }: { c: Ciclo; sedutaId: string }) {
+  const sed = c.programma.sedute[sedutaId]
+  const [nome, setNome] = useState(sed.nome)
+  useEffect(() => setNome(sed.nome), [sed.nome, sedutaId])
+  const aggiorna = (patch: Partial<Seduta>) => aggiornaProgramma(c.piano.id, { ...c.programma, sedute: { ...c.programma.sedute, [sedutaId]: { ...sed, ...patch } } })
+  const sedute = elencoSedute(c.programma)
+  return (
+    <div>
+      {sedute.length > 1 && (
+        <div className="-mx-4 mb-3 flex gap-2 overflow-x-auto px-4 pb-1">
+          {sedute.map((x) => (
+            <Link key={x.sedutaId} to={`/scheda/${x.sedutaId}?modifica=1`} replace className={`h-9 shrink-0 rounded-full px-4 text-sm font-semibold leading-9 ${x.sedutaId === sedutaId ? 'bg-zinc-900 text-white dark:bg-white dark:text-zinc-900' : 'bg-zinc-200 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300'}`}>
+              {x.giorni.length ? x.giorni.map((g) => NOMI_GIORNI[g].slice(0, 3)).join('·') : x.nome}
+            </Link>
+          ))}
+        </div>
+      )}
+      <Card className="space-y-3">
+        <label className="block">
+          <span className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Nome della seduta</span>
+          <input
+            value={nome}
+            onChange={(e) => setNome(e.target.value)}
+            onBlur={() => nome.trim() && nome.trim() !== sed.nome && aggiorna({ nome: nome.trim() })}
+            className="mt-1 h-11 w-full rounded-xl bg-zinc-100 px-3 font-semibold dark:bg-zinc-800"
+          />
+        </label>
+        <label className="flex items-center justify-between text-sm font-medium">
+          Blocco core a inizio seduta
+          <input type="checkbox" className="size-5 accent-orange-500" checked={!!sed.core} onChange={(e) => aggiorna({ core: e.target.checked })} />
+        </label>
+      </Card>
     </div>
   )
 }

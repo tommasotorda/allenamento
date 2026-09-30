@@ -3,7 +3,8 @@ import { Icon } from '../../components/Icon'
 import { Stepper } from '../../components/Stepper'
 import type { Serie, TipoRegistrazione } from '../../domain/types'
 
-export type Bozza = Pick<Serie, 'ripetizioni' | 'caricoKg' | 'durataSec' | 'distanzaM' | 'rpe'>
+export type { Bozza } from '../../domain/progression'
+import type { Bozza } from '../../domain/progression'
 
 interface Props {
   etichetta: string
@@ -14,11 +15,17 @@ interface Props {
   conRpe: boolean
   onConferma: (b: Bozza) => void
   onElimina?: () => void
+  /** valori attuali della riga (anche se non ancora confermata) */
+  onBozza?: (b: Bozza) => void
 }
 
 /** Riga di una serie: precompilata, si conferma con un tap. */
-export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRpe, onConferma, onElimina }: Props) {
+export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRpe, onConferma, onElimina, onBozza }: Props) {
   const [b, setB] = useState<Bozza>(salvata ?? iniziale)
+  useEffect(() => {
+    onBozza?.(b)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(b)])
   const [modifica, setModifica] = useState(!salvata)
 
   // se la serie viene salvata o cambia da fuori, riallinea la bozza
@@ -96,7 +103,7 @@ export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRp
 export function riassunto(tipo: TipoRegistrazione, s: Bozza): string {
   const p: string[] = []
   const kg = s.caricoKg !== null ? `${String(s.caricoKg).replace('.', ',')} kg` : null
-  if (tipo === 'carico_ripetizioni') p.push([kg, s.ripetizioni !== null ? `${s.ripetizioni} rip` : null].filter(Boolean).join(' × '))
+  if (tipo === 'carico_ripetizioni') p.push([kg, s.ripetizioni !== null ? `${s.ripetizioni} rip` : s.durataSec !== null ? `${s.durataSec} s` : null].filter(Boolean).join(' × '))
   if (tipo === 'ripetizioni' && s.ripetizioni !== null) p.push(`${s.ripetizioni} rip`)
   if (tipo === 'tempo' && s.durataSec !== null) p.push(`${s.durataSec} s`)
   if (tipo === 'distanza') p.push([s.distanzaM !== null ? `${s.distanzaM} m` : null, kg].filter(Boolean).join(' · '))

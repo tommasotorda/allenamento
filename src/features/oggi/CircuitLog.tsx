@@ -5,6 +5,7 @@ import { eliminaSerie, salvaSerie, uuid } from '../../db/repositories'
 import { esercizio } from '../../domain/data'
 import type { Circuito, Serie } from '../../domain/types'
 import { LinkEsercizio, type Lista } from '../esercizi/lista'
+import { usePendente } from './registro'
 
 interface Props {
   sedutaId: string
@@ -47,6 +48,20 @@ export function CircuitLog({ sedutaId, data, c, serie, lista, pos }: Props) {
       await salvaSerie({ id: uuid(), sedutaId, esercizioId: id, data, numero: g, lato: null, durataSec: c.lavoroSec, ripetizioni: null, caricoKg: null, distanzaM: null, rpe: null })
     }
   }
+
+  const giriMancanti = Array.from({ length: c.giri }, (_, i) => i + 1).filter((g) => !giriFatti(g))
+  usePendente(
+    `circuito:${c.esercizi.join(',')}`,
+    giriMancanti.length
+      ? {
+          titolo: 'Circuito',
+          dettaglio: `${giriMancanti.length} ${giriMancanti.length === 1 ? 'giro' : 'giri'} · ${c.esercizi.map((id) => esercizio(id).nome).join(', ')}`,
+          salva: async () => {
+            for (const g of giriMancanti) await segnaGiro(g)
+          },
+        }
+      : null,
+  )
 
   return (
     <Card className="p-3">

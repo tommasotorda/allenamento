@@ -1,13 +1,15 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { Icon } from '../../components/Icon'
 import { useRestTimer } from '../../components/RestTimer'
-import { Badge, Card, ExerciseThumb } from '../../components/ui'
-import { eliminaSerie, salvaSerie, serieUltimaSeduta, uuid } from '../../db/repositories'
+import { Badge, Button, Card, ExerciseThumb, numIt } from '../../components/ui'
+import { azzeraMemoria, chiaveEs, eliminaSerie, salvaSerieRicordando, serieUltimaSeduta, uuid } from '../../db/repositories'
+import { db } from '../../db/schema'
 import { esercizio } from '../../domain/data'
-import { caricoSuggerito, primoNumero, ripetizioniEffettive, serieEffettive, testoPrescrizione } from '../../domain/progression'
+import { caricoSuggerito, serieEffettive, testoPrescrizione, valoriPrecompilati } from '../../domain/progression'
 import type { Fase, Prescrizione, Serie } from '../../domain/types'
-import { SetRow, type Bozza } from './SetRow'
+import { riassunto, SetRow, type Bozza } from './SetRow'
+import { usePendente } from './registro'
 import { LinkEsercizio, type Lista } from '../esercizi/lista'
 
 interface Props {
@@ -36,20 +38,32 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
   for (let i = 1; i <= nSerie; i++) righe.push({ numero: i, lato: null, etichetta: `${i}` })
   for (let k = 1; k <= (p.serieExtraSx ?? 0); k++) righe.push({ numero: nSerie + k, lato: 'sx', etichetta: `${nSerie + k} sx` })
 
+  // precompilazione: memoria dell'utente, poi ultima seduta, poi scheda
+  const memoria = useLiveQuery(() => db.memoria.get(chiaveEs(id)), [id])
+  const [caricoApplicato, setCaricoApplicato] = useState<number | null>(null)
+  const [confermaReset, setConfermaReset] = useState(false)
   const suggerito = caricoSuggerito(precedenti, incrementoKg)
-  const repsPrescritte = ripetizioniEffettive(p, fase)
   const conRpe = es.categoria !== 'mobilita'
+  const iniziale = (numero: number): Bozza => valoriPrecompilati(numero, { memoria, precedenti, p, fase, caricoApplicato })
 
-  const iniziale = (numero: number): Bozza => {
-    const prec = precedenti.find((s) => s.numero === numero) ?? precedenti.at(-1)
-    return {
-      caricoKg: suggerito ?? prec?.caricoKg ?? null,
-      ripetizioni: prec?.ripetizioni ?? (repsPrescritte?.startsWith('max') ? null : primoNumero(repsPrescritte)),
-      durataSec: prec?.durataSec ?? primoNumero(p.durataSec),
-      distanzaM: prec?.distanzaM ?? p.distanzaM ?? null,
-      rpe: null,
+  // valori attuali delle righe non confermate (anche se modificate a mano)
+  const bozze = useRef(new Map<number, Bozza>())
+  const daRegistrare = righe.filter((r) => !mie.some((s) => s.numero === r.numero))
+  const registraTutte = async () => {
+    for (const r of daRegistrare) {
+      const b = bozze.current.get(r.numero) ?? iniziale(r.numero)
+      await salvaSerieRicordando({ id: uuid(), sedutaId, esercizioId: id, data, numero: r.numero, lato: r.lato, ...b })
     }
   }
+  const primaBozza = daRegistrare.length ? (bozze.current.get(daRegistrare[0].numero) ?? iniziale(daRegistrare[0].numero)) : null
+  usePendente(
+    `es:${p.esercizioId}`,
+    primaBozza
+      ? { titolo: es.nome, dettaglio: `${daRegistrare.length} ${daRegistrare.length === 1 ? 'serie' : 'serie'} · ${riassunto(es.tipoRegistrazione, primaBozza)}`, salva: registraTutte }
+      : null,
+  )
+  const caricoAttuale = primaBozza?.caricoKg ?? null
+  const mostraSuggerito = es.tipoRegistrazione === 'carico_ripetizioni' && suggerito !== null && caricoAttuale !== null && suggerito > caricoAttuale && !!daRegistrare.length
 
   const fatte = righe.filter((r) => mie.some((s) => s.numero === r.numero)).length
 
@@ -93,13 +107,54 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
               incrementoKg={incrementoKg}
               conRpe={conRpe}
               onConferma={async (b) => {
-                await salvaSerie({ id: salvata?.id ?? uuid(), sedutaId, esercizioId: id, data, numero: r.numero, lato: r.lato, ...b })
+                await salvaSerieRicordando({ id: salvata?.id ?? uuid(), sedutaId, esercizioId: id, data, numero: r.numero, lato: r.lato, ...b })
                 if (!salvata && p.recuperoSec) timer.avvia(p.recuperoSec, es.nome)
               }}
               onElimina={salvata ? () => eliminaSerie(salvata.id) : undefined}
+              onBozza={(b) => bozze.current.set(r.numero, b)}
             />
           )
         })}
+      </div>
+      {(daRegistrare.length > 0 || mostraSuggerito) && (
+        <div className="mt-2 flex flex-wrap gap-2">
+          {daRegistrare.length > 1 && (
+            <Button className="h-10 flex-1" onClick={registraTutte}>
+              <Icon name="checks" className="size-5" /> Conferma tutte ({daRegistrare.length})
+            </Button>
+          )}
+          {mostraSuggerito && (
+            <Button className="h-10" variant="ghost" onClick={() => setCaricoApplicato(suggerito)}>
+              Suggerito {numIt(suggerito!, 2)} kg
+            </Button>
+          )}
+        </div>
+      )}
+      <div className="mt-2 flex justify-end">
+        {confermaReset ? (
+          <span className="flex items-center gap-2 text-xs">
+            <span className="text-zinc-500">Ripartire dai valori della scheda?</span>
+            <Button
+              className="h-8 px-3 text-xs"
+              variant="danger"
+              onClick={async () => {
+                await azzeraMemoria(id)
+                bozze.current.clear()
+                setCaricoApplicato(null)
+                setConfermaReset(false)
+              }}
+            >
+              Azzera
+            </Button>
+            <Button className="h-8 px-3 text-xs" onClick={() => setConfermaReset(false)}>
+              No
+            </Button>
+          </span>
+        ) : (
+          <button type="button" onClick={() => setConfermaReset(true)} className="flex items-center gap-1 text-xs font-medium text-zinc-400" aria-label="Azzera i valori precompilati">
+            <Icon name="reset" className="size-3.5" /> {memoria?.azzerata ? 'valori della scheda' : 'valori precompilati'}
+          </button>
+        )}
       </div>
     </Card>
   )

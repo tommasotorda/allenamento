@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Button, Card, ExerciseThumb, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { esporta, importa, nomeFileBackup } from '../../db/backup'
-import { aggiornaImpostazioni, aggiornaPiano, eliminaFoto } from '../../db/repositories'
+import { aggiornaImpostazioni, aggiornaPiano, azzeraTuttaMemoria, eliminaFoto } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { lunediDi } from '../../domain/calendar'
 import { esercizi, esercizio, NOMI_GIORNI, programma } from '../../domain/data'
@@ -40,6 +40,8 @@ export function ImpostazioniPage() {
   const [daImportare, setDaImportare] = useState<unknown>(null)
   const [msg, setMsg] = useState<string | null>(null)
   const [nuovoCiclo, setNuovoCiclo] = useState(false)
+  const [reset, setReset] = useState<'no' | 'conferma' | 'fatto'>('no')
+  const ricordati = useLiveQuery(() => db.memoria.filter((m) => !m.azzerata).count()) ?? 0
   if (!imp || !piano) return null
 
   const esportaFile = async () => {
@@ -135,6 +137,32 @@ export function ImpostazioniPage() {
             </button>
           ))}
         </div>
+      </Card>
+
+      <SectionTitle>Autocompilazione</SectionTitle>
+      <Card className="space-y-2">
+        <div className="text-sm text-zinc-500">
+          Esercizi con valori ricordati: {ricordati}
+        </div>
+        {reset === 'conferma' ? (
+          <div className="flex gap-2">
+            <Button
+              variant="danger"
+              className="flex-1"
+              onClick={async () => {
+                await azzeraTuttaMemoria()
+                setReset('fatto')
+              }}
+            >
+              Azzera tutto
+            </Button>
+            <Button onClick={() => setReset('no')}>Annulla</Button>
+          </div>
+        ) : (
+          <Button className="w-full" onClick={() => setReset('conferma')} disabled={reset === 'fatto'}>
+            <Icon name="reset" className="size-5" /> {reset === 'fatto' ? 'Si riparte dai valori della scheda' : 'Azzera i valori precompilati'}
+          </Button>
+        )}
       </Card>
 
       <SectionTitle>Backup</SectionTitle>

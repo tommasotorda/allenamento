@@ -4,17 +4,32 @@ import { Button, PageHeader, SectionTitle } from '../../components/ui'
 import { eliminaSeduta, terminaSeduta } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { faseDellaSettimana } from '../../domain/calendar'
-import { programma } from '../../domain/data'
 import { strutturaSeduta } from '../../domain/session'
 import { isCircuito, type SedutaLog } from '../../domain/types'
 import type { Ciclo } from '../../hooks'
 import { CircuitLog } from './CircuitLog'
 import { ExerciseLog } from './ExerciseLog'
 import { PistaLog, TennisLog } from './PistaLog'
+import { FineSeduta } from './FineSeduta'
+import { RegistroProvider, useRegistro, type Pendente } from './registro'
 import { listaDaSeduta, type Lista } from '../esercizi/lista'
 
-export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo; onFine: (id: string) => void }) {
-  const fase = faseDellaSettimana(programma, seduta.settimanaCiclo)
+export function SessioneAttiva(props: { seduta: SedutaLog; ciclo: Ciclo; onFine: (id: string) => void }) {
+  return (
+    <RegistroProvider>
+      <Contenuto {...props} />
+    </RegistroProvider>
+  )
+}
+
+function Contenuto({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo; onFine: (id: string) => void }) {
+  const fase = faseDellaSettimana(ciclo.programma, seduta.settimanaCiclo)
+  const registro = useRegistro()
+  const [riepilogo, setRiepilogo] = useState<[string, Pendente][] | null>(null)
+  const termina = async () => {
+    await terminaSeduta(seduta.id)
+    onFine(seduta.id)
+  }
   const s = strutturaSeduta(ciclo.programma, seduta.templateId, seduta.settimanaCiclo, fase, ciclo.impostazioni.sbloccati)
   const serie = useLiveQuery(() => db.serie.where('sedutaId').equals(seduta.id).toArray(), [seduta.id]) ?? []
   const [annulla, setAnnulla] = useState(false)
@@ -86,9 +101,11 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
         variant="primary"
         big
         className="mt-8 w-full"
-        onClick={async () => {
-          await terminaSeduta(seduta.id)
-          onFine(seduta.id)
+        onClick={() => {
+          // cio' che non e' stato confermato si propone gia' compilato, da spuntare
+          const pendenti = registro.elenco()
+          if (pendenti.length) setRiepilogo(pendenti)
+          else void termina()
         }}
       >
         Termina seduta
@@ -108,6 +125,7 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
           </Button>
         )}
       </div>
+      {riepilogo && <FineSeduta voci={riepilogo} onChiudi={() => setRiepilogo(null)} onTermina={termina} />}
     </div>
   )
 }

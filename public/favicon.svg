@@ -1,4 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
-<rect width="512" height="512" fill="#f97316"/>
-<g transform="translate(-81.5 -103.10000000000002) scale(2.7)" color="#fff" style="--fig-prop:#fff;--fig-accent:#fff"><g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" opacity=".4"><polyline points="120,114.7 108,148.6 80.7,168.9 89.1,174.4" fill="none" stroke-width="7"/><polyline points="133.6,72.8 146.7,94.1 168.1,85.9" fill="none" stroke-width="6"/></g><g stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M120 114.7 L133.6 72.8" fill="none" stroke-width="9"/><polyline points="120,114.7 137.7,146 125.1,177.6 135.1,177.9" fill="none" stroke-width="7"/><polyline points="133.6,72.8 120.5,94.1 142,102.4" fill="none" stroke-width="6"/></g><circle cx="137.6" cy="60.4" r="9" fill="currentColor"/></g>
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+  <stop offset="0" stop-color="#ffa24c"/>
+  <stop offset="0.55" stop-color="#f97316"/>
+  <stop offset="1" stop-color="#e2470b"/>
+</linearGradient></defs>
+<rect width="512" height="512" rx="120" fill="url(#g)"/>
+<g transform="translate(256 276) scale(1.12) translate(-256 -276)">
+  <path d="M176 262 C150 196 162 124 256 124 C350 124 362 196 336 262" fill="none" stroke="#fff" stroke-width="36" stroke-linecap="round"/>
+  <path d="M202 428 A120 120 0 1 1 310 428 Z" fill="#fff"/>
+  <polyline points="198,368 238,328 268,354 318,304" fill="none" stroke="#f26b12" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+  <polyline points="286,302 320,302 320,336" fill="none" stroke="#f26b12" stroke-width="26" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
 </svg>

@@ -1,4 +1,4 @@
-import type { Esercizio, Fase, Prescrizione, Serie } from './types'
+import type { Esercizio, Fase, Memoria, Prescrizione, Serie } from './types'
 
 /** Categorie a cui si applica la riduzione delle serie nelle settimane di scarico. */
 const CATEGORIE_SCARICO = new Set(['forza', 'potenza', 'ricostruzione'])
@@ -71,4 +71,42 @@ export function caricoSuggerito(serieUltimaSeduta: Serie[], incrementoKg: number
 /** Il nome dice "per lato": si registrano serie separate sx/dx. */
 export function perLato(p: Prescrizione): boolean {
   return /per lato/.test(String(p.ripetizioni ?? '')) || /per lato/.test(String(p.durataSec ?? ''))
+}
+
+export type Bozza = Pick<Serie, 'ripetizioni' | 'caricoKg' | 'durataSec' | 'distanzaM' | 'rpe'>
+
+/**
+ * Valori proposti per una serie. Priorita': memoria (ultimi valori registrati dall'utente),
+ * poi l'ultima seduta, poi la prescrizione della scheda. Dopo un reset della memoria si
+ * riparte dalla scheda. `caricoApplicato` sostituisce il carico (suggerimento accettato).
+ */
+export function valoriPrecompilati(
+  numero: number,
+  opts: { memoria?: Memoria; precedenti: Serie[]; p: Prescrizione; fase: Fase; caricoApplicato?: number | null },
+): Bozza {
+  const { memoria, precedenti, p, fase } = opts
+  const reps = ripetizioniEffettive(p, fase)
+  const scheda: Bozza = {
+    caricoKg: null,
+    ripetizioni: reps?.startsWith('max') ? null : primoNumero(reps),
+    durataSec: primoNumero(p.durataSec),
+    distanzaM: p.distanzaM ?? null,
+    rpe: null,
+  }
+  let base: Partial<Bozza> | undefined
+  if (memoria?.azzerata) base = undefined
+  else if (memoria?.serie?.length) base = memoria.serie[numero - 1] ?? memoria.serie.at(-1)
+  else if (precedenti.length) {
+    const s = precedenti.find((x) => x.numero === numero) ?? precedenti.at(-1)!
+    base = { ripetizioni: s.ripetizioni, caricoKg: s.caricoKg, durataSec: s.durataSec, distanzaM: s.distanzaM, rpe: null }
+  }
+  const out: Bozza = {
+    caricoKg: base?.caricoKg ?? scheda.caricoKg,
+    ripetizioni: base?.ripetizioni ?? scheda.ripetizioni,
+    durataSec: base?.durataSec ?? scheda.durataSec,
+    distanzaM: base?.distanzaM ?? scheda.distanzaM,
+    rpe: base?.rpe ?? null,
+  }
+  if (opts.caricoApplicato != null) out.caricoKg = opts.caricoApplicato
+  return out
 }

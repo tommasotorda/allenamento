@@ -16,6 +16,8 @@ const PATHS = {
   download: 'M12 4v12M6 10l6 6 6-6M4 20h16',
   upload: 'M12 20V8M6 14l6-6 6 6M4 4h16',
   chevron: 'M9 5l7 7-7 7',
+  reset: 'M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5',
+  checks: 'M2 12.5l4.5 4.5L15 7.5M10 16l1 1 9.5-9.5',
 } as const
 
 export type IconName = keyof typeof PATHS

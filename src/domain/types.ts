@@ -109,7 +109,7 @@ export type Obiettivo = 'forza' | 'massa' | 'potenza' | 'resistenza' | 'mobilita
 export interface Piano {
   id: string
   nome: string
-  origine: 'originale' | 'profilo' | 'questionario' | 'adattamento' | 'copia'
+  origine: 'originale' | 'profilo' | 'questionario' | 'adattamento' | 'copia' | 'libera'
   obiettivi: Obiettivo[]
   /** lunedi' di inizio del ciclo */
   inizio: string
@@ -210,4 +210,17 @@ export interface FotoEsercizio {
   esercizioId: string
   blob: Blob
   creata: string
+}
+
+/** Valori ricordati per precompilare la seduta successiva (autocompilazione). */
+export interface Memoria {
+  /** `es:<esercizio>`, `pista:<esercizio>` oppure `tennis` */
+  chiave: string
+  /** ultimi valori per numero di serie (indice = numero - 1) */
+  serie?: Pick<Serie, 'ripetizioni' | 'caricoKg' | 'durataSec' | 'distanzaM' | 'rpe'>[]
+  pista?: SedutaLog['pista']
+  minuti?: number
+  /** reset: si riparte dai valori della scheda */
+  azzerata?: boolean
+  aggiornata: string
 }

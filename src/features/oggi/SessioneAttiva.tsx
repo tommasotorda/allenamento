@@ -11,6 +11,7 @@ import type { Ciclo } from '../../hooks'
 import { CircuitLog } from './CircuitLog'
 import { ExerciseLog } from './ExerciseLog'
 import { PistaLog, TennisLog } from './PistaLog'
+import { listaDaSeduta, type Lista } from '../esercizi/lista'
 
 export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo; onFine: (id: string) => void }) {
   const fase = faseDellaSettimana(programma, seduta.settimanaCiclo)
@@ -19,7 +20,12 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
   const [annulla, setAnnulla] = useState(false)
   const inc = ciclo.impostazioni.incrementoCaricoKg
 
-  const comune = { sedutaId: seduta.id, data: seduta.data, fase, incrementoKg: inc, serie }
+  // lista per scorrere tra gli esercizi della seduta dalla loro pagina (modificabili se il piano e' quello attivo)
+  const suoPiano = (seduta.pianoId ?? 'originale') === ciclo.piano.id
+  const lista: Lista = { titolo: s.nome, voci: listaDaSeduta(suoPiano ? ciclo.programma : undefined, s), pianoId: suoPiano ? ciclo.piano.id : undefined }
+  let k = 0
+  const pos = () => k++
+  const comune = { sedutaId: seduta.id, data: seduta.data, fase, incrementoKg: inc, serie, lista }
 
   return (
     <div>
@@ -30,7 +36,7 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
           <SectionTitle>Core · {s.core.variante}</SectionTitle>
           <div className="space-y-3">
             {s.core.voci.map((p) => (
-              <ExerciseLog key={p.esercizioId} p={p} {...comune} />
+              <ExerciseLog key={p.esercizioId} p={p} {...comune} pos={pos()} />
             ))}
           </div>
         </>
@@ -39,7 +45,7 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
       {s.pista && (
         <>
           <SectionTitle>Pista</SectionTitle>
-          <PistaLog seduta={seduta} pista={s.pista} />
+          <PistaLog seduta={seduta} pista={s.pista} lista={lista} pos={pos()} />
         </>
       )}
 
@@ -56,9 +62,9 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
           <div className="space-y-3">
             {s.palestra.map((v, i) =>
               isCircuito(v) ? (
-                <CircuitLog key={`c${i}`} sedutaId={seduta.id} data={seduta.data} c={v} serie={serie} />
+                <CircuitLog key={`c${i}`} sedutaId={seduta.id} data={seduta.data} c={v} serie={serie} lista={lista} pos={v.esercizi.map(() => pos())} />
               ) : (
-                <ExerciseLog key={v.esercizioId} p={v} {...comune} />
+                <ExerciseLog key={v.esercizioId} p={v} {...comune} pos={pos()} />
               ),
             )}
           </div>
@@ -70,7 +76,7 @@ export function SessioneAttiva({ seduta, ciclo, onFine }: { seduta: SedutaLog; c
           <SectionTitle>Mobilità</SectionTitle>
           <div className="space-y-3">
             {s.mobilita.map((p) => (
-              <ExerciseLog key={p.esercizioId} p={p} {...comune} />
+              <ExerciseLog key={p.esercizioId} p={p} {...comune} pos={pos()} />
             ))}
           </div>
         </>

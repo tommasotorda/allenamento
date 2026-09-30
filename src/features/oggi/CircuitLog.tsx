@@ -1,16 +1,19 @@
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, ExerciseThumb } from '../../components/ui'
 import { eliminaSerie, salvaSerie, uuid } from '../../db/repositories'
 import { esercizio } from '../../domain/data'
 import type { Circuito, Serie } from '../../domain/types'
+import { LinkEsercizio, type Lista } from '../esercizi/lista'
 
 interface Props {
   sedutaId: string
   data: string
   c: Circuito
   serie: Serie[]
+  lista?: Lista
+  /** posizione nella lista di ciascun esercizio del circuito */
+  pos?: number[]
 }
 
 function bip(freq: number) {
@@ -31,7 +34,7 @@ function bip(freq: number) {
 }
 
 /** Circuito a tempo: registrazione per giro e timer lavoro/pausa. */
-export function CircuitLog({ sedutaId, data, c, serie }: Props) {
+export function CircuitLog({ sedutaId, data, c, serie, lista, pos }: Props) {
   const giriFatti = (g: number) => c.esercizi.every((id) => serie.some((s) => s.esercizioId === id && s.numero === g))
 
   const segnaGiro = async (g: number) => {
@@ -54,11 +57,11 @@ export function CircuitLog({ sedutaId, data, c, serie }: Props) {
         </Badge>
       </div>
       <div className="space-y-2">
-        {c.esercizi.map((id) => (
-          <Link key={id} to={`/esercizi/${id}`} className="flex items-center gap-3">
+        {c.esercizi.map((id, k) => (
+          <LinkEsercizio key={id} id={id} lista={lista} pos={pos?.[k]} className="flex items-center gap-3">
             <ExerciseThumb id={id} className="size-12" />
             <span className="font-medium">{esercizio(id).nome}</span>
-          </Link>
+          </LinkEsercizio>
         ))}
       </div>
       <IntervalTimer c={c} />

@@ -12,9 +12,12 @@ export function AnteprimaProgramma({
   settimana = 1,
   aperta: apertaEsterna,
   onApri,
+  pianoId,
 }: {
   programma: Programma
   settimana?: number
+  /** piano salvato: gli esercizi si possono modificare dalla loro pagina */
+  pianoId?: string
   /** stato controllato dall'esterno (es. nell'indirizzo, per ritrovarlo tornando indietro) */
   aperta?: string | null
   onApri?: (id: string | null) => void
@@ -39,7 +42,7 @@ export function AnteprimaProgramma({
               </div>
               <Icon name="chevron" className={`size-5 text-zinc-400 transition-transform ${aperta === x.sedutaId ? 'rotate-90' : ''}`} />
             </button>
-            {aperta === x.sedutaId && <SessionPreview s={strutturaSeduta(programma, x.sedutaId, settimana, fase, [])} fase={fase} />}
+            {aperta === x.sedutaId && <SessionPreview s={strutturaSeduta(programma, x.sedutaId, settimana, fase, [])} fase={fase} programma={programma} pianoId={pianoId} />}
           </Card>
         )
       })}

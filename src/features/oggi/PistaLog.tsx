@@ -1,25 +1,25 @@
-import { Link } from 'react-router-dom'
 import { Stepper } from '../../components/Stepper'
 import { Badge, Card, ExerciseThumb } from '../../components/ui'
 import { aggiornaSeduta } from '../../db/repositories'
 import { esercizio } from '../../domain/data'
 import type { StrutturaSeduta } from '../../domain/session'
 import type { SedutaLog } from '../../domain/types'
+import { LinkEsercizio, type Lista } from '../esercizi/lista'
 
-export function PistaLog({ seduta, pista }: { seduta: SedutaLog; pista: NonNullable<StrutturaSeduta['pista']> }) {
+export function PistaLog({ seduta, pista, lista, pos }: { seduta: SedutaLog; pista: NonNullable<StrutturaSeduta['pista']>; lista?: Lista; pos?: number }) {
   const es = esercizio(pista.esercizioId)
   const set = (k: keyof SedutaLog['pista']) => (v: number | null) => aggiornaSeduta(seduta.id, { pista: { ...seduta.pista, [k]: v } })
 
   return (
     <Card className="p-3">
       <div className="flex items-center gap-3">
-        <Link to={`/esercizi/${es.id}`}>
+        <LinkEsercizio id={es.id} lista={lista} pos={pos}>
           <ExerciseThumb id={es.id} className="size-16" />
-        </Link>
+        </LinkEsercizio>
         <div className="min-w-0 flex-1">
-          <Link to={`/esercizi/${es.id}`} className="font-semibold">
+          <LinkEsercizio id={es.id} lista={lista} pos={pos} className="font-semibold">
             {pista.scarico ? 'Corsa in Zona 2' : es.nome}
-          </Link>
+          </LinkEsercizio>
           {pista.ripetute !== null && (
             <div className="mt-1">
               <Badge tone="accent">{pista.ripetute} ripetute</Badge>

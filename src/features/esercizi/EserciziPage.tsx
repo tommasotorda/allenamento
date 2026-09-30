@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { GearLink } from '../../components/GearLink'
 import { Chip, ExerciseThumb, PageHeader } from '../../components/ui'
 import { CATEGORIE, esercizi, NOMI_CATEGORIE } from '../../domain/data'
 import type { Categoria } from '../../domain/types'
+import { LinkEsercizio, type Lista } from './lista'
 
 type Filtro = Categoria | 'funzionali'
 
@@ -25,6 +25,7 @@ export function EserciziPage() {
     }
   }
   const lista = esercizi.filter((e) => !cat || (cat === 'funzionali' ? e.funzionale : e.categoria === cat))
+  const scorrimento: Lista = { titolo: cat === 'funzionali' ? 'Funzionali' : cat ? NOMI_CATEGORIE[cat] : 'Tutti gli esercizi', voci: lista.map((e) => ({ id: e.id })) }
 
   return (
     <div>
@@ -43,14 +44,14 @@ export function EserciziPage() {
         ))}
       </div>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {lista.map((e) => (
-          <Link key={e.id} to={`/esercizi/${e.id}`} className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-white/10">
+        {lista.map((e, i) => (
+          <LinkEsercizio key={e.id} lista={scorrimento} pos={i} className="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-white/10">
             <ExerciseThumb id={e.id} className="aspect-[240/196] w-full rounded-none" />
             <div className="p-2.5">
               <div className="text-sm font-semibold leading-tight">{e.nome}</div>
               <div className="mt-0.5 text-xs text-zinc-500">{NOMI_CATEGORIE[e.categoria]}</div>
             </div>
-          </Link>
+          </LinkEsercizio>
         ))}
       </div>
     </div>

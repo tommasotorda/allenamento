@@ -1,6 +1,5 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { useRestTimer } from '../../components/RestTimer'
 import { Badge, Card, ExerciseThumb } from '../../components/ui'
@@ -9,6 +8,7 @@ import { esercizio } from '../../domain/data'
 import { caricoSuggerito, primoNumero, ripetizioniEffettive, serieEffettive, testoPrescrizione } from '../../domain/progression'
 import type { Fase, Prescrizione, Serie } from '../../domain/types'
 import { SetRow, type Bozza } from './SetRow'
+import { LinkEsercizio, type Lista } from '../esercizi/lista'
 
 interface Props {
   sedutaId: string
@@ -17,10 +17,12 @@ interface Props {
   fase: Fase
   incrementoKg: number
   serie: Serie[]
+  lista?: Lista
+  pos?: number
 }
 
 /** Blocco di un esercizio nella seduta in corso: intestazione e righe delle serie. */
-export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie }: Props) {
+export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, lista, pos }: Props) {
   // l'alternativa e' scelta se ci sono gia' serie registrate con quell'esercizio
   const [usaAlt, setUsaAlt] = useState(() => !!p.alternativa && serie.some((s) => s.esercizioId === p.alternativa))
   const id = usaAlt && p.alternativa ? p.alternativa : p.esercizioId
@@ -54,13 +56,13 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie }: Pr
   return (
     <Card className="p-3">
       <div className="flex items-center gap-3">
-        <Link to={`/esercizi/${id}`} className="shrink-0">
+        <LinkEsercizio id={id} lista={lista} pos={pos} className="shrink-0">
           <ExerciseThumb id={id} className="size-16" />
-        </Link>
+        </LinkEsercizio>
         <div className="min-w-0 flex-1">
-          <Link to={`/esercizi/${id}`} className="block truncate font-semibold">
+          <LinkEsercizio id={id} lista={lista} pos={pos} className="block truncate font-semibold">
             {es.nome}
-          </Link>
+          </LinkEsercizio>
           <div className="text-sm text-zinc-500">{testoPrescrizione(p, fase, es)}</div>
           <div className="mt-1 flex flex-wrap gap-1">
             {p.recuperoSec ? <Badge>rec {p.recuperoSec} s</Badge> : null}

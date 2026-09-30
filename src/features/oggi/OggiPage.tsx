@@ -79,7 +79,7 @@ function Anteprima({ c }: { c: Ciclo }) {
         Inizia seduta
       </Button>
 
-      <SessionPreview s={s} fase={c.fase} />
+      <SessionPreview s={s} fase={c.fase} programma={c.programma} pianoId={c.piano.id} />
     </div>
   )
 }

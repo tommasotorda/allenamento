@@ -114,7 +114,7 @@ function SchedaCard({
           <Button className="w-full" onClick={() => aggiorna({ sedute: esercizi ? null : '1', seduta: null })}>
             <Icon name="book" className="size-5" /> {esercizi ? 'Nascondi sedute' : 'Sedute ed esercizi'}
           </Button>
-          {esercizi && <AnteprimaProgramma programma={p.programma} settimana={attiva ? Math.min(settimanaAssoluta(p, oggi), p.settimane) : 1} aperta={vista.get('seduta')} onApri={(id) => aggiorna({ seduta: id })} />}
+          {esercizi && <AnteprimaProgramma programma={p.programma} settimana={attiva ? Math.min(settimanaAssoluta(p, oggi), p.settimane) : 1} aperta={vista.get('seduta')} onApri={(id) => aggiorna({ seduta: id })} pianoId={p.id} />}
           <div className="flex gap-2">
             <input value={nome} onChange={(e) => setNome(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl bg-zinc-100 px-3 dark:bg-zinc-800" aria-label="Nome della scheda" />
             <Button disabled={!nome.trim() || nome === p.nome} onClick={() => aggiornaPiano(p.id, { nome: nome.trim() })}>

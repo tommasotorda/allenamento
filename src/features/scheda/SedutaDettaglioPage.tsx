@@ -61,7 +61,7 @@ export function SedutaDettaglioPage() {
           >
             Avvia questa seduta
           </Button>
-          <SessionPreview s={s} fase={c.fase} />
+          <SessionPreview s={s} fase={c.fase} programma={c.programma} pianoId={c.piano.id} />
         </>
       )}
     </div>

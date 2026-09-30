@@ -1,6 +1,6 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import { MuscleMap } from '../../components/MuscleMap'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, formatData, PageHeader, SectionTitle } from '../../components/ui'
@@ -10,6 +10,8 @@ import { esercizi, NOMI_CATEGORIE } from '../../domain/data'
 import { espandi, MUSCOLI, perLivello, type Livello } from '../../domain/muscles'
 import type { FotoEsercizio } from '../../domain/types'
 import { riassunto } from '../oggi/SetRow'
+import type { StatoLista, VoceLista } from './lista'
+import { ModificaNellaScheda } from './ModificaNellaScheda'
 
 // three.js e' pesante: il visore si carica solo aprendo un esercizio
 const Viewer3D = lazy(() => import('./Viewer3D'))
@@ -56,20 +58,82 @@ export function EsercizioPage() {
   const input = useRef<HTMLInputElement>(null)
   const [caricamento, setCaricamento] = useState(false)
 
+  // lista di provenienza: scorrimento al precedente/successivo
+  const nav = useNavigate()
+  const loc = useLocation()
+  const stato = loc.state as StatoLista | null
+  const lista = stato && stato.voci[stato.pos]?.id === id ? stato : null
+  const vai = (pos: number, voci: VoceLista[] = lista!.voci) => {
+    if (!lista || pos < 0 || pos >= voci.length) return
+    nav(`/esercizi/${voci[pos].id}`, { replace: true, state: { ...lista, voci, pos, dir: pos >= lista.pos ? 1 : -1 } satisfies StatoLista })
+  }
+  const tocco = useRef<{ x: number; y: number; t: number; suCanvas: boolean } | null>(null)
+  const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length !== 1) return (tocco.current = null)
+    const t = e.touches[0]
+    tocco.current = { x: t.clientX, y: t.clientY, t: performance.now(), suCanvas: !!(e.target as HTMLElement).closest('canvas') }
+  }
+  const onTouchEnd = (e: React.TouchEvent) => {
+    const i = tocco.current
+    tocco.current = null
+    if (!i || !lista || document.querySelector('[role=dialog]')) return
+    const t = e.changedTouches[0]
+    const dx = t.clientX - i.x
+    const dy = t.clientY - i.y
+    const dt = performance.now() - i.t
+    // sul visore 3D il trascinamento ruota la figura: lo scorrimento vale solo se rapido
+    const ok = i.suCanvas ? Math.abs(dx) > 110 && Math.abs(dx) > 3 * Math.abs(dy) && dt < 450 : Math.abs(dx) > 60 && Math.abs(dx) > 2 * Math.abs(dy)
+    if (ok) vai(lista.pos + (dx < 0 ? 1 : -1))
+  }
+
   if (!es) return <PageHeader back="/esercizi" title="Esercizio non trovato" />
 
   const perData = new Map<string, typeof storico>()
   for (const s of storico) perData.set(s.data, [...(perData.get(s.data) ?? []), s])
 
+  const frecce = lista && lista.voci.length > 1 && (
+    <div className="flex items-center gap-1">
+      <button type="button" onClick={() => vai(lista.pos - 1)} disabled={lista.pos === 0} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio precedente">
+        <Icon name="back" className="size-5" />
+      </button>
+      <button type="button" onClick={() => vai(lista.pos + 1)} disabled={lista.pos === lista.voci.length - 1} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio successivo">
+        <Icon name="chevron" className="size-5" />
+      </button>
+    </div>
+  )
+
   return (
-    <div>
-      <PageHeader back="/esercizi" title={es.nome} subtitle={NOMI_CATEGORIE[es.categoria]} />
+    <div key={id} onTouchStart={onTouchStart} onTouchEnd={onTouchEnd} className={lista?.dir === 1 ? 'entra-da-destra' : lista?.dir === -1 ? 'entra-da-sinistra' : ''}>
+      <PageHeader
+        back="/esercizi"
+        title={es.nome}
+        subtitle={lista && lista.voci.length > 1 ? `${lista.pos + 1} / ${lista.voci.length} · ${lista.titolo}` : NOMI_CATEGORIE[es.categoria]}
+        right={frecce}
+      />
+      {lista && lista.voci.length > 1 && lista.voci.length <= 24 && (
+        <div className="mb-2 flex justify-center gap-1" aria-hidden="true">
+          {lista.voci.map((_, i) => (
+            <span key={i} className={`h-1.5 rounded-full transition-all ${i === lista.pos ? 'w-4 bg-accent' : 'w-1.5 bg-zinc-300 dark:bg-zinc-700'}`} />
+          ))}
+        </div>
+      )}
 
       <Card className="p-2">
         <Suspense fallback={<div className="aspect-square w-full rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:aspect-[4/3]" />}>
           <Viewer3D id={es.id} />
         </Suspense>
       </Card>
+
+      {lista?.pianoId && (
+        <ModificaNellaScheda
+          key={`${lista.pos}-${id}`}
+          stato={lista}
+          onLista={(voci, pos) => {
+            if (pos === null) nav(-1)
+            else nav(`/esercizi/${voci[pos].id}`, { replace: true, state: { ...lista, voci, pos } satisfies StatoLista })
+          }}
+        />
+      )}
 
       <SectionTitle>Muscoli coinvolti</SectionTitle>
       <Card>

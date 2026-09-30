@@ -101,3 +101,29 @@ input[type='number'] {
 .mappa-muscoli .muscolo[data-livello='3'] {
   fill: var(--mm-3);
 }
+
+/* scorrimento tra gli esercizi */
+@keyframes entra-destra {
+  from {
+    opacity: 0;
+    transform: translateX(32px);
+  }
+}
+@keyframes entra-sinistra {
+  from {
+    opacity: 0;
+    transform: translateX(-32px);
+  }
+}
+.entra-da-destra {
+  animation: entra-destra 0.22s ease-out;
+}
+.entra-da-sinistra {
+  animation: entra-sinistra 0.22s ease-out;
+}
+@media (prefers-reduced-motion: reduce) {
+  .entra-da-destra,
+  .entra-da-sinistra {
+    animation: none;
+  }
+}

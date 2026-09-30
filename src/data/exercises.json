@@ -3395,5 +3395,198 @@
       "polsi"
     ],
     "funzionale": true
+  },
+  {
+    "id": "curl_manubri",
+    "nome": "Curl con manubri",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi, manubri lungo i fianchi con i palmi in avanti.",
+      "Piega i gomiti portando i manubri verso le spalle, gomiti fermi ai fianchi.",
+      "Scendi lentamente fino a braccia tese."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "bicipite": 3,
+      "avambraccio-flessori": 2,
+      "deltoide-anteriore": 1
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "pushdown_tricipiti",
+    "nome": "Pushdown per tricipiti",
+    "categoria": "forza",
+    "attrezzatura": [
+      "cavo o elastico"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi davanti all'ancoraggio alto, gomiti vicini ai fianchi.",
+      "Spingi la maniglia in basso fino a braccia tese.",
+      "Torna lentamente fino a gomiti piegati a 90 gradi."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "tricipite": 3,
+      "addome": 1
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "cavo",
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "alzate_laterali",
+    "nome": "Alzate laterali",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi, manubri lungo i fianchi, gomiti leggermente piegati.",
+      "Solleva le braccia di lato fino all'altezza delle spalle.",
+      "Scendi lentamente."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "deltoide-posteriore": 2,
+      "trapezio-alto": 1
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "croci_manubri",
+    "nome": "Croci con manubri",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri",
+      "panca"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Supino sulla panca, manubri sopra il petto con i gomiti leggermente piegati.",
+      "Apri le braccia di lato fino a sentire l'allungamento del petto.",
+      "Richiudi portando i manubri sopra il petto."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "pettorali": 3,
+      "deltoide-anteriore": 2
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ],
+      [
+        "panca"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "curl_martello",
+    "nome": "Curl a martello",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi, manubri lungo i fianchi con i palmi rivolti verso le cosce.",
+      "Piega i gomiti mantenendo la presa neutra, gomiti fermi ai fianchi.",
+      "Scendi lentamente fino a braccia tese."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "bicipite": 3,
+      "avambraccio-flessori": 3
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "estensioni_tricipiti",
+    "nome": "Estensioni per tricipiti sopra la testa",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubrio"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi o seduto, un manubrio tenuto con due mani sopra la testa.",
+      "Piega i gomiti portando il manubrio dietro la nuca, gomiti vicini alla testa.",
+      "Distendi le braccia fino in alto."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "tricipite": 3,
+      "addome": 1
+    },
+    "schemi": [
+      "isolamento"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   }
 ]

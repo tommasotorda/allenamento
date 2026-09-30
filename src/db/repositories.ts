@@ -166,7 +166,8 @@ export const eliminaProfilo = (id: string) => db.profili.delete(id)
 
 export const chiaveEs = (id: string) => `es:${id}`
 export const chiavePista = (id: string) => `pista:${id}`
-export const CHIAVE_TENNIS = 'tennis'
+/** la chiave `tennis` resta per i dati gia' salvati */
+export const chiaveAttivita = (tipo: string) => (tipo === 'tennis' ? 'tennis' : `attivita:${tipo}`)
 
 /** Registra una serie e la ricorda come valore precompilato per la prossima volta. */
 export async function salvaSerieRicordando(s: Serie) {
@@ -187,8 +188,8 @@ export async function ricordaPista(esercizioId: string, pista: SedutaLog['pista'
   await db.memoria.put({ chiave: chiavePista(esercizioId), pista, aggiornata: new Date().toISOString() })
 }
 
-export async function ricordaTennis(minuti: number) {
-  await db.memoria.put({ chiave: CHIAVE_TENNIS, minuti, aggiornata: new Date().toISOString() })
+export async function ricordaAttivita(tipo: string, minuti: number) {
+  await db.memoria.put({ chiave: chiaveAttivita(tipo), minuti, aggiornata: new Date().toISOString() })
 }
 
 /** Reset di un esercizio: la prossima seduta riparte dai valori della scheda. */

@@ -37,7 +37,7 @@ export function AnteprimaProgramma({
               <div className="min-w-0 flex-1">
                 <div className="font-semibold">{s.nome}</div>
                 <div className="text-sm text-zinc-500">
-                  {x.giorni.map((g) => NOMI_GIORNI[g]).join(', ')} · {n} esercizi{s.pista ? ' · pista' : ''}
+                  {x.giorni.map((g) => NOMI_GIORNI[g]).join(', ')} · {n} esercizi{s.pista ? ' · pista' : ''}{s.attivita ? ` · ${s.attivita.tipo} ${s.attivita.durataMin} min` : ''}
                 </div>
               </div>
               <Icon name="chevron" className={`size-5 text-zinc-400 transition-transform ${aperta === x.sedutaId ? 'rotate-90' : ''}`} />

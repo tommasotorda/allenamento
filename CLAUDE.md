@@ -63,6 +63,8 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 - Profili standard = risposte preimpostate (`profili.ts`) che aprono il questionario precompilato; i profili salvati dall'utente (`profili` in Dexie) sono copie di programmi.
 - `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.
 - Deterministico: stesse risposte, stessa scheda (c'è un test).
+- Questionario dettagliato: `suddivisione` (auto, full body, superiore/inferiore, spinta/tirata/gambe, gruppi muscolari — `modelliPer`), `attrezziGiorno` (attrezzi e corpo libero per singolo giorno), `sport` (tipo, giorni, durata). Gli slot `Mu(...)` scelgono esercizi in cui quei muscoli sono primari: gli esercizi di isolamento (schema `isolamento`) entrano solo così. Nei giorni con sport la seduta ha l'attività, un esercizio in meno e niente salti; i giorni di solo sport diventano sedute con l'attività e un defaticamento.
+- `Seduta.attivita` è generica (tennis, calcio...): i minuti stanno in `SedutaLog.tennisMin` (nome storico).
 
 ## PDF
 

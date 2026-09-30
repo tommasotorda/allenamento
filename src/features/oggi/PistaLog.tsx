@@ -2,7 +2,8 @@ import { Stepper } from '../../components/Stepper'
 import { Badge, Card, ExerciseThumb } from '../../components/ui'
 import { useLiveQuery } from 'dexie-react-hooks'
 import { Button } from '../../components/ui'
-import { aggiornaSeduta, CHIAVE_TENNIS, chiavePista, ricordaPista, ricordaTennis } from '../../db/repositories'
+import { aggiornaSeduta, chiaveAttivita, chiavePista, ricordaAttivita, ricordaPista } from '../../db/repositories'
+import { nomeAttivita } from '../../domain/session'
 import { db } from '../../db/schema'
 import { usePendente } from './registro'
 import { esercizio } from '../../domain/data'
@@ -63,17 +64,39 @@ export function PistaLog({ seduta, pista, lista, pos }: { seduta: SedutaLog; pis
   )
 }
 
-export function TennisLog({ seduta, durataMin }: { seduta: SedutaLog; durataMin: number }) {
-  const memoria = useLiveQuery(() => db.memoria.get(CHIAVE_TENNIS))
+/** Sport della seduta (tennis, calcio, ...): minuti, proposti dall'ultima volta. */
+export function AttivitaLog({ seduta, tipo, durataMin }: { seduta: SedutaLog; tipo: string; durataMin: number }) {
+  const memoria = useLiveQuery(() => db.memoria.get(chiaveAttivita(tipo)), [tipo])
   const proposta = memoria?.minuti ?? durataMin
-  usePendente('tennis', seduta.tennisMin === null ? { titolo: 'Tennis', dettaglio: `${proposta} min`, salva: () => aggiornaSeduta(seduta.id, { tennisMin: proposta }).then(() => undefined) } : null)
+  const nome = nomeAttivita(tipo)
+  usePendente(
+    `attivita:${tipo}`,
+    seduta.tennisMin === null
+      ? {
+          titolo: nome,
+          dettaglio: `${proposta} min`,
+          salva: async () => {
+            await aggiornaSeduta(seduta.id, { tennisMin: proposta })
+          },
+        }
+      : null,
+  )
   return (
     <Card className="flex items-center justify-between p-3">
       <div>
-        <div className="font-semibold">Tennis</div>
+        <div className="font-semibold">{nome}</div>
         <div className="text-sm text-zinc-500">{durataMin} min</div>
       </div>
-      <Stepper label="minuti" value={seduta.tennisMin} onChange={async (v) => { await aggiornaSeduta(seduta.id, { tennisMin: v }); if (v !== null) await ricordaTennis(v) }} step={5} start={proposta} />
+      <Stepper
+        label="minuti"
+        value={seduta.tennisMin}
+        onChange={async (v) => {
+          await aggiornaSeduta(seduta.id, { tennisMin: v })
+          if (v !== null) await ricordaAttivita(tipo, v)
+        }}
+        step={5}
+        start={proposta}
+      />
     </Card>
   )
 }

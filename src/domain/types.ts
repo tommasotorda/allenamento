@@ -31,7 +31,7 @@ export interface Esercizio {
 export type Schema =
   | 'squat' | 'hinge' | 'affondo' | 'spinta-orizzontale' | 'spinta-verticale' | 'tirata-orizzontale' | 'tirata-verticale'
   | 'trasporto' | 'anti-estensione' | 'anti-rotazione' | 'anti-flessione-laterale' | 'rotazione' | 'pliometria' | 'balistico'
-  | 'locomozione' | 'cardio' | 'mobilita' | 'stretching' | 'yoga' | 'polpacci' | 'ginocchio' | 'scapole' | 'respirazione'
+  | 'locomozione' | 'cardio' | 'mobilita' | 'stretching' | 'yoga' | 'polpacci' | 'ginocchio' | 'scapole' | 'respirazione' | 'isolamento'
 
 export type Attrezzo =
   | 'manubri' | 'kettlebell' | 'bilanciere' | 'trap-bar' | 'panca' | 'sbarra' | 'elastico' | 'cavo' | 'slitta'
@@ -182,6 +182,7 @@ export interface SedutaLog {
     fcMedia: number | null
     ripetuteFatte: number | null
   }
+  /** minuti dell'attivita' della seduta (tennis o altro sport; nome storico del campo) */
   tennisMin: number | null
 }
 
@@ -215,7 +216,7 @@ export interface FotoEsercizio {
 
 /** Valori ricordati per precompilare la seduta successiva (autocompilazione). */
 export interface Memoria {
-  /** `es:<esercizio>`, `pista:<esercizio>` oppure `tennis` */
+  /** `es:<esercizio>`, `pista:<esercizio>`, `attivita:<sport>` o `tennis` */
   chiave: string
   /** ultimi valori per numero di serie (indice = numero - 1) */
   serie?: Pick<Serie, 'ripetizioni' | 'caricoKg' | 'durataSec' | 'distanzaM' | 'rpe'>[]

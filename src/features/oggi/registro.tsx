@@ -1,6 +1,6 @@
 /**
  * Registro della seduta in corso: ogni blocco annuncia cio' che resta da registrare
- * (serie non confermate, pista, tennis) con i valori precompilati, per il riepilogo di fine seduta.
+ * (serie non confermate, pista, altri sport) con i valori precompilati, per il riepilogo di fine seduta.
  */
 import { createContext, useCallback, useContext, useEffect, useRef, type ReactNode } from 'react'
 

@@ -60,3 +60,6 @@ export function elencoSedute(programma: Programma): { sedutaId: string; nome: st
 export function nomeSedutaLog(log: { templateId: string; nomeSeduta?: string }, programmaBase: Programma): string {
   return log.nomeSeduta ?? programmaBase.sedute[log.templateId]?.nome ?? log.templateId
 }
+
+/** "calcio + padel" -> "Calcio + padel" */
+export const nomeAttivita = (tipo: string) => tipo.charAt(0).toUpperCase() + tipo.slice(1)

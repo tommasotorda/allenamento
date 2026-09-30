@@ -6,7 +6,7 @@ import { Button, Card, formatData, PageHeader, SectionTitle } from '../../compon
 import { aggiornaSeduta, eliminaSeduta, eliminaSerie, salvaSerie } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizio, programma } from '../../domain/data'
-import { nomeSedutaLog } from '../../domain/session'
+import { nomeAttivita, nomeSedutaLog } from '../../domain/session'
 import type { SedutaLog } from '../../domain/types'
 import { useImpostazioni } from '../../hooks'
 import { durataMin } from '../oggi/Riepilogo'
@@ -69,7 +69,7 @@ export function SedutaStoricoPage() {
 
       {(seduta.tennisMin !== null || (seduta.templateId === 'mer' && (seduta.pianoId ?? 'originale') === 'originale')) && (
         <>
-          <SectionTitle>Tennis</SectionTitle>
+          <SectionTitle>{nomeAttivita(programma.sedute[seduta.templateId]?.attivita?.tipo ?? 'attività')}</SectionTitle>
           <Card className="flex justify-center">
             {modifica ? <Stepper label="minuti" value={seduta.tennisMin} onChange={(v) => aggiornaSeduta(seduta.id, { tennisMin: v })} step={5} start={60} /> : <span>{seduta.tennisMin ?? '—'} min</span>}
           </Card>

@@ -1,7 +1,7 @@
 import { Badge, Card, ExerciseThumb, SectionTitle } from '../../components/ui'
 import { esercizio } from '../../domain/data'
 import { testoPrescrizione } from '../../domain/progression'
-import type { StrutturaSeduta } from '../../domain/session'
+import { nomeAttivita, type StrutturaSeduta } from '../../domain/session'
 import { isCircuito, type Fase, type Prescrizione, type Programma } from '../../domain/types'
 import { LinkEsercizio, listaDaSeduta, type StatoLista } from '../esercizi/lista'
 
@@ -61,7 +61,7 @@ export function SessionPreview({ s, fase, programma, pianoId }: { s: StrutturaSe
       )}
       {s.attivita && (
         <>
-          <SectionTitle>Tennis</SectionTitle>
+          <SectionTitle>{nomeAttivita(s.attivita.tipo)}</SectionTitle>
           <Card className="font-semibold">{s.attivita.durataMin} min</Card>
         </>
       )}

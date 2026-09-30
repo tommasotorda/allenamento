@@ -24,7 +24,7 @@ export function Riepilogo({ sedutaId, onChiudi }: { sedutaId: string; onChiudi: 
   if (seduta.pista.durataMin !== null) voci.push(['Pista', `${seduta.pista.durataMin} min`])
   if (seduta.pista.distanzaM !== null) voci.push(['Distanza', `${numIt(seduta.pista.distanzaM, 0)} m`])
   if (seduta.pista.fcMedia !== null) voci.push(['FC media', `${seduta.pista.fcMedia} bpm`])
-  if (seduta.tennisMin !== null) voci.push(['Tennis', `${seduta.tennisMin} min`])
+  if (seduta.tennisMin !== null) voci.push(['Attività', `${seduta.tennisMin} min`])
 
   return (
     <div>

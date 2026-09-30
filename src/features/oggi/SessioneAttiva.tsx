@@ -9,7 +9,8 @@ import { isCircuito, type SedutaLog } from '../../domain/types'
 import type { Ciclo } from '../../hooks'
 import { CircuitLog } from './CircuitLog'
 import { ExerciseLog } from './ExerciseLog'
-import { PistaLog, TennisLog } from './PistaLog'
+import { AttivitaLog, PistaLog } from './PistaLog'
+import { nomeAttivita } from '../../domain/session'
 import { FineSeduta } from './FineSeduta'
 import { RegistroProvider, useRegistro, type Pendente } from './registro'
 import { listaDaSeduta, type Lista } from '../esercizi/lista'
@@ -66,8 +67,8 @@ function Contenuto({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo;
 
       {s.attivita && (
         <>
-          <SectionTitle>Tennis</SectionTitle>
-          <TennisLog seduta={seduta} durataMin={s.attivita.durataMin} />
+          <SectionTitle>{nomeAttivita(s.attivita.tipo)}</SectionTitle>
+          <AttivitaLog seduta={seduta} tipo={s.attivita.tipo} durataMin={s.attivita.durataMin} />
         </>
       )}
 

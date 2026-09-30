@@ -64,6 +64,43 @@ describe('generatore', () => {
     expect(n(120)).toBeGreaterThanOrEqual(9)
   })
 
+  it('suddivisioni: spinta/tirata/gambe e gruppi muscolari con isolamento', () => {
+    const base: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['massa'], livello: 2, durataMin: 60, attrezzi: ['manubri', 'bilanciere', 'panca', 'sbarra', 'cavo'], giorni: ['lun', 'mar', 'mer', 'gio', 'ven'] }
+    const ppl = generaProgramma({ ...base, suddivisione: 'ppl' })
+    expect(ppl.settimana.map((x) => ppl.sedute[x.sedutaId].nome)).toEqual(['Spinta A', 'Tirata A', 'Gambe', 'Spinta B', 'Tirata B'])
+    const gruppi = generaProgramma({ ...base, suddivisione: 'gruppi' })
+    expect(gruppi.settimana.map((x) => gruppi.sedute[x.sedutaId].nome)).toEqual(['Petto e tricipiti', 'Schiena e bicipiti', 'Gambe', 'Spalle e core', 'Braccia'])
+    const braccia = gruppi.sedute[gruppi.settimana[4].sedutaId].palestra!.map((v) => (v as { esercizioId: string }).esercizioId)
+    expect(braccia).toEqual(expect.arrayContaining(['curl_manubri', 'pushdown_tricipiti']))
+    // l'isolamento compare solo con suddivisioni che lo prevedono
+    expect(ids(generaProgramma({ ...base, suddivisione: 'fullbody' })).some((id) => esercizio(id).schemi.includes('isolamento'))).toBe(false)
+  })
+
+  it('attrezzi diversi in un giorno', () => {
+    const r: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['forza'], livello: 2, attrezzi: ['bilanciere', 'panca', 'manubri'], corpoLibero: false, giorni: ['lun', 'ven'], attrezziGiorno: { ven: { attrezzi: ['elastico'], corpoLibero: true } } }
+    const p = generaProgramma(r)
+    const ven = p.sedute[p.settimana.find((x) => x.giorno === 'ven')!.sedutaId]
+    for (const v of [...(ven.palestra ?? []), ...(ven.mobilita ?? [])]) {
+      const e = esercizio((v as { esercizioId: string }).esercizioId)
+      expect(e.attrezzi.every((g) => g.some((a) => a === 'elastico' || a === 'tappetino')), e.id).toBe(true)
+    }
+    const lun = p.sedute[p.settimana.find((x) => x.giorno === 'lun')!.sedutaId]
+    expect(lun.palestra!.some((v) => esercizio((v as { esercizioId: string }).esercizioId).attrezzi.flat().includes('bilanciere'))).toBe(true)
+  })
+
+  it('altri sport: nei giorni di allenamento come attivita\', negli altri come seduta a parte', () => {
+    const r: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['potenza'], livello: 2, attrezzi: ['kettlebell', 'box', 'palla-medica'], giorni: ['lun', 'mer'], sport: [{ tipo: 'Calcio', giorni: ['mer', 'sab'], durataMin: 90 }] }
+    const p = generaProgramma(r)
+    expect(p.settimana.map((x) => x.giorno)).toEqual(['lun', 'mer', 'sab'])
+    const mer = p.sedute[p.settimana[1].sedutaId]
+    expect(mer.attivita).toEqual({ tipo: 'calcio', durataMin: 90 })
+    // niente salti nel giorno dello sport, esplosivi in apertura solo negli altri giorni
+    expect(mer.palestra!.some((v) => esercizio((v as { esercizioId: string }).esercizioId).impatto)).toBe(false)
+    const sab = p.sedute[p.settimana[2].sedutaId]
+    expect(sab).toMatchObject({ nome: 'Calcio', attivita: { tipo: 'calcio' }, palestra: [], core: false })
+    expect(sab.mobilita!.length).toBeGreaterThan(0)
+  })
+
   it('la corsa aggiunge la pista', () => {
     const p = generaProgramma({ ...RISPOSTE_VUOTE, obiettivi: ['resistenza'], corsa: true, giorni: ['lun', 'mer', 'ven', 'sab'] })
     expect(Object.values(p.sedute).filter((s) => s.pista).length).toBe(2)

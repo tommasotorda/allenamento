@@ -32,6 +32,7 @@ const PIANI: Record<string, Piano> = {
   albero: 'frontale',
   stretch_laterale: 'frontale',
   stretch_adduttori: 'frontale',
+  alzate_laterali: 'frontale',
 }
 
 export const NOMI_GIUNTI = [
@@ -144,6 +145,10 @@ const speciali: Record<string, (g: Scheletro3D, t: number) => void> = {
   },
   band_pull_apart(g, t) {
     apriBraccia(g, t, [1, 0, 0], 1)
+  },
+  // supino: le braccia si aprono di lato partendo dalla verticale
+  croci_manubri(g, t) {
+    apriBraccia(g, t, [0, 1, 0], 1)
   },
   ytw_prono(g, t) {
     // da Y (braccia avanti e in alto) a T (braccia di lato)

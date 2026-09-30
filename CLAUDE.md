@@ -54,7 +54,7 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 - Le sedute hanno ID liberi (`s1`, `lun`…) e `programma.settimana` le assegna ai giorni, weekend compresi. `Seduta.core` indica il blocco core iniziale.
 - `useCiclo()` restituisce piano attivo, programma, settimana, fase e `scaduto`: è la fonte da usare nelle schermate. Le sedute registrate salvano `pianoId` e `nomeSeduta`.
 - Migrazione: la versione 3 del database crea il "Piano originale" dal JSON con le modifiche fatte nella v2; i backup v1/v2 si importano allo stesso modo.
-- Primo avvio: nessun piano creato in automatico. Senza schede (`useSenzaSchede()`) Oggi e Scheda mostrano `InvitoScheda` (`piani/NuovaScheda.tsx`) con i modi per crearne una; il "Piano originale" resta tra i profili.
+- Primo avvio: nessun piano creato in automatico. Senza schede (`useSenzaSchede()`) Oggi e Scheda mostrano `InvitoScheda` (`piani/NuovaScheda.tsx`) con i modi per crearne una; il "Piano originale" resta tra i profili. Impostazioni → Schede → "Elimina tutte le schede" (`eliminaTutteLeSchede`) riporta a questo stato senza toccare storico, misure e profili.
 
 ## Generatore, profili e adattamenti
 

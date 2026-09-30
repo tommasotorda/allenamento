@@ -1,10 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Button, Card, ExerciseThumb, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { esporta, importa, nomeFileBackup } from '../../db/backup'
-import { aggiornaImpostazioni, aggiornaPiano, azzeraTuttaMemoria, eliminaFoto } from '../../db/repositories'
+import { aggiornaImpostazioni, aggiornaPiano, azzeraTuttaMemoria, eliminaFoto, eliminaTutteLeSchede } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { lunediDi } from '../../domain/calendar'
 import { esercizi, esercizio, NOMI_GIORNI, programma } from '../../domain/data'
@@ -42,6 +42,9 @@ export function ImpostazioniPage() {
   const [msg, setMsg] = useState<string | null>(null)
   const [nuovoCiclo, setNuovoCiclo] = useState(false)
   const [reset, setReset] = useState<'no' | 'conferma' | 'fatto'>('no')
+  const [eliminaSchede, setEliminaSchede] = useState(false)
+  const nSchede = useLiveQuery(() => db.piani.count()) ?? 0
+  const nav = useNavigate()
   const ricordati = useLiveQuery(() => db.memoria.filter((m) => !m.azzerata).count()) ?? 0
   if (!imp) return null
 
@@ -225,6 +228,33 @@ export function ImpostazioniPage() {
               </div>
             ))}
           </div>
+        )}
+      </Card>
+
+      <SectionTitle>Schede</SectionTitle>
+      <Card className="space-y-2">
+        <div className="text-sm text-zinc-500">
+          Schede salvate: {nSchede}. Storico, misure e profili restano.
+        </div>
+        {eliminaSchede ? (
+          <div className="flex gap-2">
+            <Button
+              variant="danger"
+              className="flex-1"
+              onClick={async () => {
+                await eliminaTutteLeSchede()
+                setEliminaSchede(false)
+                nav('/')
+              }}
+            >
+              Elimina {nSchede === 1 ? '1 scheda' : `${nSchede} schede`}
+            </Button>
+            <Button onClick={() => setEliminaSchede(false)}>Annulla</Button>
+          </div>
+        ) : (
+          <Button className="w-full text-red-600" disabled={nSchede === 0} onClick={() => setEliminaSchede(true)}>
+            <Icon name="trash" className="size-5" /> Elimina tutte le schede
+          </Button>
         )}
       </Card>
     </div>

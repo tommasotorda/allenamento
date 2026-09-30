@@ -158,6 +158,15 @@ export async function eliminaPiano(id: string) {
   await db.piani.delete(id)
 }
 
+/** Ricomincia da zero: elimina tutte le schede. Storico, misure e profili restano; una seduta lasciata aperta viene chiusa. */
+export async function eliminaTutteLeSchede() {
+  await db.transaction('rw', db.piani, db.impostazioni, db.sedute, async () => {
+    await db.piani.clear()
+    await db.sedute.filter((s) => s.fine === null).modify({ fine: new Date().toISOString() })
+    await aggiornaImpostazioni({ pianoAttivo: undefined })
+  })
+}
+
 export const salvaProfilo = (p: ProfiloUtente) => db.profili.put(p)
 export const eliminaProfilo = (id: string) => db.profili.delete(id)
 

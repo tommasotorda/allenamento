@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { faseDellaSettimana, giornoSettimana, lunediDi, prossimaSeduta, settimanaCiclo, varianteCore } from '../src/domain/calendar'
+import { faseDellaSettimana, giornoSettimana, lunediDi, prossimaSeduta, sedutaDelGiorno, settimanaCiclo, varianteCore } from '../src/domain/calendar'
 import { programma } from '../src/domain/data'
 
 describe('calendario', () => {
@@ -31,13 +31,15 @@ describe('calendario', () => {
 
   it('giorno della settimana e lunedi\'', () => {
     expect(giornoSettimana('2026-09-29')).toBe('mar')
-    expect(giornoSettimana('2026-10-03')).toBeNull()
+    expect(giornoSettimana('2026-10-03')).toBe('sab')
+    expect(sedutaDelGiorno(programma, '2026-10-03')).toBeNull()
+    expect(sedutaDelGiorno(programma, '2026-09-30')).toBe('mer')
     expect(lunediDi('2026-10-04')).toBe('2026-09-28')
     expect(lunediDi('2026-09-28')).toBe('2026-09-28')
   })
 
   it('prossima seduta dal weekend e\' il lunedi\'', () => {
-    expect(prossimaSeduta('2026-10-03')).toEqual({ data: '2026-10-05', giorno: 'lun' })
+    expect(prossimaSeduta(programma, '2026-10-03')).toEqual({ data: '2026-10-05', giorno: 'lun', sedutaId: 'lun' })
   })
 
   it('il core alterna le varianti', () => {

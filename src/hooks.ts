@@ -1,11 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks'
 import { useEffect, useState } from 'react'
-import { leggiImpostazioni } from './db/repositories'
+import { assicuraPianoAttivo, leggiImpostazioni } from './db/repositories'
 import { db } from './db/schema'
 import { faseDellaSettimana, isoLocale, settimanaCiclo } from './domain/calendar'
-import { programma } from './domain/data'
-import { programmaEffettivo, type SchedaUtente } from './domain/editing'
-import type { Fase, Impostazioni, Programma } from './domain/types'
+import { scaduto } from './domain/plans'
+import type { Fase, Impostazioni, Piano, Programma } from './domain/types'
 
 export function useImpostazioni(): Impostazioni | undefined {
   useEffect(() => {
@@ -34,24 +33,28 @@ export interface Ciclo {
   settimana: number
   fase: Fase
   impostazioni: Impostazioni
-  /** programma con le modifiche dell'utente */
+  piano: Piano
+  /** programma del piano attivo, con le modifiche dell'utente */
   programma: Programma
-  schedaUtente: SchedaUtente | undefined
+  /** il piano ha superato la durata prevista */
+  scaduto: boolean
 }
 
-/** Scheda personalizzata: undefined finche' carica, null se non esiste. */
-export function useSchedaUtente(): SchedaUtente | null | undefined {
-  return useLiveQuery(async () => (await db.schede.get('singleton')) ?? null)
+export function usePianoAttivo(): Piano | undefined {
+  const imp = useImpostazioni()
+  useEffect(() => {
+    void assicuraPianoAttivo()
+  }, [imp?.pianoAttivo])
+  return useLiveQuery(() => (imp?.pianoAttivo ? db.piani.get(imp.pianoAttivo) : undefined), [imp?.pianoAttivo])
 }
 
 export function useCiclo(): Ciclo | undefined {
   const imp = useImpostazioni()
   const oggi = useOggi()
-  const scheda = useSchedaUtente()
-  if (!imp || scheda === undefined) return undefined
-  const settimana = settimanaCiclo(oggi, imp.cicloInizio)
-  const u = scheda ?? undefined
-  return { oggi, settimana, fase: faseDellaSettimana(programma, settimana), impostazioni: imp, programma: programmaEffettivo(programma, u), schedaUtente: u }
+  const piano = usePianoAttivo()
+  if (!imp || !piano) return undefined
+  const settimana = settimanaCiclo(oggi, piano.inizio)
+  return { oggi, settimana, fase: faseDellaSettimana(piano.programma, settimana), impostazioni: imp, piano, programma: piano.programma, scaduto: scaduto(piano, oggi) }
 }
 
 /** URL dell'ultima foto dell'utente per un esercizio, se presente. */

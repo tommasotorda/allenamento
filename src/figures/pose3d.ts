@@ -24,6 +24,14 @@ const PIANI: Record<string, Piano> = {
   side_plank: 'laterale',
   copenhagen_plank: 'laterale',
   open_book: 'trasverso',
+  affondo_laterale: 'frontale',
+  kettlebell_windmill: 'frontale',
+  lat_machine: 'frontale',
+  guerriero_2: 'frontale',
+  triangolo: 'frontale',
+  albero: 'frontale',
+  stretch_laterale: 'frontale',
+  stretch_adduttori: 'frontale',
 }
 
 export const NOMI_GIUNTI = [
@@ -99,6 +107,21 @@ export function scheletro3D(id: string, t: number): { giunti: Scheletro3D; j2d: 
 
 const UA = 25 * S
 const FA = 23 * S
+const lerp3 = (a: V3, b: V3, t: number): V3 => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t]
+const norm = (v: V3): V3 => {
+  const l = Math.hypot(...v) || 1
+  return [v[0] / l, v[1] / l, v[2] / l]
+}
+
+/** Porta le braccia dalla direzione `da` (t=0) all'apertura laterale (t=1), gomiti poco piegati. */
+function apriBraccia(g: Scheletro3D, t: number, da: V3, apertura: number) {
+  for (const [n, s] of [['N', 1], ['F', -1]] as const) {
+    const d = norm(lerp3(da, [0, 0, s * apertura], t))
+    const e = add(g[`sh${n}`], scale(d, UA))
+    g[`elbow${n}`] = e
+    g[`hand${n}`] = add(e, scale(norm(lerp3(d, [da[0], da[1], 0], 0.15)), FA))
+  }
+}
 
 /** Movimenti che non stanno in un piano: il braccio o la gamba ruotano fuori dal disegno. */
 const speciali: Record<string, (g: Scheletro3D, t: number) => void> = {
@@ -114,6 +137,59 @@ const speciali: Record<string, (g: Scheletro3D, t: number) => void> = {
     const a = (-70 + 140 * t) * (Math.PI / 180)
     g.elbowN = add(g.shN, [0, -UA, 0])
     g.handN = add(g.elbowN, [Math.cos(a) * FA, 0, Math.sin(a) * FA])
+  },
+  // braccia che si aprono di lato (fuori dal piano del disegno)
+  alzate_posteriori(g, t) {
+    apriBraccia(g, t, [0, -1, 0], 0.9)
+  },
+  band_pull_apart(g, t) {
+    apriBraccia(g, t, [1, 0, 0], 1)
+  },
+  ytw_prono(g, t) {
+    // da Y (braccia avanti e in alto) a T (braccia di lato)
+    apriBraccia(g, t, [1, 0.2, 0], 1)
+  },
+  // braccio incrociato davanti al petto, l'altra mano sul gomito
+  stretch_spalla(g, t) {
+    const d: V3 = norm([Math.sin((Math.PI / 2) * t) * 0.3, -1 + t, -t * 1.1])
+    g.elbowN = add(g.shN, scale(d, UA))
+    g.handN = add(g.elbowN, scale(norm([0.2, 0, -1]), FA * t + FA * 0.2 * (1 - t)))
+    if (t > 0.05) {
+      g.handF = lerp3(g.handF, add(g.elbowN, [0.05, 0, 0]), t)
+      g.elbowF = lerp3(g.elbowF, add(g.shF, [0.18, -0.12, 0.05]), t)
+    }
+  },
+  // caviglia sul ginocchio opposto, ginocchio aperto di lato
+  stretch_piriforme(g) {
+    g.ankleN = add(g.kneeF, [0, 0.05, 0.07])
+    g.toeN = add(g.ankleN, [0, 0.02, -0.1])
+    g.kneeN = add(lerp3(g.hipN, g.ankleN, 0.5), [0.05, 0.1, 0.3])
+  },
+  // tibia anteriore di traverso sul tappetino
+  piccione(g, t) {
+    if (t < 0.02) return
+    const k = add(g.hipN, [UA * 1.3 * t, -g.hipN[1] + 0.06, 0.18 * t])
+    g.kneeN = lerp3(g.kneeN, k, t)
+    g.ankleN = lerp3(g.ankleN, add(g.kneeN, [0.02, 0, -0.38]), t)
+    g.toeN = add(g.ankleN, [0, 0, -0.1])
+  },
+  // ginocchia che cadono di lato, braccia aperte a T
+  torsione_supina(g, t) {
+    for (const [n, s] of [['N', 1], ['F', -1]] as const) {
+      g[`elbow${n}`] = add(g[`sh${n}`], [0, 0, s * UA])
+      g[`hand${n}`] = add(g[`sh${n}`], [0, 0, s * (UA + FA)])
+    }
+    const a = (Math.PI / 2.4) * t
+    for (const n of ['kneeN', 'ankleN', 'toeN', 'kneeF', 'ankleF', 'toeF'] as const) {
+      const p = g[n]
+      const h = p[1] - g.hip[1]
+      g[n] = [p[0], g.hip[1] + h * Math.cos(a), p[2] - h * Math.sin(a)]
+    }
+  },
+  // farfalla: i piedi stanno davanti al bacino
+  stretch_adduttori(g) {
+    for (const n of ['ankleN', 'toeN', 'ankleF', 'toeF'] as const) g[n] = [g[n][0] + 0.32, g[n][1], g[n][2] * 0.3]
+    for (const n of ['kneeN', 'kneeF'] as const) g[n] = [g[n][0] + 0.15, g[n][1] + 0.08, g[n][2]]
   },
   // 90/90: da seduti le gambe stanno sul pavimento, il disegno le mostra viste dall'alto
   anche_90_90(g) {
@@ -207,8 +283,8 @@ export function oggetti3D(id: string, t: number, g: Scheletro3D, j2d: Joints, de
         const dietro = pr.side === 'left' ? -0.05 : 0.05
         out.push(
           lato
-            ? { k: 'box', centro: [a[0] + dietro, 1.2, 0], dim: [0.1, 2.4, 3], tono: 'muro' }
-            : { k: 'box', centro: [0, 1.2, a[2] + dietro], dim: [3, 2.4, 0.1], tono: 'muro' },
+            ? { k: 'box', centro: [a[0] + dietro, 1.1, 0], dim: [0.06, 2.2, 1.4], tono: 'muro' }
+            : { k: 'box', centro: [0, 1.1, a[2] + dietro], dim: [1.4, 2.2, 0.06], tono: 'muro' },
         )
         break
       }
@@ -261,9 +337,11 @@ export function oggetti3D(id: string, t: number, g: Scheletro3D, j2d: Joints, de
         }
         break
       }
-      case 'slider':
-        for (const p of [g.ankleN, g.ankleF]) out.push({ k: 'cilindro', a: [p[0], 0, p[2]], b: [p[0], 0.015, p[2]], r: 0.08, tono: 'accento' })
+      case 'slider': {
+        const sotto = Math.hypot(j2d.handN[0] - pr.at[0], j2d.handN[1] - pr.at[1]) < 4 ? [g.handN, g.handF] : [g.ankleN, g.ankleF]
+        for (const p of sotto) out.push({ k: 'cilindro', a: [p[0], 0, p[2]], b: [p[0], 0.015, p[2]], r: 0.08, tono: 'accento' })
         break
+      }
       case 'mat':
       case 'rug':
         out.push({ k: 'box', centro: [0, 0.005, 0], dim: piano === 'sagittale' ? [2.2, 0.01, 0.8] : [1.2, 0.01, 2], tono: 'tappeto' })

@@ -8,6 +8,10 @@ import { OggiPage } from './features/oggi/OggiPage'
 import { SedutaStoricoPage } from './features/progressi/SedutaStoricoPage'
 import { SchedaPage } from './features/scheda/SchedaPage'
 import { SedutaDettaglioPage } from './features/scheda/SedutaDettaglioPage'
+import { AdattaPage } from './features/adattamento/AdattaPage'
+import { ProfiliPage } from './features/piani/ProfiliPage'
+import { QuestionarioPage } from './features/piani/QuestionarioPage'
+import { SchedePage } from './features/piani/SchedePage'
 import { lazy, Suspense, useEffect } from 'react'
 
 // i grafici (Recharts) sono pesanti: caricati solo aprendo Progressi
@@ -79,6 +83,10 @@ export default function App() {
               <Route path="/" element={<OggiPage />} />
               <Route path="/scheda" element={<SchedaPage />} />
               <Route path="/scheda/:giorno" element={<SedutaDettaglioPage />} />
+              <Route path="/schede" element={<SchedePage />} />
+              <Route path="/profili" element={<ProfiliPage />} />
+              <Route path="/questionario" element={<QuestionarioPage />} />
+              <Route path="/adatta" element={<AdattaPage />} />
               <Route path="/progressi" element={<Suspense fallback={null}><ProgressiPage /></Suspense>} />
               <Route path="/progressi/seduta/:id" element={<SedutaStoricoPage />} />
               <Route path="/esercizi" element={<EserciziPage />} />

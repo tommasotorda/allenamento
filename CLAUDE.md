@@ -11,6 +11,8 @@ PWA personale per seguire la scheda settimanale e registrare i progressi. Un sol
 - `npm run figures:preview -- <id,id> <out.html>` – foglio HTML con le pose A / metà / B delle figure (base del 3D)
 - `npx tsx scripts/preview-muscles.ts <id,id> <out.html>` – anteprima delle mappe muscolari
 - `npm run icons` – rigenera le icone PWA (solo macOS: usa Quick Look e sips)
+- `npx tsx scripts/prova-generatore.ts [id,id]` – stampa le schede generate dai profili standard
+- `python3 scripts/catalogo_meta.py` / `python3 scripts/catalogo_nuovi.py` – metadati del generatore ed esercizi aggiunti in `exercises.json`
 
 ## Stack
 
@@ -19,10 +21,10 @@ React 19 + TypeScript + Vite, Tailwind v4, Dexie (IndexedDB), React Router (Hash
 ## Struttura
 
 - `src/data/` – JSON statici: `exercises.json`, `program.json`, `tests.json`
-- `src/domain/` – logica pura e testata: calendario/ciclo, progressione, statistiche, struttura seduta, validazione, muscoli (`muscles.ts`), scheda personalizzata e suggerimenti di sostituzione (`editing.ts`)
+- `src/domain/` – logica pura e testata: calendario/ciclo, progressione, statistiche, struttura seduta, validazione, muscoli (`muscles.ts`), modifica dei blocchi e suggerimenti di sostituzione (`editing.ts`), piani (`plans.ts`), generatore (`generator.ts`), profili standard (`profili.ts`), adattamenti e proposte (`adattamento.ts`)
 - `src/db/` – schema Dexie, repository, backup (export/import JSON con foto in base64)
 - `src/figures/` – `engine.ts` + `poses.ts`: pose A e B di ogni esercizio (2D, cinematica diretta/inversa); `pose3d.ts` le porta in 3D per il visore; `muscleGeometry.ts` + `muscleMap.ts`: mappa muscolare stile Technogym
-- `src/features/` – schermate: oggi, scheda, progressi, esercizi, impostazioni
+- `src/features/` – schermate: oggi, scheda, progressi, esercizi, impostazioni, piani (questionario, le mie schede, profili), adattamento
 
 ## Vincoli sui testi (dalla specifica)
 
@@ -42,9 +44,20 @@ Tutto è generato da codice: niente immagini esterne, niente licenze, funziona o
 
 Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la voce in `FIGURE` (`src/figures/poses.ts`), altrimenti `npm run validate` fallisce. Angoli delle pose in gradi: 0 = destra, 90 = giù, -90 = su; la figura guarda a destra. Le foto scattate dall'utente hanno priorità nelle miniature.
 
-## Scheda personalizzata
+## Piani (schede)
 
-Tabella Dexie `schede` (singleton): contiene solo i blocchi modificati (palestra/mobilità per giorno, varianti del core). `programmaEffettivo()` la unisce al programma originale; `useCiclo().programma` è sempre quello da usare nelle schermate. Fasi, pista e sbloccabili non sono modificabili. Inclusa in export/import (backup versione 2; la versione 1 si importa ancora).
+- L'utente ha più **piani** (tabella Dexie `piani`), uno attivo (`impostazioni.pianoAttivo`). Ogni piano ha il suo `programma`, la copia `originale` per ripristinare i blocchi, `inizio` (lunedì) e `settimane` (12 = scadenza a 3 mesi).
+- Le sedute hanno ID liberi (`s1`, `lun`…) e `programma.settimana` le assegna ai giorni, weekend compresi. `Seduta.core` indica il blocco core iniziale.
+- `useCiclo()` restituisce piano attivo, programma, settimana, fase e `scaduto`: è la fonte da usare nelle schermate. Le sedute registrate salvano `pianoId` e `nomeSeduta`.
+- Migrazione: la versione 3 del database crea il "Piano originale" dal JSON con le modifiche fatte nella v2; i backup v1/v2 si importano allo stesso modo.
+
+## Generatore, profili e adattamenti
+
+- Ogni esercizio ha `schemi` di movimento, `attrezzi` (gruppi AND di alternative OR, `[]` = corpo libero), `livello`, `impatto`, `sollecita` (zone), `funzionale`.
+- `generaProgramma(risposte)`: split in base ai giorni (total body, gambe/superiore, condizionamento), slot per schema scelti per disponibilità (attrezzi, livello, zone da evitare) e punteggio (funzionale, focus, obiettivo). Parametri e fasi dipendono dagli obiettivi (il primo per i principali e le fasi, il secondo per gli accessori); potenza aggiunge un esplosivo in apertura, resistenza un circuito finale, mobilità più stretching/yoga.
+- Profili standard = risposte preimpostate (`profili.ts`) che aprono il questionario precompilato; i profili salvati dall'utente (`profili` in Dexie) sono copie di programmi.
+- `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.
+- Deterministico: stesse risposte, stessa scheda (c'è un test).
 
 ## Deploy
 

@@ -9,6 +9,7 @@ import { eliminaMisura, eliminaRisultatoTest, salvaMisura, salvaRisultatoTest } 
 import { db } from '../../db/schema'
 import { settimanaCiclo } from '../../domain/calendar'
 import { esercizi, programma, tests } from '../../domain/data'
+import { nomeSedutaLog } from '../../domain/session'
 import { mediaMobilePeso, miglioriSeriePerSeduta, volumeSerie, volumeSettimanale } from '../../domain/stats'
 import type { Misura } from '../../domain/types'
 import { useCiclo, useOggi } from '../../hooks'
@@ -249,7 +250,7 @@ function TestTab() {
                 const prec = rs[i - 1]
                 const diff = prec ? r.valore - prec.valore : null
                 const meglio = diff === null || diff === 0 ? null : (diff > 0) === (t.meglio === 'alto')
-                const sett = c ? settimanaCiclo(r.data, c.impostazioni.cicloInizio) : null
+                const sett = c ? settimanaCiclo(r.data, c.piano.inizio) : null
                 return (
                   <div key={r.id} className="flex items-center gap-2 py-2 text-sm">
                     <span className="w-24 shrink-0">{formatData(r.data)}</span>
@@ -287,7 +288,7 @@ function Storico() {
           <Link key={s.id} to={`/progressi/seduta/${s.id}`} className="block">
             <Card className="flex items-center gap-3 py-3">
               <div className="min-w-0 flex-1">
-                <div className="font-semibold">{programma.sedute[s.templateId].nome}</div>
+                <div className="font-semibold">{nomeSedutaLog(s, programma)}</div>
                 <div className="text-sm text-zinc-500">
                   {formatData(s.data)} · sett. {s.settimanaCiclo}
                   {d !== null ? ` · ${d} min` : ''} · {ss.length} serie · {numIt(volumeSerie(ss), 0)} kg

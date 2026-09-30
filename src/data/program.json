@@ -177,7 +177,8 @@
           "durataSec": 15,
           "recuperoSec": 45
         }
-      ]
+      ],
+      "core": true
     },
     "mar": {
       "nome": "Aerobico + Ricostruzione",
@@ -263,7 +264,8 @@
           "durataSec": 20,
           "recuperoSec": 60
         }
-      ]
+      ],
+      "core": true
     },
     "mer": {
       "nome": "Tennis + Mobilita'",
@@ -356,7 +358,8 @@
           "durataSec": "20 per lato",
           "recuperoSec": 30
         }
-      ]
+      ],
+      "core": true
     },
     "ven": {
       "nome": "Resistenza + Potenza",
@@ -402,7 +405,8 @@
             "suitcase_carry"
           ]
         }
-      ]
+      ],
+      "core": true
     }
   }
 }

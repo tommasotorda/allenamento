@@ -1,12 +1,10 @@
 import { isoLocale, lunediDi } from '../domain/calendar'
-import type { GiornoId, Impostazioni, Misura, RisultatoTest, SedutaLog, Serie } from '../domain/types'
-import type { SchedaUtente } from '../domain/editing'
+import { pianoOriginale } from '../domain/plans'
+import type { Impostazioni, Misura, Piano, ProfiloUtente, Programma, RisultatoTest, SedutaLog, Serie } from '../domain/types'
 import { db } from './schema'
 
-/** randomUUID esiste solo in contesti sicuri (HTTPS o localhost): in anteprima via Wi-Fi si usa getRandomValues. */
-export const uuid = (): string =>
-  crypto.randomUUID?.() ??
-  '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, (c) => (Number(c) ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (Number(c) / 4)))).toString(16))
+import { uuid } from '../domain/util'
+export { uuid }
 
 // ---- Impostazioni ----
 
@@ -48,11 +46,13 @@ export const eliminaMisura = (id: number) => db.misure.delete(id)
 
 // ---- Sedute e serie ----
 
-export async function iniziaSeduta(templateId: GiornoId, settimanaCiclo: number, data = isoLocale()): Promise<SedutaLog> {
+export async function iniziaSeduta(piano: Piano, templateId: string, settimanaCiclo: number, data = isoLocale()): Promise<SedutaLog> {
   const s: SedutaLog = {
     id: uuid(),
     data,
     templateId,
+    pianoId: piano.id,
+    nomeSeduta: piano.programma.sedute[templateId]?.nome,
     settimanaCiclo,
     inizio: new Date().toISOString(),
     fine: null,
@@ -126,12 +126,37 @@ async function ridimensiona(file: Blob, lato: number): Promise<Blob> {
   return new Promise((res, rej) => canvas.toBlob((b) => (b ? res(b) : rej(new Error('toBlob'))), 'image/jpeg', 0.85))
 }
 
-// ---- Scheda personalizzata ----
+// ---- Piani e profili ----
 
-export async function salvaScheda(u: SchedaUtente) {
-  await db.schede.put(u)
+/** Piano attivo; al primo avvio crea il "Piano originale" dal JSON. */
+export async function assicuraPianoAttivo(): Promise<Piano> {
+  const imp = await leggiImpostazioni()
+  const attivo = imp.pianoAttivo ? await db.piani.get(imp.pianoAttivo) : undefined
+  if (attivo) return attivo
+  const primo = (await db.piani.filter((p) => !p.archiviato).first()) ?? pianoOriginale(imp.cicloInizio)
+  await db.piani.put(primo)
+  await aggiornaImpostazioni({ pianoAttivo: primo.id })
+  return primo
 }
 
-export async function eliminaScheda() {
-  await db.schede.delete('singleton')
+/** Salva e (di default) rende attivo un piano. */
+export async function salvaPiano(p: Piano, attiva = true) {
+  await db.piani.put(p)
+  if (attiva) await aggiornaImpostazioni({ pianoAttivo: p.id })
 }
+
+export async function attivaPiano(id: string) {
+  const p = await db.piani.get(id)
+  if (p?.archiviato) await db.piani.update(id, { archiviato: false })
+  await aggiornaImpostazioni({ pianoAttivo: id })
+}
+
+export const aggiornaPiano = (id: string, patch: Partial<Piano>) => db.piani.update(id, patch)
+export const aggiornaProgramma = (id: string, programma: Programma) => db.piani.update(id, { programma })
+
+export async function eliminaPiano(id: string) {
+  await db.piani.delete(id)
+}
+
+export const salvaProfilo = (p: ProfiloUtente) => db.profili.put(p)
+export const eliminaProfilo = (id: string) => db.profili.delete(id)

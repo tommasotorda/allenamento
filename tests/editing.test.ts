@@ -1,49 +1,55 @@
 import { describe, expect, it } from 'vitest'
 import { esercizio, programma } from '../src/domain/data'
-import {
-  conBlocco,
-  leggiIntervallo,
-  programmaEffettivo,
-  scriviIntervallo,
-  senzaBlocco,
-  sostituisci,
-  suggerisciSostituti,
-  vociBlocco,
-} from '../src/domain/editing'
+import { bloccoModificato, conVoci, leggiIntervallo, ripristinaBlocco, scriviIntervallo, sostituisci, suggerisciSostituti, vociBlocco } from '../src/domain/editing'
+import { pianoOriginale } from '../src/domain/plans'
 import { espandi, somiglianza } from '../src/domain/muscles'
 import { strutturaSeduta } from '../src/domain/session'
 import type { Prescrizione } from '../src/domain/types'
 
 describe('scheda personalizzata', () => {
-  it('senza modifiche il programma e\' quello originale', () => {
-    expect(programmaEffettivo(programma, undefined)).toBe(programma)
+  const piano = () => pianoOriginale('2026-09-07')
+
+  it('il piano originale nasce dal JSON e ricorda la versione iniziale', () => {
+    const p = piano()
+    expect(p.programma).toEqual(programma)
+    expect(p.originale).toEqual(programma)
+    expect(p.programma).not.toBe(programma)
   })
 
   it('modifica un blocco lasciando intatti gli altri', () => {
-    const voci = vociBlocco(programma, { tipo: 'palestra', giorno: 'lun' }).slice(1)
-    const u = conBlocco(programma, undefined, { tipo: 'palestra', giorno: 'lun' }, voci)
-    const eff = programmaEffettivo(programma, u)
-    expect(eff.sedute.lun.palestra).toHaveLength(programma.sedute.lun.palestra!.length - 1)
-    expect(eff.sedute.lun.pista).toEqual(programma.sedute.lun.pista)
-    expect(eff.sedute.gio).toEqual(programma.sedute.gio)
-    expect(eff.blocco_core).toEqual(programma.blocco_core)
+    const p = piano()
+    const voci = vociBlocco(p.programma, { tipo: 'palestra', sedutaId: 'lun' }).slice(1)
+    const n = conVoci(p.programma, { tipo: 'palestra', sedutaId: 'lun' }, voci)
+    expect(n.sedute.lun.palestra).toHaveLength(programma.sedute.lun.palestra!.length - 1)
+    expect(n.sedute.lun.pista).toEqual(programma.sedute.lun.pista)
+    expect(n.sedute.gio).toEqual(programma.sedute.gio)
+    expect(bloccoModificato({ ...p, programma: n }, { tipo: 'palestra', sedutaId: 'lun' })).toBe(true)
+    expect(bloccoModificato({ ...p, programma: n }, { tipo: 'palestra', sedutaId: 'gio' })).toBe(false)
   })
 
   it('il core modificato vale per tutte le sedute con core', () => {
-    const u = conBlocco(programma, undefined, { tipo: 'core', variante: 'A' }, [{ esercizioId: 'hollow_hold', serie: 2, durataSec: 20 }])
-    const eff = programmaEffettivo(programma, u)
+    const eff = conVoci(programma, { tipo: 'core', variante: 'A' }, [{ esercizioId: 'hollow_hold', serie: 2, durataSec: 20 }])
     const base = programma.fasi[0]
     expect(strutturaSeduta(eff, 'lun', 1, base, []).core?.voci.map((v) => v.esercizioId)).toEqual(['hollow_hold'])
     expect(strutturaSeduta(eff, 'gio', 1, base, []).core?.voci.map((v) => v.esercizioId)).toEqual(['hollow_hold'])
     expect(strutturaSeduta(eff, 'lun', 2, base, []).core?.variante).toBe('B')
+    expect(strutturaSeduta(eff, 'mer', 1, base, []).core).toBeUndefined()
   })
 
   it('ripristino di un blocco', () => {
-    let u = conBlocco(programma, undefined, { tipo: 'mobilita', giorno: 'mer' }, [])
-    u = conBlocco(programma, u, { tipo: 'palestra', giorno: 'ven' }, [])
-    const r = senzaBlocco(u, { tipo: 'mobilita', giorno: 'mer' })
-    expect(programmaEffettivo(programma, r).sedute.mer).toEqual(programma.sedute.mer)
-    expect(programmaEffettivo(programma, r).sedute.ven.palestra).toEqual([])
+    const p = piano()
+    p.programma = conVoci(p.programma, { tipo: 'mobilita', sedutaId: 'mer' }, [])
+    p.programma = conVoci(p.programma, { tipo: 'palestra', sedutaId: 'ven' }, [])
+    const r = ripristinaBlocco(p, { tipo: 'mobilita', sedutaId: 'mer' })
+    expect(r.sedute.mer).toEqual(programma.sedute.mer)
+    expect(r.sedute.ven.palestra).toEqual([])
+  })
+
+  it('le modifiche della versione precedente confluiscono nel piano originale', () => {
+    const p = pianoOriginale('2026-09-09', { sedute: { lun: { palestra: [{ esercizioId: 'push_up', serie: 3 }] } } })
+    expect(p.inizio).toBe('2026-09-07')
+    expect(p.programma.sedute.lun.palestra).toEqual([{ esercizioId: 'push_up', serie: 3 }])
+    expect(p.programma.sedute.lun.pista).toEqual(programma.sedute.lun.pista)
   })
 
   it('sostituzione: mantiene serie e recupero, adatta le misure al nuovo tipo', () => {
@@ -77,7 +83,7 @@ describe('muscoli e suggerimenti', () => {
     expect(panca.slice(0, 3)).toEqual(expect.arrayContaining(['push_up', 'lancio_palla_medica_petto']))
     const stacco = suggerisciSostituti('trap_bar_deadlift').map((s) => s.es.id)
     expect(stacco).toContain('box_squat')
-    expect(suggerisciSostituti('trazioni').map((s) => s.es.id).slice(0, 2)).toEqual(expect.arrayContaining(['rematore_manubrio', 'rematore_trx']))
+    expect(suggerisciSostituti('trazioni').map((s) => s.es.id)[0]).toBe('lat_machine')
   })
 
   it('i suggerimenti escludono gli esercizi gia\' presenti e la pista', () => {

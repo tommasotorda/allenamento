@@ -4,12 +4,12 @@ import { Link } from 'react-router-dom'
 import { Icon } from '../../components/Icon'
 import { Button, Card, ExerciseThumb, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { esporta, importa, nomeFileBackup } from '../../db/backup'
-import { aggiornaImpostazioni, eliminaFoto } from '../../db/repositories'
+import { aggiornaImpostazioni, aggiornaPiano, eliminaFoto } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { lunediDi } from '../../domain/calendar'
 import { esercizi, esercizio, NOMI_GIORNI, programma } from '../../domain/data'
 import type { FotoEsercizio } from '../../domain/types'
-import { useImpostazioni, useOggi } from '../../hooks'
+import { useImpostazioni, useOggi, usePianoAttivo } from '../../hooks'
 
 const sbloccabili = esercizi.filter((e) => e.sbloccabile)
 
@@ -33,13 +33,14 @@ function FotoMini({ f }: { f: FotoEsercizio }) {
 
 export function ImpostazioniPage() {
   const imp = useImpostazioni()
+  const piano = usePianoAttivo()
   const oggi = useOggi()
   const foto = useLiveQuery(() => db.fotoEsercizi.toArray()) ?? []
   const fileInput = useRef<HTMLInputElement>(null)
   const [daImportare, setDaImportare] = useState<unknown>(null)
   const [msg, setMsg] = useState<string | null>(null)
   const [nuovoCiclo, setNuovoCiclo] = useState(false)
-  if (!imp) return null
+  if (!imp || !piano) return null
 
   const esportaFile = async () => {
     const dati = await esporta(db)
@@ -66,25 +67,25 @@ export function ImpostazioniPage() {
     <div>
       <PageHeader back="/" title="Impostazioni" />
 
-      <SectionTitle>Ciclo</SectionTitle>
+      <SectionTitle>Ciclo · {piano.nome}</SectionTitle>
       <Card className="space-y-3">
         <label className="flex items-center justify-between gap-3">
           <span className="font-medium">Inizio ciclo</span>
           <input
             type="date"
-            value={imp.cicloInizio}
-            onChange={(e) => e.target.value && aggiornaImpostazioni({ cicloInizio: lunediDi(e.target.value) })}
+            value={piano.inizio}
+            onChange={(e) => e.target.value && aggiornaPiano(piano.id, { inizio: lunediDi(e.target.value) })}
             className="h-11 rounded-lg bg-zinc-100 px-2 dark:bg-zinc-800"
           />
         </label>
-        <div className="text-sm text-zinc-500">{formatData(imp.cicloInizio, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
+        <div className="text-sm text-zinc-500">{formatData(piano.inizio, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</div>
         {nuovoCiclo ? (
           <div className="flex gap-2">
             <Button
               variant="primary"
               className="flex-1"
               onClick={async () => {
-                await aggiornaImpostazioni({ cicloInizio: lunediDi(oggi) })
+                await aggiornaPiano(piano.id, { inizio: lunediDi(oggi) })
                 setNuovoCiclo(false)
               }}
             >

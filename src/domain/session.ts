@@ -1,8 +1,8 @@
-import { haBloccoCore, varianteCore } from './calendar'
+import { varianteCore } from './calendar'
 import type { Fase, GiornoId, Prescrizione, Programma, VocePalestra } from './types'
 
 export interface StrutturaSeduta {
-  giorno: GiornoId
+  sedutaId: string
   nome: string
   core?: { variante: 'A' | 'B'; voci: Prescrizione[] }
   pista?: { esercizioId: string; testo: string; ripetute: number | null; scarico: boolean }
@@ -12,11 +12,11 @@ export interface StrutturaSeduta {
 }
 
 /** Seduta del giorno risolta per la settimana e la fase correnti, con gli sbloccabili attivi. */
-export function strutturaSeduta(programma: Programma, giorno: GiornoId, settimana: number, fase: Fase, sbloccati: string[]): StrutturaSeduta {
-  const s = programma.sedute[giorno]
-  const out: StrutturaSeduta = { giorno, nome: s.nome, palestra: [], mobilita: s.mobilita ?? [] }
+export function strutturaSeduta(programma: Programma, sedutaId: string, settimana: number, fase: Fase, sbloccati: string[]): StrutturaSeduta {
+  const s = programma.sedute[sedutaId]
+  const out: StrutturaSeduta = { sedutaId, nome: s.nome, palestra: [], mobilita: s.mobilita ?? [] }
 
-  if (haBloccoCore(giorno)) {
+  if (s.core) {
     const v = varianteCore(programma, settimana)
     out.core = { variante: v.nome, voci: v.esercizi }
   }
@@ -43,4 +43,20 @@ export function strutturaSeduta(programma: Programma, giorno: GiornoId, settiman
   }
   out.palestra = palestra
   return out
+}
+
+/** Sedute del programma nell'ordine della settimana, con i giorni in cui sono previste. */
+export function elencoSedute(programma: Programma): { sedutaId: string; nome: string; giorni: GiornoId[] }[] {
+  const ordine: GiornoId[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom']
+  const visti = new Map<string, GiornoId[]>()
+  for (const g of ordine) {
+    for (const x of programma.settimana.filter((y) => y.giorno === g)) visti.set(x.sedutaId, [...(visti.get(x.sedutaId) ?? []), g])
+  }
+  for (const id of Object.keys(programma.sedute)) if (!visti.has(id)) visti.set(id, [])
+  return [...visti.entries()].filter(([id]) => programma.sedute[id]).map(([sedutaId, giorni]) => ({ sedutaId, nome: programma.sedute[sedutaId].nome, giorni }))
+}
+
+/** Nome di una seduta registrata (anche di piani eliminati o dati precedenti). */
+export function nomeSedutaLog(log: { templateId: string; nomeSeduta?: string }, programmaBase: Programma): string {
+  return log.nomeSeduta ?? programmaBase.sedute[log.templateId]?.nome ?? log.templateId
 }

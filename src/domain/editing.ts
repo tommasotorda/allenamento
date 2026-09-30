@@ -5,62 +5,35 @@
  */
 import { esercizi, esercizio } from './data'
 import { espandi, MUSCOLI, somiglianza, type MuscoloId } from './muscles'
-import type { Esercizio, GiornoId, Prescrizione, Programma, Seduta, VocePalestra } from './types'
-
-export interface SchedaUtente {
-  chiave: 'singleton'
-  sedute: Partial<Record<GiornoId, Pick<Seduta, 'palestra' | 'mobilita'>>>
-  core?: { varianteA: Prescrizione[]; varianteB: Prescrizione[] }
-  modificata: string
-}
+import type { Esercizio, Piano, Prescrizione, Programma, Seduta, VocePalestra } from './types'
+import { clona } from './util'
 
 /** Blocchi modificabili: liste di esercizi di una seduta o una variante del core. */
-export type Blocco = { tipo: 'palestra' | 'mobilita'; giorno: GiornoId } | { tipo: 'core'; variante: 'A' | 'B' }
-
-export function programmaEffettivo(base: Programma, u: SchedaUtente | undefined): Programma {
-  if (!u) return base
-  const sedute = { ...base.sedute }
-  for (const [g, over] of Object.entries(u.sedute) as [GiornoId, Pick<Seduta, 'palestra' | 'mobilita'>][]) {
-    sedute[g] = { ...sedute[g], ...over }
-  }
-  return { ...base, sedute, blocco_core: u.core ? { ...base.blocco_core, ...u.core } : base.blocco_core }
-}
+export type Blocco = { tipo: 'palestra' | 'mobilita'; sedutaId: string } | { tipo: 'core'; variante: 'A' | 'B' }
 
 export function vociBlocco(p: Programma, b: Blocco): VocePalestra[] {
   if (b.tipo === 'core') return b.variante === 'A' ? p.blocco_core.varianteA : p.blocco_core.varianteB
-  return (b.tipo === 'palestra' ? p.sedute[b.giorno].palestra : p.sedute[b.giorno].mobilita) ?? []
+  const s = p.sedute[b.sedutaId]
+  if (!s) return []
+  return (b.tipo === 'palestra' ? s.palestra : s.mobilita) ?? []
 }
 
-/** Nuova scheda utente con il blocco sostituito da `voci`. */
-export function conBlocco(base: Programma, u: SchedaUtente | undefined, b: Blocco, voci: VocePalestra[]): SchedaUtente {
-  const eff = programmaEffettivo(base, u)
-  const out: SchedaUtente = { chiave: 'singleton', sedute: { ...(u?.sedute ?? {}) }, core: u?.core, modificata: new Date().toISOString() }
+/** Programma con il blocco sostituito da `voci`. */
+export function conVoci(p: Programma, b: Blocco, voci: VocePalestra[]): Programma {
   if (b.tipo === 'core') {
-    out.core = {
-      varianteA: b.variante === 'A' ? (voci as Prescrizione[]) : eff.blocco_core.varianteA,
-      varianteB: b.variante === 'B' ? (voci as Prescrizione[]) : eff.blocco_core.varianteB,
-    }
-  } else {
-    const attuale = eff.sedute[b.giorno]
-    out.sedute[b.giorno] = {
-      palestra: b.tipo === 'palestra' ? voci : attuale.palestra,
-      mobilita: b.tipo === 'mobilita' ? (voci as Prescrizione[]) : attuale.mobilita,
-    }
+    const bc = { ...p.blocco_core, [b.variante === 'A' ? 'varianteA' : 'varianteB']: voci as Prescrizione[] }
+    return { ...p, blocco_core: bc }
   }
-  return out
+  const s: Seduta = { ...p.sedute[b.sedutaId], [b.tipo]: voci }
+  return { ...p, sedute: { ...p.sedute, [b.sedutaId]: s } }
 }
 
-/** Ripristina l'originale di un blocco. */
-export function senzaBlocco(u: SchedaUtente, b: Blocco): SchedaUtente {
-  const out: SchedaUtente = { ...u, sedute: { ...u.sedute }, modificata: new Date().toISOString() }
-  if (b.tipo === 'core') delete out.core
-  else delete out.sedute[b.giorno]
-  return out
+export function bloccoModificato(piano: Piano, b: Blocco): boolean {
+  return JSON.stringify(vociBlocco(piano.programma, b)) !== JSON.stringify(vociBlocco(piano.originale, b))
 }
 
-export function bloccoModificato(u: SchedaUtente | undefined, b: Blocco): boolean {
-  if (!u) return false
-  return b.tipo === 'core' ? !!u.core : !!u.sedute[b.giorno]
+export function ripristinaBlocco(piano: Piano, b: Blocco): Programma {
+  return conVoci(piano.programma, b, clona(vociBlocco(piano.originale, b)))
 }
 
 // ---------- prescrizioni ----------

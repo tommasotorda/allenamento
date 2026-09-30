@@ -17,7 +17,19 @@
       "deltoide-anteriore": 1,
       "grande-gluteo": 1,
       "retto-femorale": 1
-    }
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "side_plank",
@@ -37,7 +49,21 @@
       "medio-gluteo": 2,
       "deltoide-anteriore": 1,
       "deltoide-posteriore": 1
-    }
+    },
+    "schemi": [
+      "anti-flessione-laterale"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": false
   },
   {
     "id": "dead_bug",
@@ -55,7 +81,19 @@
       "addome": 3,
       "obliqui": 2,
       "retto-femorale": 1
-    }
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "bird_dog",
@@ -75,7 +113,20 @@
       "grande-gluteo": 2,
       "deltoide-posteriore": 1,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "anti-rotazione",
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "pallof_press",
@@ -96,7 +147,20 @@
       "addome": 2,
       "deltoide-anteriore": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "anti-rotazione"
+    ],
+    "attrezzi": [
+      [
+        "elastico",
+        "cavo"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "hollow_hold",
@@ -114,7 +178,19 @@
       "addome": 3,
       "obliqui": 2,
       "retto-femorale": 2
-    }
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "mcgill_curl_up",
@@ -131,7 +207,19 @@
     "muscoli": {
       "addome": 3,
       "obliqui": 1
-    }
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "trap_bar_deadlift",
@@ -156,7 +244,22 @@
       "trapezio-alto": 2,
       "avambraccio-flessori": 2,
       "gran-dorsale": 1
-    }
+    },
+    "schemi": [
+      "hinge",
+      "squat"
+    ],
+    "attrezzi": [
+      [
+        "trap-bar"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
   },
   {
     "id": "trazioni",
@@ -180,7 +283,21 @@
       "avambraccio-flessori": 2,
       "deltoide-posteriore": 1,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "tirata-verticale"
+    ],
+    "attrezzi": [
+      [
+        "sbarra"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
   },
   {
     "id": "hip_thrust",
@@ -203,7 +320,22 @@
       "medio-gluteo": 1,
       "quadricipiti": 1,
       "lombari": 1
-    }
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "bilanciere"
+      ],
+      [
+        "panca"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "rematore_manubrio",
@@ -227,7 +359,22 @@
       "bicipite": 2,
       "avambraccio-flessori": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "tirata-orizzontale"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ],
+      [
+        "panca"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "farmer_carry",
@@ -251,7 +398,20 @@
       "quadricipiti": 1,
       "polpacci": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "trasporto"
+    ],
+    "attrezzi": [
+      [
+        "manubri",
+        "kettlebell"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "kettlebell_swing",
@@ -275,7 +435,22 @@
       "deltoide-anteriore": 1,
       "avambraccio-flessori": 1,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "hinge",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
   },
   {
     "id": "spanish_squat",
@@ -294,7 +469,20 @@
     "muscoli": {
       "quadricipiti": 3,
       "grande-gluteo": 1
-    }
+    },
+    "schemi": [
+      "squat",
+      "ginocchio"
+    ],
+    "attrezzi": [
+      [
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "terminal_knee_extension",
@@ -314,7 +502,19 @@
       "vasto-mediale": 3,
       "retto-femorale": 2,
       "vasto-laterale": 2
-    }
+    },
+    "schemi": [
+      "ginocchio"
+    ],
+    "attrezzi": [
+      [
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "reverse_sled_drag",
@@ -336,7 +536,20 @@
       "tibiale-anteriore": 1,
       "polpacci": 1,
       "avambraccio-flessori": 1
-    }
+    },
+    "schemi": [
+      "locomozione",
+      "ginocchio"
+    ],
+    "attrezzi": [
+      [
+        "slitta"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "step_up_basso",
@@ -357,7 +570,19 @@
       "grande-gluteo": 2,
       "medio-gluteo": 2,
       "polpacci": 1
-    }
+    },
+    "schemi": [
+      "affondo"
+    ],
+    "attrezzi": [
+      [
+        "box"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "slider_leg_curl",
@@ -378,7 +603,19 @@
       "grande-gluteo": 2,
       "gastrocnemio": 1,
       "lombari": 1
-    }
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "slider"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "polpacci_monopodalici",
@@ -397,7 +634,15 @@
     "muscoli": {
       "gastrocnemio": 3,
       "soleo": 2
-    }
+    },
+    "schemi": [
+      "polpacci"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "tibialis_raise",
@@ -413,7 +658,15 @@
     "sbloccabile": false,
     "muscoli": {
       "tibiale-anteriore": 3
-    }
+    },
+    "schemi": [
+      "polpacci"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "box_squat",
@@ -436,7 +689,25 @@
       "adduttori": 2,
       "femorali": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "squat"
+    ],
+    "attrezzi": [
+      [
+        "box"
+      ],
+      [
+        "bilanciere",
+        "kettlebell"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": true
   },
   {
     "id": "saltelli_sul_posto",
@@ -454,7 +725,17 @@
       "polpacci": 3,
       "quadricipiti": 1,
       "tibiale-anteriore": 1
-    }
+    },
+    "schemi": [
+      "pliometria"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
   },
   {
     "id": "lancio_palla_medica_petto",
@@ -475,7 +756,20 @@
       "deltoide-anteriore": 2,
       "tricipite": 2,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "spinta-orizzontale",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "palla-medica"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "panca_piana",
@@ -496,7 +790,25 @@
       "pettorali": 3,
       "deltoide-anteriore": 2,
       "tricipite": 2
-    }
+    },
+    "schemi": [
+      "spinta-orizzontale"
+    ],
+    "attrezzi": [
+      [
+        "bilanciere",
+        "manubri"
+      ],
+      [
+        "panca"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": false
   },
   {
     "id": "military_press",
@@ -519,7 +831,22 @@
       "pettorale-alto": 1,
       "addome": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "spinta-verticale"
+    ],
+    "attrezzi": [
+      [
+        "bilanciere"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle",
+      "schiena"
+    ],
+    "funzionale": true
   },
   {
     "id": "landmine_press",
@@ -542,7 +869,19 @@
       "tricipite": 2,
       "obliqui": 1,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "spinta-verticale"
+    ],
+    "attrezzi": [
+      [
+        "landmine"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "stacco_rumeno_manubri",
@@ -565,7 +904,21 @@
       "lombari": 2,
       "avambraccio-flessori": 1,
       "trapezio-alto": 1
-    }
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
   },
   {
     "id": "face_pull",
@@ -587,7 +940,21 @@
       "trapezio-basso": 2,
       "trapezio-alto": 1,
       "bicipite": 1
-    }
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "scapole"
+    ],
+    "attrezzi": [
+      [
+        "elastico",
+        "cavo"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "push_up",
@@ -606,7 +973,18 @@
       "tricipite": 2,
       "deltoide-anteriore": 2,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "spinta-orizzontale",
+      "anti-estensione"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": true
   },
   {
     "id": "copenhagen_plank",
@@ -627,7 +1005,19 @@
       "obliqui": 2,
       "addome": 1,
       "medio-gluteo": 1
-    }
+    },
+    "schemi": [
+      "anti-flessione-laterale"
+    ],
+    "attrezzi": [
+      [
+        "panca"
+      ]
+    ],
+    "livello": 3,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "lancio_rotazionale",
@@ -649,7 +1039,20 @@
       "grande-gluteo": 1,
       "deltoide-anteriore": 1,
       "pettorali": 1
-    }
+    },
+    "schemi": [
+      "rotazione",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "palla-medica"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "overhead_back_toss",
@@ -673,7 +1076,22 @@
       "deltoide-anteriore": 2,
       "trapezio-alto": 1,
       "polpacci": 1
-    }
+    },
+    "schemi": [
+      "hinge",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "palla-medica"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
   },
   {
     "id": "push_press_manubri",
@@ -696,7 +1114,22 @@
       "grande-gluteo": 1,
       "trapezio-alto": 1,
       "polpacci": 1
-    }
+    },
+    "schemi": [
+      "spinta-verticale",
+      "squat"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
   },
   {
     "id": "sled_push",
@@ -720,7 +1153,19 @@
       "tricipite": 1,
       "deltoide-anteriore": 1,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "locomozione"
+    ],
+    "attrezzi": [
+      [
+        "slitta"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "rematore_trx",
@@ -743,7 +1188,20 @@
       "bicipite": 2,
       "addome": 1,
       "grande-gluteo": 1
-    }
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "trx"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "turkish_get_up",
@@ -768,7 +1226,23 @@
       "tricipite": 1,
       "trapezio-alto": 1,
       "medio-gluteo": 1
-    }
+    },
+    "schemi": [
+      "anti-rotazione",
+      "spinta-verticale",
+      "affondo"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell"
+      ]
+    ],
+    "livello": 3,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
   },
   {
     "id": "battle_rope",
@@ -791,7 +1265,21 @@
       "bicipite": 1,
       "tricipite": 1,
       "quadricipiti": 1
-    }
+    },
+    "schemi": [
+      "cardio"
+    ],
+    "attrezzi": [
+      [
+        "battle-rope"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
   },
   {
     "id": "suitcase_carry",
@@ -813,7 +1301,21 @@
       "trapezio-alto": 2,
       "medio-gluteo": 2,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "trasporto",
+      "anti-flessione-laterale"
+    ],
+    "attrezzi": [
+      [
+        "manubri",
+        "kettlebell"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "sprint_salita",
@@ -833,7 +1335,17 @@
       "quadricipiti": 3,
       "polpacci": 3,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "cardio"
+    ],
+    "attrezzi": [],
+    "livello": 2,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
   },
   {
     "id": "corsa_zona2",
@@ -855,7 +1367,17 @@
       "femorali": 2,
       "grande-gluteo": 2,
       "tibiale-anteriore": 1
-    }
+    },
+    "schemi": [
+      "cardio"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
   },
   {
     "id": "ripetute_soglia",
@@ -876,7 +1398,17 @@
       "polpacci": 2,
       "femorali": 2,
       "glutei": 2
-    }
+    },
+    "schemi": [
+      "cardio"
+    ],
+    "attrezzi": [],
+    "livello": 2,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
   },
   {
     "id": "intervalli_30_30",
@@ -895,7 +1427,17 @@
       "femorali": 2,
       "grande-gluteo": 2,
       "polpacci": 2
-    }
+    },
+    "schemi": [
+      "cardio"
+    ],
+    "attrezzi": [],
+    "livello": 2,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
   },
   {
     "id": "cat_cow",
@@ -913,7 +1455,19 @@
       "erettori-spinali": 3,
       "lombari": 3,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "mobilita"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "anche_90_90",
@@ -931,7 +1485,19 @@
       "medio-gluteo": 3,
       "grande-gluteo": 2,
       "adduttori": 2
-    }
+    },
+    "schemi": [
+      "mobilita"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "ginocchio_muro",
@@ -949,7 +1515,15 @@
       "soleo": 3,
       "gastrocnemio": 2,
       "tibiale-anteriore": 1
-    }
+    },
+    "schemi": [
+      "mobilita"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "equilibrio_monopodalico",
@@ -968,7 +1542,15 @@
       "soleo": 2,
       "tibiale-anteriore": 2,
       "addome": 1
-    }
+    },
+    "schemi": [
+      "mobilita"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
   },
   {
     "id": "rotazioni_esterne_elastico",
@@ -987,7 +1569,19 @@
     "muscoli": {
       "deltoide-posteriore": 3,
       "trapezio-medio": 1
-    }
+    },
+    "schemi": [
+      "scapole"
+    ],
+    "attrezzi": [
+      [
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "open_book",
@@ -1006,7 +1600,19 @@
       "trapezio-medio": 2,
       "pettorali": 1,
       "erettori-spinali": 1
-    }
+    },
+    "schemi": [
+      "mobilita"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
   },
   {
     "id": "respirazione_diaframmatica",
@@ -1023,6 +1629,1771 @@
     "muscoli": {
       "addome": 2,
       "obliqui": 1
-    }
+    },
+    "schemi": [
+      "respirazione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "goblet_squat",
+    "nome": "Goblet squat",
+    "categoria": "forza",
+    "attrezzatura": [
+      "kettlebell o manubrio"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Kettlebell tenuto al petto con due mani, piedi poco più larghi delle spalle.",
+      "Scendi tra le ginocchia con il busto alto fino a cosce parallele o più in basso.",
+      "Risali spingendo con tutto il piede, espira in salita."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 2,
+      "adduttori": 2,
+      "addome": 1,
+      "erettori-spinali": 1
+    },
+    "schemi": [
+      "squat"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell",
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "affondo_indietro",
+    "nome": "Affondo indietro",
+    "categoria": "forza",
+    "attrezzatura": [
+      "corpo libero o manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi, piedi larghezza anche.",
+      "Fai un passo lungo indietro e scendi finché il ginocchio posteriore sfiora il pavimento.",
+      "Spingi con il tallone anteriore per tornare in piedi e alterna."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 3,
+      "medio-gluteo": 2,
+      "adduttori": 1,
+      "addome": 1
+    },
+    "schemi": [
+      "affondo"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "affondo_laterale",
+    "nome": "Affondo laterale",
+    "categoria": "forza",
+    "attrezzatura": [
+      "corpo libero o kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Piedi molto larghi, punte in avanti.",
+      "Siediti su una gamba piegando il ginocchio, l'altra resta tesa con il piede a terra.",
+      "Spingi per tornare al centro e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "adduttori": 3,
+      "quadricipiti": 2,
+      "grande-gluteo": 2,
+      "medio-gluteo": 2
+    },
+    "schemi": [
+      "affondo"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "split_squat_bulgaro",
+    "nome": "Split squat bulgaro",
+    "categoria": "forza",
+    "attrezzatura": [
+      "panca",
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Collo del piede posteriore appoggiato sulla panca, piede anteriore circa un passo avanti.",
+      "Scendi in verticale fino a coscia anteriore parallela, busto leggermente inclinato.",
+      "Risali spingendo con il piede anteriore; completa le ripetizioni e cambia gamba."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 3,
+      "medio-gluteo": 2,
+      "adduttori": 1,
+      "obliqui": 1
+    },
+    "schemi": [
+      "affondo"
+    ],
+    "attrezzi": [
+      [
+        "panca"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "stacco_monopodalico",
+    "nome": "Stacco su una gamba",
+    "categoria": "forza",
+    "attrezzatura": [
+      "kettlebell o manubrio"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi su una gamba, peso nella mano opposta, ginocchio d'appoggio morbido.",
+      "Porta il busto avanti e la gamba libera indietro in linea con la schiena.",
+      "Torna in piedi contraendo il gluteo della gamba d'appoggio."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "grande-gluteo": 3,
+      "medio-gluteo": 2,
+      "erettori-spinali": 2,
+      "obliqui": 1,
+      "polpacci": 1
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell",
+        "manubri"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "stacco_kettlebell",
+    "nome": "Stacco con kettlebell",
+    "categoria": "forza",
+    "attrezzatura": [
+      "kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Kettlebell tra i piedi, piedi larghezza anche.",
+      "Anche indietro, schiena neutra, afferra la maniglia con due mani.",
+      "Spingi il pavimento ed estendi le anche fino in piedi; scendi con lo stesso percorso."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "quadricipiti": 2,
+      "erettori-spinali": 2,
+      "lombari": 2,
+      "avambraccio-flessori": 1
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "kettlebell_clean",
+    "nome": "Clean con kettlebell",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Kettlebell davanti ai piedi, afferralo con una mano e portalo tra le gambe.",
+      "Estendi le anche con forza e tieni il gomito vicino al fianco.",
+      "Accogli il kettlebell in posizione di rack sull'avambraccio, poi riportalo giù."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "trapezio-alto": 2,
+      "deltoide-anteriore": 2,
+      "avambraccio-flessori": 2,
+      "addome": 1
+    },
+    "schemi": [
+      "hinge",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "thruster_manubri",
+    "nome": "Thruster con manubri",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Manubri alle spalle, piedi larghezza spalle.",
+      "Scendi in squat completo mantenendo i gomiti alti.",
+      "Risali con forza e usa la spinta per portare i manubri sopra la testa."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "deltoide-anteriore": 3,
+      "grande-gluteo": 2,
+      "tricipite": 2,
+      "addome": 1,
+      "trapezio-alto": 1
+    },
+    "schemi": [
+      "squat",
+      "spinta-verticale"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "wall_ball",
+    "nome": "Wall ball",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "palla medica"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Palla al petto, a un passo dal muro.",
+      "Scendi in squat e risali con forza lanciando la palla verso un punto alto del muro.",
+      "Riprendi la palla e scendi subito nello squat successivo."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 2,
+      "deltoide-anteriore": 3,
+      "tricipite": 2,
+      "addome": 1
+    },
+    "schemi": [
+      "squat",
+      "spinta-verticale",
+      "balistico"
+    ],
+    "attrezzi": [
+      [
+        "palla-medica"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "slam_palla_medica",
+    "nome": "Slam con palla medica",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "palla medica"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Palla sopra la testa a braccia tese, sulle punte.",
+      "Scaglia la palla a terra davanti a te piegando anche e busto.",
+      "Riprendi la palla con la schiena neutra e torna in posizione."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "addome": 3,
+      "deltoide-anteriore": 2,
+      "grande-gluteo": 2,
+      "tricipite": 1
+    },
+    "schemi": [
+      "balistico",
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "palla-medica"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "burpee",
+    "nome": "Burpee",
+    "categoria": "potenza",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi, scendi in squat e appoggia le mani a terra.",
+      "Porta i piedi indietro in plank e fai un piegamento.",
+      "Riporta i piedi alle mani e salta in alto con le braccia sopra la testa."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 2,
+      "pettorali": 2,
+      "tricipite": 2,
+      "addome": 2,
+      "deltoide-anteriore": 2,
+      "polpacci": 1
+    },
+    "schemi": [
+      "pliometria",
+      "locomozione",
+      "spinta-orizzontale"
+    ],
+    "attrezzi": [],
+    "livello": 2,
+    "impatto": true,
+    "sollecita": [
+      "polsi",
+      "ginocchia"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "bear_crawl",
+    "nome": "Bear crawl",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "In quadrupedia con le ginocchia sollevate di pochi centimetri da terra.",
+      "Avanza muovendo insieme mano e piede opposti a passi corti.",
+      "Mantieni la schiena piatta e il bacino fermo per tutta la distanza."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "deltoide-anteriore": 2,
+      "quadricipiti": 2,
+      "tricipite": 1
+    },
+    "schemi": [
+      "locomozione",
+      "anti-estensione",
+      "anti-rotazione"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "renegade_row",
+    "nome": "Renegade row",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In plank sulle mani impugnando due manubri, piedi larghi.",
+      "Tira un manubrio verso il fianco senza ruotare il bacino.",
+      "Riappoggia e alterna il lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "addome": 2,
+      "obliqui": 3,
+      "deltoide-posteriore": 2,
+      "bicipite": 1,
+      "tricipite": 1
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "anti-rotazione"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "overhead_carry",
+    "nome": "Overhead carry",
+    "categoria": "forza",
+    "attrezzatura": [
+      "kettlebell o manubrio"
+    ],
+    "tipoRegistrazione": "distanza",
+    "esecuzione": [
+      "Peso sopra la testa a braccio teso, bicipite vicino all'orecchio.",
+      "Costole basse e addome contratto.",
+      "Cammina a passi regolari per la distanza prevista e cambia braccio."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-anteriore": 3,
+      "trapezio-alto": 2,
+      "trapezio-basso": 2,
+      "tricipite": 2,
+      "obliqui": 2,
+      "addome": 2
+    },
+    "schemi": [
+      "trasporto",
+      "anti-flessione-laterale"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell",
+        "manubri"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "kettlebell_windmill",
+    "nome": "Windmill con kettlebell",
+    "categoria": "core",
+    "attrezzatura": [
+      "kettlebell"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Kettlebell sopra la testa a braccio teso, piedi larghi e ruotati dal lato opposto.",
+      "Spingi l'anca verso il lato del peso e scendi con la mano libera lungo la gamba.",
+      "Sguardo sul kettlebell; risali allo stesso modo."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "deltoide-anteriore": 2,
+      "medio-gluteo": 2,
+      "femorali": 2,
+      "trapezio-basso": 1
+    },
+    "schemi": [
+      "anti-flessione-laterale",
+      "mobilita"
+    ],
+    "attrezzi": [
+      [
+        "kettlebell"
+      ]
+    ],
+    "livello": 3,
+    "impatto": false,
+    "sollecita": [
+      "spalle"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "chop_mezzo_ginocchio",
+    "nome": "Chop in mezzo ginocchio",
+    "categoria": "core",
+    "attrezzatura": [
+      "elastico o cavo"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In mezzo ginocchio di fianco all'ancoraggio alto, mani sulla maniglia.",
+      "Tira in diagonale verso l'anca opposta ruotando il busto.",
+      "Torna lentamente senza muovere il bacino; completa e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "addome": 2,
+      "gran-dorsale": 1,
+      "deltoide-anteriore": 1,
+      "grande-gluteo": 1
+    },
+    "schemi": [
+      "rotazione",
+      "anti-rotazione"
+    ],
+    "attrezzi": [
+      [
+        "elastico",
+        "cavo"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "ab_rollout",
+    "nome": "Rollout",
+    "categoria": "core",
+    "attrezzatura": [
+      "ruota o slider"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In ginocchio, mani sulla ruota o sugli slider sotto le spalle.",
+      "Allunga le braccia in avanti mantenendo il bacino in linea.",
+      "Torna indietro contraendo l'addome, espira in rientro."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "gran-dorsale": 2,
+      "deltoide-anteriore": 1
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "slider"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": false
+  },
+  {
+    "id": "plank_shoulder_tap",
+    "nome": "Plank con tocco spalla",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In plank sulle mani, piedi larghi.",
+      "Solleva una mano e tocca la spalla opposta senza far ruotare il bacino.",
+      "Riappoggia e alterna con un ritmo regolare."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 3,
+      "deltoide-anteriore": 2,
+      "pettorali": 1,
+      "tricipite": 1
+    },
+    "schemi": [
+      "anti-rotazione",
+      "anti-estensione"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "hanging_knee_raise",
+    "nome": "Ginocchia al petto alla sbarra",
+    "categoria": "core",
+    "attrezzatura": [
+      "sbarra"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Appeso alla sbarra, scapole attive e gambe unite.",
+      "Porta le ginocchia verso il petto arrotondando il bacino.",
+      "Scendi lentamente senza oscillare."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "addome": 3,
+      "obliqui": 2,
+      "avambraccio-flessori": 2,
+      "gran-dorsale": 1,
+      "retto-femorale": 2
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "sbarra"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "box_jump",
+    "nome": "Salto sul box",
+    "categoria": "potenza",
+    "attrezzatura": [
+      "box"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi davanti al box, piedi larghezza anche.",
+      "Carica piegando anche e ginocchia e slancia le braccia.",
+      "Salta e atterra morbido al centro del box; scendi camminando."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3,
+      "grande-gluteo": 3,
+      "polpacci": 2,
+      "femorali": 1
+    },
+    "schemi": [
+      "pliometria"
+    ],
+    "attrezzi": [
+      [
+        "box"
+      ]
+    ],
+    "livello": 2,
+    "impatto": true,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "back_extension",
+    "nome": "Iperestensioni",
+    "categoria": "forza",
+    "attrezzatura": [
+      "panca per iperestensioni"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Anche appoggiate al cuscino, talloni bloccati, braccia incrociate al petto.",
+      "Scendi piegando le anche con la schiena neutra.",
+      "Risali fino ad allineare busto e gambe contraendo glutei e lombari."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "erettori-spinali": 3,
+      "lombari": 3,
+      "grande-gluteo": 2,
+      "femorali": 2
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "panca-iperestensioni"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "superman",
+    "nome": "Superman",
+    "categoria": "core",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Prono, braccia tese oltre la testa.",
+      "Solleva insieme braccia, petto e gambe di pochi centimetri.",
+      "Mantieni guardando il pavimento e respira regolarmente."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "erettori-spinali": 3,
+      "lombari": 3,
+      "grande-gluteo": 2,
+      "trapezio-basso": 1,
+      "deltoide-posteriore": 1
+    },
+    "schemi": [
+      "anti-estensione"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "good_morning",
+    "nome": "Good morning",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Bilanciere sulle spalle, piedi larghezza anche, ginocchia morbide.",
+      "Porta le anche indietro e inclina il busto con la schiena neutra.",
+      "Risali spingendo le anche in avanti."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "erettori-spinali": 3,
+      "lombari": 2,
+      "grande-gluteo": 2
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "bilanciere"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "ponte_glutei",
+    "nome": "Ponte glutei",
+    "categoria": "forza",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Supino, ginocchia piegate, piedi a terra vicino ai glutei.",
+      "Spingi i talloni e solleva il bacino fino ad allineare spalle, anche e ginocchia.",
+      "Tieni un secondo contraendo i glutei e scendi."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "femorali": 2,
+      "lombari": 1,
+      "medio-gluteo": 1
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "ponte_monopodalico",
+    "nome": "Ponte su una gamba",
+    "categoria": "forza",
+    "attrezzatura": [],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Supino, un piede a terra e l'altra gamba tesa verso il soffitto.",
+      "Solleva il bacino spingendo con il tallone a terra.",
+      "Mantieni il bacino orizzontale, scendi e completa prima di cambiare lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "medio-gluteo": 2,
+      "femorali": 2,
+      "obliqui": 1
+    },
+    "schemi": [
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "alzate_posteriori",
+    "nome": "Alzate posteriori",
+    "categoria": "forza",
+    "attrezzatura": [
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Busto inclinato in avanti con la schiena neutra, manubri sotto le spalle.",
+      "Apri le braccia di lato con i gomiti leggermente piegati.",
+      "Arriva all'altezza delle spalle e scendi lentamente."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-posteriore": 3,
+      "trapezio-medio": 2,
+      "trapezio-basso": 1,
+      "erettori-spinali": 1
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "scapole"
+    ],
+    "attrezzi": [
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "band_pull_apart",
+    "nome": "Band pull apart",
+    "categoria": "forza",
+    "attrezzatura": [
+      "elastico"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi, elastico teso davanti al petto a braccia tese.",
+      "Apri le braccia avvicinando le scapole fino a toccare il petto con l'elastico.",
+      "Torna controllato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-posteriore": 3,
+      "trapezio-medio": 3,
+      "trapezio-basso": 1
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "scapole"
+    ],
+    "attrezzi": [
+      [
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "ytw_prono",
+    "nome": "Y-T-W da prono",
+    "categoria": "forza",
+    "attrezzatura": [
+      "corpo libero o manubri leggeri"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "Prono a terra o su panca inclinata, fronte bassa.",
+      "Solleva le braccia disegnando in sequenza una Y, una T e una W.",
+      "Tieni un secondo in ogni posizione avvicinando le scapole."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "trapezio-basso": 3,
+      "trapezio-medio": 3,
+      "deltoide-posteriore": 2,
+      "erettori-spinali": 1
+    },
+    "schemi": [
+      "scapole"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "lat_machine",
+    "nome": "Lat machine",
+    "categoria": "forza",
+    "attrezzatura": [
+      "cavo"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Seduto con le cosce bloccate, presa più larga delle spalle.",
+      "Abbassa le scapole e tira la barra verso la parte alta del petto.",
+      "Risali controllato fino a braccia tese."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "bicipite": 2,
+      "trapezio-basso": 2,
+      "deltoide-posteriore": 1,
+      "avambraccio-flessori": 1
+    },
+    "schemi": [
+      "tirata-verticale"
+    ],
+    "attrezzi": [
+      [
+        "cavo"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "rematore_cavo",
+    "nome": "Rematore al cavo",
+    "categoria": "forza",
+    "attrezzatura": [
+      "cavo"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Seduto, piedi sulla pedana, busto eretto e maniglia a braccia tese.",
+      "Tira la maniglia verso l'ombelico portando i gomiti indietro.",
+      "Torna allungando le braccia senza inclinare il busto."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-medio": 3,
+      "deltoide-posteriore": 2,
+      "bicipite": 2,
+      "erettori-spinali": 1
+    },
+    "schemi": [
+      "tirata-orizzontale"
+    ],
+    "attrezzi": [
+      [
+        "cavo"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "rematore_bilanciere",
+    "nome": "Rematore con bilanciere",
+    "categoria": "forza",
+    "attrezzatura": [
+      "bilanciere"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Busto inclinato a circa 45 gradi, schiena neutra, bilanciere a braccia tese.",
+      "Tira il bilanciere verso l'ombelico portando i gomiti indietro.",
+      "Scendi controllato mantenendo l'inclinazione del busto."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-medio": 3,
+      "deltoide-posteriore": 2,
+      "bicipite": 2,
+      "erettori-spinali": 2,
+      "lombari": 2
+    },
+    "schemi": [
+      "tirata-orizzontale",
+      "hinge"
+    ],
+    "attrezzi": [
+      [
+        "bilanciere"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "schiena"
+    ],
+    "funzionale": true
+  },
+  {
+    "id": "rematore_panca_inclinata",
+    "nome": "Rematore su panca inclinata",
+    "categoria": "forza",
+    "attrezzatura": [
+      "panca",
+      "manubri"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "Prono sulla panca inclinata, petto appoggiato, manubri a braccia tese.",
+      "Tira i manubri verso le anche avvicinando le scapole.",
+      "Scendi fino a braccia tese."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-medio": 3,
+      "deltoide-posteriore": 2,
+      "bicipite": 2
+    },
+    "schemi": [
+      "tirata-orizzontale"
+    ],
+    "attrezzi": [
+      [
+        "panca"
+      ],
+      [
+        "manubri"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "pulldown_braccia_tese",
+    "nome": "Pulldown a braccia tese",
+    "categoria": "forza",
+    "attrezzatura": [
+      "cavo o elastico"
+    ],
+    "tipoRegistrazione": "carico_ripetizioni",
+    "esecuzione": [
+      "In piedi davanti all'ancoraggio alto, braccia tese avanti, busto leggermente inclinato.",
+      "Porta le mani verso le cosce a braccia tese contraendo i dorsali.",
+      "Torna lentamente fino all'altezza degli occhi."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "trapezio-basso": 2,
+      "tricipite": 1,
+      "addome": 1
+    },
+    "schemi": [
+      "tirata-verticale"
+    ],
+    "attrezzi": [
+      [
+        "cavo",
+        "elastico"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_femorali",
+    "nome": "Stretching femorali",
+    "categoria": "stretching",
+    "attrezzatura": [
+      "elastico o asciugamano"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Supino, elastico sotto la pianta di un piede.",
+      "Porta la gamba tesa verso l'alto finché senti tensione dietro la coscia.",
+      "Mantieni respirando lentamente, poi cambia gamba."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "polpacci": 1
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_quadricipite",
+    "nome": "Stretching quadricipite",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In piedi, una mano al muro.",
+      "Afferra la caviglia e porta il tallone verso il gluteo con le ginocchia vicine.",
+      "Spingi leggermente l'anca avanti e mantieni; cambia gamba."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 3
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_flessori_anca",
+    "nome": "Stretching flessori dell'anca",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In mezzo ginocchio, ginocchio posteriore sul tappetino.",
+      "Contrai il gluteo posteriore e porta il bacino in avanti.",
+      "Mantieni con il busto eretto e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "retto-femorale": 3,
+      "addome": 1
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_piriforme",
+    "nome": "Stretching piriforme",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Supino, caviglia appoggiata sul ginocchio opposto.",
+      "Afferra la coscia della gamba d'appoggio e portala verso il petto.",
+      "Mantieni con le spalle rilassate e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "medio-gluteo": 3
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_pettorale",
+    "nome": "Stretching pettorale al muro",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Di fianco al muro, avambraccio appoggiato con il gomito all'altezza della spalla.",
+      "Ruota lentamente il busto dal lato opposto.",
+      "Mantieni respirando e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "pettorali": 3,
+      "deltoide-anteriore": 2
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_polpacci",
+    "nome": "Stretching polpacci al muro",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Mani al muro, una gamba avanti piegata e una dietro tesa.",
+      "Tallone posteriore a terra, porta il bacino verso il muro.",
+      "Mantieni e cambia gamba."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gastrocnemio": 3,
+      "soleo": 2
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_spalla",
+    "nome": "Stretching spalla a braccio incrociato",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In piedi, porta un braccio teso davanti al petto.",
+      "Con l'altra mano spingi il braccio verso il corpo sopra il gomito.",
+      "Spalle basse, mantieni e cambia braccio."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "deltoide-posteriore": 3,
+      "trapezio-medio": 1
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_adduttori",
+    "nome": "Stretching adduttori a farfalla",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Seduto, piante dei piedi unite e ginocchia aperte.",
+      "Busto eretto, mani sui piedi.",
+      "Lascia scendere le ginocchia e inclinati in avanti espirando."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "adduttori": 3,
+      "lombari": 1
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "stretch_laterale",
+    "nome": "Allungamento laterale in piedi",
+    "categoria": "stretching",
+    "attrezzatura": [],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In piedi, piedi uniti, un braccio sopra la testa.",
+      "Inclina il busto dal lato opposto allungando il fianco.",
+      "Mantieni respirando nel fianco allungato e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "gran-dorsale": 3,
+      "obliqui": 2
+    },
+    "schemi": [
+      "stretching"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "cane_testa_giu",
+    "nome": "Cane a testa in giù",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Da quadrupedia, solleva le anche portando il corpo a V rovesciata.",
+      "Spingi il pavimento con le mani, talloni verso terra, testa tra le braccia.",
+      "Respira lentamente dal naso mantenendo la posizione."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 3,
+      "polpacci": 3,
+      "gran-dorsale": 2,
+      "deltoide-anteriore": 2,
+      "erettori-spinali": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": false
+  },
+  {
+    "id": "posizione_bambino",
+    "nome": "Posizione del bambino",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In ginocchio, alluci uniti e ginocchia leggermente aperte.",
+      "Siediti sui talloni e porta la fronte a terra con le braccia avanti.",
+      "Respira allargando la schiena a ogni inspirazione."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "erettori-spinali": 2,
+      "lombari": 3,
+      "gran-dorsale": 2,
+      "grande-gluteo": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "cobra",
+    "nome": "Cobra",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Prono, mani a terra sotto le spalle, gomiti vicini al corpo.",
+      "Inspirando, solleva il petto spingendo con le mani e allungando la colonna.",
+      "Spalle lontane dalle orecchie; mantieni e scendi espirando."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "retto-addominale": 2,
+      "erettori-spinali": 2,
+      "pettorali": 1,
+      "retto-femorale": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "guerriero_1",
+    "nome": "Guerriero I",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Piede anteriore avanti, piede posteriore ruotato di 45 gradi.",
+      "Piega il ginocchio anteriore sopra la caviglia e porta le braccia sopra la testa.",
+      "Bacino verso avanti, respira e mantieni; cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 2,
+      "grande-gluteo": 2,
+      "retto-femorale": 2,
+      "deltoide-anteriore": 1,
+      "addome": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "guerriero_2",
+    "nome": "Guerriero II",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Piedi larghi, piede anteriore avanti e piede posteriore parallelo al bordo del tappetino.",
+      "Piega il ginocchio anteriore sopra la caviglia e apri le braccia all'altezza delle spalle.",
+      "Sguardo oltre la mano anteriore, mantieni e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "quadricipiti": 2,
+      "adduttori": 2,
+      "medio-gluteo": 2,
+      "deltoide-anteriore": 1,
+      "deltoide-posteriore": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "triangolo",
+    "nome": "Triangolo",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Piedi larghi, gambe tese, piede anteriore ruotato verso il fondo del tappetino.",
+      "Allunga il busto sopra la gamba anteriore e appoggia la mano sulla tibia.",
+      "Braccio superiore verso il soffitto, torace aperto; mantieni e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 2,
+      "obliqui": 2,
+      "adduttori": 2,
+      "medio-gluteo": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "piccione",
+    "nome": "Piccione",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Da quadrupedia porta un ginocchio avanti dietro il polso, tibia di traverso.",
+      "Allunga l'altra gamba indietro con il collo del piede a terra.",
+      "Scendi con il busto in avanti respirando lentamente; cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "grande-gluteo": 3,
+      "medio-gluteo": 3,
+      "retto-femorale": 2
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 2,
+    "impatto": false,
+    "sollecita": [
+      "ginocchia"
+    ],
+    "funzionale": false
+  },
+  {
+    "id": "albero",
+    "nome": "Albero",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "In piedi su una gamba, pianta dell'altro piede sull'interno della coscia o del polpaccio.",
+      "Mani unite al petto, poi sopra la testa.",
+      "Sguardo su un punto fisso, respira e mantieni; cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "medio-gluteo": 2,
+      "polpacci": 2,
+      "tibiale-anteriore": 2,
+      "addome": 1,
+      "adduttori": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": true
+  },
+  {
+    "id": "affondo_basso",
+    "nome": "Affondo basso",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Piede anteriore avanti, ginocchio posteriore a terra.",
+      "Porta il bacino in avanti e in basso, braccia sopra la testa.",
+      "Allunga la colonna respirando; cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "retto-femorale": 3,
+      "quadricipiti": 1,
+      "grande-gluteo": 1,
+      "addome": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "torsione_supina",
+    "nome": "Torsione supina",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "tempo",
+    "esecuzione": [
+      "Supino, ginocchia piegate, braccia aperte a T.",
+      "Lascia cadere le ginocchia da un lato mantenendo le spalle a terra.",
+      "Sguardo dal lato opposto, respira e cambia lato."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "obliqui": 3,
+      "lombari": 2,
+      "grande-gluteo": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [],
+    "funzionale": false
+  },
+  {
+    "id": "saluto_al_sole",
+    "nome": "Saluto al sole",
+    "categoria": "yoga",
+    "attrezzatura": [
+      "tappetino"
+    ],
+    "tipoRegistrazione": "ripetizioni",
+    "esecuzione": [
+      "In piedi, inspira portando le braccia sopra la testa.",
+      "Espira piegandoti in avanti, poi passa per plank e cobra fino al cane a testa in giù.",
+      "Torna in piedi con la sequenza inversa, un movimento per ogni respiro."
+    ],
+    "sbloccabile": false,
+    "muscoli": {
+      "femorali": 2,
+      "erettori-spinali": 2,
+      "deltoide-anteriore": 2,
+      "pettorali": 1,
+      "tricipite": 1,
+      "addome": 1,
+      "polpacci": 1
+    },
+    "schemi": [
+      "yoga"
+    ],
+    "attrezzi": [
+      [
+        "tappetino"
+      ]
+    ],
+    "livello": 1,
+    "impatto": false,
+    "sollecita": [
+      "polsi"
+    ],
+    "funzionale": true
   }
 ]

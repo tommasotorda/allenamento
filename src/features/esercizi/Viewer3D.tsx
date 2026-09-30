@@ -150,7 +150,7 @@ export default function Viewer3D({ id }: { id: string }) {
     // attrezzi: ricreati a ogni fotogramma (sono pochi e semplici)
     const matAttrezzo = new THREE.MeshStandardMaterial({ color: 0x64748b, roughness: 0.4, metalness: 0.5 })
     const matAccento = new THREE.MeshStandardMaterial({ color: 0xf97316, roughness: 0.5 })
-    const matMuro = new THREE.MeshStandardMaterial({ color: scuro ? 0x2a2a2d : 0xd6d3d1, transparent: true, opacity: 0.3, depthWrite: false })
+    const matMuro = new THREE.MeshStandardMaterial({ color: scuro ? 0x2a2a2d : 0xd6d3d1, transparent: true, opacity: 0.18, depthWrite: false })
     const matTappeto = new THREE.MeshStandardMaterial({ color: 0xf97316, transparent: true, opacity: 0.25 })
     const lineaMat = { attrezzo: new THREE.LineBasicMaterial({ color: 0x64748b }), accento: new THREE.LineBasicMaterial({ color: 0xf97316 }) }
     const gruppoAttrezzi = new THREE.Group()
@@ -188,6 +188,8 @@ export default function Viewer3D({ id }: { id: string }) {
     }
 
     const def = FIGURE[id]
+    // ?t3d=0..1 blocca l'animazione su un istante (utile per controllare le pose)
+    const tFisso = Number(new URLSearchParams(location.hash.split('?')[1] ?? '').get('t3d') ?? NaN)
     let t0 = performance.now()
     let tPausa = 0
     let raf = 0
@@ -198,7 +200,7 @@ export default function Viewer3D({ id }: { id: string }) {
         t0 += now - tPausa
         tPausa = 0
       }
-      const t = faseAnimazione(def, (tPausa || now) - t0)
+      const t = Number.isFinite(tFisso) ? tFisso : faseAnimazione(def, (tPausa || now) - t0)
       const { giunti: g, j2d, piano } = scheletro3D(id, t)
       for (const { s, m } of segmenti) {
         orienta(m, g[s.a], g[s.b])

@@ -5,15 +5,17 @@ import { Chip, ExerciseThumb, PageHeader } from '../../components/ui'
 import { CATEGORIE, esercizi, NOMI_CATEGORIE } from '../../domain/data'
 import type { Categoria } from '../../domain/types'
 
+type Filtro = Categoria | 'funzionali'
+
 export function EserciziPage() {
-  const [cat, setCat] = useState<Categoria | null>(() => {
+  const [cat, setCat] = useState<Filtro | null>(() => {
     try {
-      return sessionStorage.getItem('esercizi.cat') as Categoria | null
+      return sessionStorage.getItem('esercizi.cat') as Filtro | null
     } catch {
       return null
     }
   })
-  const scegli = (c: Categoria | null) => {
+  const scegli = (c: Filtro | null) => {
     setCat(c)
     try {
       if (c) sessionStorage.setItem('esercizi.cat', c)
@@ -22,7 +24,7 @@ export function EserciziPage() {
       /* storage non disponibile */
     }
   }
-  const lista = esercizi.filter((e) => !cat || e.categoria === cat)
+  const lista = esercizi.filter((e) => !cat || (cat === 'funzionali' ? e.funzionale : e.categoria === cat))
 
   return (
     <div>
@@ -30,6 +32,9 @@ export function EserciziPage() {
       <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1">
         <Chip active={!cat} onClick={() => scegli(null)}>
           Tutti
+        </Chip>
+        <Chip active={cat === 'funzionali'} onClick={() => scegli('funzionali')}>
+          Funzionali
         </Chip>
         {CATEGORIE.map((c) => (
           <Chip key={c} active={cat === c} onClick={() => scegli(c)}>

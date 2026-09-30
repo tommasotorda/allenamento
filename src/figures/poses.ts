@@ -3,6 +3,7 @@
  * Vedi engine.ts per le convenzioni sugli angoli.
  */
 import { G, add, lerpV, type FiguraDef, type Joints, type Pose, type Vec } from './engine'
+import { NUOVE_FIGURE } from './poses2'
 
 /** Passo di corsa/camminata: A con gamba vicina avanti, B con gamba vicina dietro. */
 function falcata(opts: { lean: number; ampiezza: number; braccia: 'corsa' | 'pesi' | 'avanti' | 'dietro'; x?: number }): { a: Pose; b: Pose } {
@@ -39,7 +40,7 @@ function volo(mani: Vec, arrivo: Vec, t: number, da = 0.55): Vec {
 
 const mani = (j: Joints): Vec => lerpV(j.handN, j.handF, 0.5)
 
-export const FIGURE: Record<string, FiguraDef> = {
+const BASE: Record<string, FiguraDef> = {
   // ---------------- CORE ----------------
   plank: {
     a: { hip: [100], torso: -9, armN: [90, 0], legN: [150, 180, 180] },
@@ -341,3 +342,5 @@ export const FIGURE: Record<string, FiguraDef> = {
     back: (j, t) => [{ k: 'mat', x1: 60, x2: 220 }, { k: 'belly', at: [j.hip[0] - 10, j.hip[1] - 2], r: 5 + 6 * t }],
   },
 }
+
+export const FIGURE: Record<string, FiguraDef> = { ...BASE, ...NUOVE_FIGURE }

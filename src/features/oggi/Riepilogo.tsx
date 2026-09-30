@@ -2,6 +2,7 @@ import { useLiveQuery } from 'dexie-react-hooks'
 import { Button, Card, numIt, PageHeader } from '../../components/ui'
 import { db } from '../../db/schema'
 import { programma } from '../../domain/data'
+import { nomeSedutaLog } from '../../domain/session'
 import { volumeSerie } from '../../domain/stats'
 
 export function durataMin(inizio: string, fine: string | null) {
@@ -27,7 +28,7 @@ export function Riepilogo({ sedutaId, onChiudi }: { sedutaId: string; onChiudi: 
 
   return (
     <div>
-      <PageHeader title="Riepilogo" subtitle={programma.sedute[seduta.templateId].nome} />
+      <PageHeader title="Riepilogo" subtitle={nomeSedutaLog(seduta, programma)} />
       <div className="mt-4 grid grid-cols-2 gap-3">
         {voci.map(([k, v]) => (
           <Card key={k}>

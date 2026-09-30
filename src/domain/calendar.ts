@@ -50,24 +50,26 @@ export function varianteCore(programma: Programma, settimana: number): { nome: '
     : { nome: 'B', esercizi: programma.blocco_core.varianteB }
 }
 
-const DOW_A_GIORNO: (GiornoId | null)[] = [null, 'lun', 'mar', 'mer', 'gio', 'ven', null]
+const DOW_A_GIORNO: GiornoId[] = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab']
 
-export function giornoSettimana(iso: string): GiornoId | null {
+export function giornoSettimana(iso: string): GiornoId {
   const [y, m, d] = iso.split('-').map(Number)
   return DOW_A_GIORNO[new Date(Date.UTC(y, m - 1, d)).getUTCDay()]
 }
 
-/** Sedute con blocco palestra: iniziano con il blocco core. */
-export function haBloccoCore(giorno: GiornoId): boolean {
-  return giorno !== 'mer'
+/** Seduta prevista in una data, se c'e'. */
+export function sedutaDelGiorno(programma: Programma, iso: string): string | null {
+  const g = giornoSettimana(iso)
+  return programma.settimana.find((x) => x.giorno === g)?.sedutaId ?? null
 }
 
 /** Prossima seduta in programma a partire da una data (inclusa). */
-export function prossimaSeduta(iso: string): { data: string; giorno: GiornoId } {
+export function prossimaSeduta(programma: Programma, iso: string): { data: string; giorno: GiornoId; sedutaId: string } | null {
   for (let i = 0; i < 7; i++) {
     const data = aggiungiGiorni(iso, i)
     const g = giornoSettimana(data)
-    if (g) return { data, giorno: g }
+    const s = programma.settimana.find((x) => x.giorno === g)
+    if (s) return { data, giorno: g, sedutaId: s.sedutaId }
   }
-  throw new Error('irraggiungibile')
+  return null
 }

@@ -15,7 +15,7 @@ export function esercizio(id: string): Esercizio {
   return e
 }
 
-export const GIORNI: GiornoId[] = ['lun', 'mar', 'mer', 'gio', 'ven']
+export const GIORNI: GiornoId[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom']
 
 export const NOMI_GIORNI: Record<GiornoId, string> = {
   lun: 'Lunedì',
@@ -23,9 +23,11 @@ export const NOMI_GIORNI: Record<GiornoId, string> = {
   mer: 'Mercoledì',
   gio: 'Giovedì',
   ven: 'Venerdì',
+  sab: 'Sabato',
+  dom: 'Domenica',
 }
 
-export const CATEGORIE = ['core', 'forza', 'ricostruzione', 'potenza', 'pista', 'mobilita'] as const
+export const CATEGORIE = ['core', 'forza', 'ricostruzione', 'potenza', 'pista', 'mobilita', 'stretching', 'yoga'] as const
 
 export const NOMI_CATEGORIE: Record<(typeof CATEGORIE)[number], string> = {
   core: 'Core',
@@ -34,4 +36,6 @@ export const NOMI_CATEGORIE: Record<(typeof CATEGORIE)[number], string> = {
   potenza: 'Potenza',
   pista: 'Pista',
   mobilita: 'Mobilità',
+  stretching: 'Stretching',
+  yoga: 'Yoga',
 }

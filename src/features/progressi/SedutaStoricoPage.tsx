@@ -6,6 +6,7 @@ import { Button, Card, formatData, PageHeader, SectionTitle } from '../../compon
 import { aggiornaSeduta, eliminaSeduta, eliminaSerie, salvaSerie } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizio, programma } from '../../domain/data'
+import { nomeSedutaLog } from '../../domain/session'
 import type { SedutaLog } from '../../domain/types'
 import { useImpostazioni } from '../../hooks'
 import { durataMin } from '../oggi/Riepilogo'
@@ -26,13 +27,13 @@ export function SedutaStoricoPage() {
   for (const s of [...serie].sort((a, b) => a.numero - b.numero)) perEsercizio.set(s.esercizioId, [...(perEsercizio.get(s.esercizioId) ?? []), s])
   const d = durataMin(seduta.inizio, seduta.fine)
   const setPista = (k: keyof SedutaLog['pista']) => (v: number | null) => aggiornaSeduta(seduta.id, { pista: { ...seduta.pista, [k]: v } })
-  const haPista = !!programma.sedute[seduta.templateId].pista
+  const haPista = !!programma.sedute[seduta.templateId]?.pista || Object.values(seduta.pista).some((v) => v !== null)
 
   return (
     <div>
       <PageHeader
         back="/progressi?tab=storico"
-        title={programma.sedute[seduta.templateId].nome}
+        title={nomeSedutaLog(seduta, programma)}
         subtitle={`${formatData(seduta.data, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · sett. ${seduta.settimanaCiclo}${d !== null ? ` · ${d} min` : ''}`}
         right={
           <Button variant={modifica ? 'primary' : 'secondary'} onClick={() => setModifica((m) => !m)}>
@@ -66,7 +67,7 @@ export function SedutaStoricoPage() {
         </>
       )}
 
-      {seduta.templateId === 'mer' && (
+      {(seduta.tennisMin !== null || (seduta.templateId === 'mer' && (seduta.pianoId ?? 'originale') === 'originale')) && (
         <>
           <SectionTitle>Tennis</SectionTitle>
           <Card className="flex justify-center">

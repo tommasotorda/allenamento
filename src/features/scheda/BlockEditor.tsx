@@ -2,15 +2,15 @@ import { useState } from 'react'
 import { Icon } from '../../components/Icon'
 import { Stepper } from '../../components/Stepper'
 import { Badge, Button, Card, ExerciseThumb, SectionTitle } from '../../components/ui'
-import { eliminaScheda, salvaScheda } from '../../db/repositories'
-import { esercizio, programma as programmaBase } from '../../domain/data'
+import { aggiornaProgramma } from '../../db/repositories'
+import { esercizio } from '../../domain/data'
 import {
   bloccoModificato,
-  conBlocco,
+  conVoci,
   leggiIntervallo,
   prescrizioneDefault,
+  ripristinaBlocco,
   scriviIntervallo,
-  senzaBlocco,
   sostituisci,
   vociBlocco,
   type Blocco,
@@ -28,10 +28,10 @@ export function BlockEditor({ titolo, blocco, c }: { titolo: string; blocco: Blo
   const [aperta, setAperta] = useState<number | null>(null)
   const [scelta, setScelta] = useState<Scelta | null>(null)
   const [conferma, setConferma] = useState(false)
-  const modificato = bloccoModificato(c.schedaUtente, blocco)
+  const modificato = bloccoModificato(c.piano, blocco)
 
   const salva = async (nuove: VocePalestra[]) => {
-    await salvaScheda(conBlocco(programmaBase, c.schedaUtente, blocco, nuove))
+    await aggiornaProgramma(c.piano.id, conVoci(c.programma, blocco, nuove))
   }
   const aggiorna = (i: number, v: VocePalestra) => salva(voci.map((x, k) => (k === i ? v : x)))
   const sposta = (i: number, d: -1 | 1) => {
@@ -49,10 +49,7 @@ export function BlockEditor({ titolo, blocco, c }: { titolo: string; blocco: Blo
   const ripristina = async () => {
     setConferma(false)
     setAperta(null)
-    if (!c.schedaUtente) return
-    const u = senzaBlocco(c.schedaUtente, blocco)
-    if (!u.core && Object.keys(u.sedute).length === 0) await eliminaScheda()
-    else await salvaScheda(u)
+    await aggiornaProgramma(c.piano.id, ripristinaBlocco(c.piano, blocco))
   }
 
   const idsPresenti = voci.flatMap((v) => (isCircuito(v) ? v.esercizi : [v.esercizioId]))

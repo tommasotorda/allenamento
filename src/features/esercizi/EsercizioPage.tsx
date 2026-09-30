@@ -68,6 +68,26 @@ export function EsercizioPage() {
     nav(`/esercizi/${voci[pos].id}`, { replace: true, state: { ...lista, voci, pos, dir: pos >= lista.pos ? 1 : -1 } satisfies StatoLista })
   }
   const tocco = useRef<{ x: number; y: number; t: number; suCanvas: boolean } | null>(null)
+  // da tastiera: frecce sinistra/destra per l'esercizio precedente/successivo
+  const vaiRef = useRef(vai)
+  const posRef = useRef(lista?.pos)
+  useEffect(() => {
+    vaiRef.current = vai
+    posRef.current = lista?.pos
+  })
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
+      if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey || posRef.current === undefined) return
+      const el = document.activeElement as HTMLElement | null
+      if (el && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName))) return
+      if (document.querySelector('[role=dialog]')) return
+      e.preventDefault()
+      vaiRef.current(posRef.current + (e.key === 'ArrowRight' ? 1 : -1))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
   const onTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length !== 1) return (tocco.current = null)
     const t = e.touches[0]
@@ -93,10 +113,10 @@ export function EsercizioPage() {
 
   const frecce = lista && lista.voci.length > 1 && (
     <div className="flex items-center gap-1">
-      <button type="button" onClick={() => vai(lista.pos - 1)} disabled={lista.pos === 0} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio precedente">
+      <button type="button" onClick={() => vai(lista.pos - 1)} disabled={lista.pos === 0} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio precedente" aria-keyshortcuts="ArrowLeft" title="Precedente (←)">
         <Icon name="back" className="size-5" />
       </button>
-      <button type="button" onClick={() => vai(lista.pos + 1)} disabled={lista.pos === lista.voci.length - 1} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio successivo">
+      <button type="button" onClick={() => vai(lista.pos + 1)} disabled={lista.pos === lista.voci.length - 1} className="flex size-10 items-center justify-center rounded-xl bg-zinc-200 disabled:opacity-30 dark:bg-zinc-800" aria-label="Esercizio successivo" aria-keyshortcuts="ArrowRight" title="Successivo (→)">
         <Icon name="chevron" className="size-5" />
       </button>
     </div>

@@ -60,10 +60,18 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 - `adatta(programma, direzioni, contesto)` restituisce il nuovo programma e l'elenco delle modifiche; si applica come nuovo piano e il precedente va in archivio. `proposteAdattamento()` propone di adattare alla scadenza, dopo i test di metà ciclo, a metà delle sedute o con 1RM stimato +10%; le proposte rimandate stanno in `piano.proposteChiuse`.
 - Deterministico: stesse risposte, stessa scheda (c'è un test).
 
-## PDF della scheda
+## PDF
+
+- **Progressi** (`esportaProgressi.ts`): riepilogo, misure, forza per esercizio, volume, test e storico; grafici disegnati con le primitive di jsPDF. Stile e utilità comuni in `pdf/comune.ts`.
+
+### Scheda
 
 `src/features/pdf/esportaPdf.ts` (jsPDF + svg2pdf.js, caricati solo al clic): indice con un pulsante per giorno e, per ogni giorno, tre viste (Scheda, Muscoli, Dettaglio) collegate da linguette e segnalibri. Solo link interni tra pagine, perché il JavaScript nei PDF funziona solo in Acrobat. Le figure 2D (`figuraSvg`, posizione iniziale e finale) e le mappe muscolari (`mappaSvg` con `inline: true`) sono vettoriali. Il testo passa per `t()` perché il font standard è Windows-1252.
 
+## Pagina esercizio
+
+Chi apre un esercizio passa nello stato della navigazione una lista (`features/esercizi/lista.tsx`): swipe/frecce scorrono tra le voci (`navigate` con `replace`, così "indietro" torna alla lista). Le voci con `blocco`/`indice` e `pianoId` si modificano da `ModificaNellaScheda` (specifiche con `PrescrizioneForm`, sostituzione, rimozione). Sul visore 3D lo scorrimento vale solo se rapido, altrimenti il trascinamento ruota la figura.
+
 ## Deploy
 
-GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`; `BASE_PATH` viene impostato al nome del repo.
+GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`. Il repo è `tommasotorda.github.io`, quindi l'app sta alla radice (`BASE_PATH=/`); `public/allenamento/` rimanda il vecchio indirizzo.

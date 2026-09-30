@@ -16,17 +16,10 @@ import { isCircuito, type Circuito, type Fase, type Piano, type Prescrizione } f
 import { figuraSvg } from '../../figures/engine'
 import { COLORI_MAPPA, mappaSvg } from '../../figures/muscleMap'
 import { FIGURE } from '../../figures/poses'
+import { A4, ACCENTO, CHIARO, fmtData, GRIGIO, LINEA, M, pieDiPagina, righe, SCARICO, t, TESTO } from './comune'
 
 // ---------- stile ----------
 
-const A4 = { w: 210, h: 297 }
-const M = 14 // margine
-const TESTO = '#18181b'
-const GRIGIO = '#71717a'
-const CHIARO = '#f4f4f5'
-const LINEA = '#e4e4e7'
-const ACCENTO = '#f97316'
-const SCARICO = '#bae6fd'
 const HEADER_H = 30 // spazio occupato dalle linguette in alto
 
 type Vista = 'scheda' | 'muscoli' | 'dettaglio'
@@ -35,20 +28,6 @@ const VISTE: { id: Vista; nome: string }[] = [
   { id: 'muscoli', nome: 'Muscoli' },
   { id: 'dettaglio', nome: 'Dettaglio' },
 ]
-
-/** Il font standard del PDF usa la codifica Windows-1252: sostituisce i pochi caratteri fuori. */
-const t = (s: string) =>
-  s
-    .replace(/→/g, '->')
-    .replace(/[′’‘]/g, "'")
-    .replace(/[“”]/g, '"')
-    .replace(/[–—]/g, '-')
-    .replace(/…/g, '...')
-
-const fmtData = (iso: string) => {
-  const [y, m, d] = iso.split('-').map(Number)
-  return new Date(y, m - 1, d).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
-}
 
 // ---------- svg ----------
 
@@ -154,9 +133,6 @@ function titoloBlocco(doc: jsPDF, pag: Pagina, testo: string, nuova: () => void,
   pag.y += 7
 }
 
-function righe(doc: jsPDF, testo: string, larghezza: number): string[] {
-  return doc.splitTextToSize(t(testo), larghezza) as string[]
-}
 
 export async function esportaPdf(piano: Piano, opzioni: { settimana: number; sbloccati: string[]; onProgresso?: (x: number) => void }): Promise<Blob> {
   const doc = new jsPDF({ unit: 'mm', format: 'a4', compress: true })
@@ -195,7 +171,6 @@ export async function esportaPdf(piano: Piano, opzioni: { settimana: number; sbl
   disegnaIndice(doc, piano, giorni, settimana, fase)
 
   // linguette e piè di pagina su tutte le pagine dei giorni
-  const totale = doc.getNumberOfPages()
   for (const g of giorni) {
     for (const v of VISTE) {
       for (const n of g.pagine[v.id]) {
@@ -204,14 +179,7 @@ export async function esportaPdf(piano: Piano, opzioni: { settimana: number; sbl
       }
     }
   }
-  for (let n = 1; n <= totale; n++) {
-    doc.setPage(n)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8)
-    doc.setTextColor(GRIGIO)
-    doc.text(t(piano.nome), M, A4.h - 8)
-    doc.text(`${n} / ${totale}`, A4.w - M, A4.h - 8, { align: 'right' })
-  }
+  pieDiPagina(doc, piano.nome)
 
   // segnalibri nella barra laterale del lettore
   doc.outline.add(null, 'Indice', { pageNumber: 1 })

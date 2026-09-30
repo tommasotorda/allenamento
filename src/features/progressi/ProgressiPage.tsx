@@ -15,6 +15,7 @@ import type { Misura } from '../../domain/types'
 import { useCiclo, useOggi } from '../../hooks'
 import { durataMin } from '../oggi/Riepilogo'
 import { Barre, C1, C2, ChartCard, LineaTempo } from './charts'
+import { PdfButton } from '../pdf/EsportaPdfButton'
 
 type Tab = 'misure' | 'forza' | 'test' | 'storico'
 
@@ -24,6 +25,15 @@ export function ProgressiPage() {
   return (
     <div>
       <PageHeader title="Progressi" right={<GearLink />} />
+      <PdfButton
+        className="mb-3 w-full"
+        etichetta="Esporta PDF dei progressi"
+        crea={async (onProgresso) => {
+          const { esportaProgressi } = await import('../pdf/esportaProgressi')
+          const blob = await esportaProgressi({ onProgresso })
+          return { blob, nome: `progressi-${new Date().toISOString().slice(0, 10)}.pdf`, titolo: 'Progressi' }
+        }}
+      />
       <Tabs
         value={tab}
         onChange={(t) => setParams({ tab: t }, { replace: true })}

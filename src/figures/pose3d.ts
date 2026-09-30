@@ -33,6 +33,7 @@ const PIANI: Record<string, Piano> = {
   stretch_laterale: 'frontale',
   stretch_adduttori: 'frontale',
   alzate_laterali: 'frontale',
+  croci_cavo: 'frontale',
 }
 
 export const NOMI_GIUNTI = [

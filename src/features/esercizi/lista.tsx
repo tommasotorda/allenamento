@@ -32,6 +32,7 @@ export interface StatoLista {
 export function listaDaSeduta(programma: Programma | undefined, s: StrutturaSeduta): VoceLista[] {
   const out: VoceLista[] = []
   const grezza = programma?.sedute[s.sedutaId]
+  s.riscaldamento.forEach((p, i) => out.push({ id: p.esercizioId, blocco: grezza ? { tipo: 'riscaldamento', sedutaId: s.sedutaId } : undefined, indice: grezza ? i : undefined }))
   if (s.core) s.core.voci.forEach((p, i) => out.push({ id: p.esercizioId, blocco: { tipo: 'core', variante: s.core!.variante }, indice: i }))
   if (s.pista) out.push({ id: s.pista.esercizioId })
   const aggiungi = (voci: VocePalestra[], originali: VocePalestra[] | undefined, tipo: 'palestra' | 'mobilita') => {

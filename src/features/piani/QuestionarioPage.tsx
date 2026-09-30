@@ -6,7 +6,8 @@ import { salvaPiano } from '../../db/repositories'
 import { DESCR_DIREZIONI } from '../../domain/adattamento'
 import { lunediDi } from '../../domain/calendar'
 import { GIORNI, NOMI_GIORNI } from '../../domain/data'
-import { generaProgramma, modelliPer, nomeScheda, NOMI_ATTREZZI, NOMI_FOCUS, NOMI_OBIETTIVI, NOMI_SUDDIVISIONI, RISPOSTE_VUOTE, type Focus, type Risposte, type Sport, type Suddivisione } from '../../domain/generator'
+import { generaProgramma, modelliPer, nomeScheda, NOMI_ATTREZZI, NOMI_COMPONENTI, NOMI_FOCUS, NOMI_OBIETTIVI, NOMI_SUDDIVISIONI, RISPOSTE_VUOTE, type Componente, type Focus, type Risposte, type Sport, type Suddivisione } from '../../domain/generator'
+import { ELENCO_GRUPPI, FATTORE_GRUPPO, GRUPPI, volumeSettimanaleGruppi, volumeTarget } from '../../domain/programmazione'
 import { creaPiano } from '../../domain/plans'
 import { PROFILI } from '../../domain/profili'
 import type { Attrezzo, GiornoId, Obiettivo, Zona } from '../../domain/types'
@@ -33,6 +34,7 @@ const PASSI = [
   { id: 'livello', nome: 'Livello' },
   { id: 'giorni', nome: 'Giorni' },
   { id: 'suddivisione', nome: 'Suddivisione' },
+  { id: 'composizione', nome: 'Composizione' },
   { id: 'attrezzatura', nome: 'Attrezzatura' },
   { id: 'sport', nome: 'Altri sport' },
   { id: 'preferenze', nome: 'Preferenze' },
@@ -42,13 +44,16 @@ type PassoId = (typeof PASSI)[number]['id']
 
 const SPORT = ['Tennis', 'Padel', 'Calcio', 'Calcetto', 'Basket', 'Pallavolo', 'Nuoto', 'Ciclismo', 'Arrampicata', 'Arti marziali', 'Sci', 'Golf']
 const DURATE_SPORT = [30, 45, 60, 90, 120]
-const SUDDIVISIONI: Suddivisione[] = ['auto', 'fullbody', 'sup-inf', 'ppl', 'gruppi']
+const SUDDIVISIONI: Suddivisione[] = ['auto', 'fullbody', 'sup-inf', 'ppl', 'gruppi', 'libera']
+const COMPONENTI = Object.keys(NOMI_COMPONENTI) as Componente[]
+const N_ESERCIZI = [3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
 const DESCR_SUDDIVISIONI: Record<Suddivisione, string> = {
   auto: 'Scelta in base al numero di giorni',
   fullbody: 'Tutto il corpo in ogni seduta, con varianti',
   'sup-inf': 'Parte superiore e gambe a sedute alterne',
   ppl: 'Petto, spalle e tricipiti / schiena e bicipiti / gambe. Da 3 giorni',
   gruppi: 'Un gruppo muscolare per seduta, con esercizi di isolamento. Da 3 giorni',
+  libera: 'Scegli tu cosa allenare in ogni giorno',
 }
 
 function Scelta({ attivo, onClick, children, ordine }: { attivo: boolean; onClick: () => void; children: React.ReactNode; ordine?: number }) {
@@ -102,21 +107,25 @@ export function QuestionarioPage() {
   const tipoNavigazione = useNavigationType()
   const [salvato] = useState(() => (tipoNavigazione === 'POP' ? leggiStato(profilo?.id ?? null) : null))
   const [r, setR] = useState<Risposte>(salvato?.r ?? profilo?.risposte ?? RISPOSTE_VUOTE)
-  const [passo, setPasso] = useState(salvato?.passo ?? (profilo ? PASSI.length - 1 : 0))
+  const [passo, setPasso] = useState(salvato?.passo ?? (profilo ? PASSI.length - (profilo.risposte.suddivisione === 'libera' ? 1 : 2) : 0))
   const [nome, setNome] = useState<string | null>(salvato ? salvato.nome : (profilo?.nome ?? null))
   const [seduta, setSeduta] = useState<string | null>(salvato?.seduta ?? null)
   useEffect(() => scriviStato({ profilo: profilo?.id ?? null, r, passo, nome, seduta }), [profilo, r, passo, nome, seduta])
   const oggi = useOggi()
   const nav = useNavigate()
+  // il passo Composizione c'e' solo con la suddivisione libera
+  const passi = PASSI.filter((p) => p.id !== 'composizione' || r.suddivisione === 'libera')
   const set = (patch: Partial<Risposte> | ((r: Risposte) => Partial<Risposte>)) => setR((x) => ({ ...x, ...(typeof patch === 'function' ? patch(x) : patch) }))
-  const programma = useMemo(() => (passo === PASSI.length - 1 && r.obiettivi.length && r.giorni.length ? generaProgramma(r) : null), [passo, r])
+  const ultimo = passi.length - 1
+  const programma = useMemo(() => (passo === ultimo && r.obiettivi.length && r.giorni.length ? generaProgramma(r) : null), [passo, ultimo, r])
 
-  const passoId: PassoId = PASSI[Math.min(passo, PASSI.length - 1)].id
+  const passoId: PassoId = passi[Math.min(passo, ultimo)].id
   const valido: Record<PassoId, boolean> = {
     obiettivi: r.obiettivi.length > 0,
     livello: true,
     giorni: r.giorni.length >= 1,
     suddivisione: true,
+    composizione: r.giorni.every((g) => (r.composizione?.[g] ?? []).length > 0),
     attrezzatura: r.corpoLibero !== false || r.attrezzi.length > 0,
     sport: (r.sport ?? []).every((x) => x.giorni.length > 0 && x.tipo.trim()),
     preferenze: true,
@@ -134,9 +143,9 @@ export function QuestionarioPage() {
 
   return (
     <div>
-      <PageHeader back="/schede" title={profilo ? profilo.nome : 'Nuova scheda'} subtitle={`${passo + 1}/${PASSI.length} · ${PASSI[passo].nome}`} />
+      <PageHeader back="/schede" title={profilo ? profilo.nome : 'Nuova scheda'} subtitle={`${passo + 1}/${passi.length} · ${passi[Math.min(passo, ultimo)].nome}`} />
       <div className="mb-4 flex gap-1">
-        {PASSI.map((p, i) => (
+        {passi.map((p, i) => (
           <button key={p.id} type="button" onClick={() => i < passo && setPasso(i)} className={`h-1.5 flex-1 rounded-full ${i <= passo ? 'bg-accent' : 'bg-zinc-200 dark:bg-zinc-800'}`} aria-label={p.nome} />
         ))}
       </div>
@@ -184,6 +193,18 @@ export function QuestionarioPage() {
               </Scelta>
             ))}
           </div>
+          <div className="mb-2 mt-6 px-1 text-sm font-semibold text-zinc-500">Esercizi per seduta</div>
+          <div className="grid grid-cols-4 gap-2 sm:grid-cols-6">
+            <Scelta attivo={r.eserciziPerSeduta === undefined} onClick={() => set({ eserciziPerSeduta: undefined })}>
+              Auto
+            </Scelta>
+            {N_ESERCIZI.map((n) => (
+              <Scelta key={n} attivo={r.eserciziPerSeduta === n} onClick={() => set({ eserciziPerSeduta: n })}>
+                {n}
+              </Scelta>
+            ))}
+          </div>
+          <div className="mt-2 px-1 text-xs text-zinc-500">Esclusi riscaldamento, core e defaticamento. Auto: in base alla durata.</div>
         </div>
       )}
 
@@ -196,14 +217,18 @@ export function QuestionarioPage() {
               <Scelta key={sd} attivo={attivo} onClick={() => set({ suddivisione: sd })}>
                 <div>{NOMI_SUDDIVISIONI[sd]}</div>
                 <div className={`text-xs font-normal ${attivo ? 'opacity-70' : 'text-zinc-500'}`}>{DESCR_SUDDIVISIONI[sd]}</div>
-                <div className={`mt-1 text-xs font-normal ${attivo ? 'opacity-90' : 'text-zinc-600 dark:text-zinc-400'}`}>
-                  {r.giorni.map((g, k) => `${NOMI_GIORNI[g].slice(0, 3)}: ${sedute[k]}`).join(' · ')}
-                </div>
+                {sd !== 'libera' && (
+                  <div className={`mt-1 text-xs font-normal ${attivo ? 'opacity-90' : 'text-zinc-600 dark:text-zinc-400'}`}>
+                    {r.giorni.map((g, k) => `${NOMI_GIORNI[g].slice(0, 3)}: ${sedute[k]}`).join(' · ')}
+                  </div>
+                )}
               </Scelta>
             )
           })}
         </div>
       )}
+
+      {passoId === 'composizione' && <Composizione r={r} set={set} />}
 
       {passoId === 'attrezzatura' && (
         <div>
@@ -235,6 +260,33 @@ export function QuestionarioPage() {
               No
             </Scelta>
           </div>
+          <div className="mb-2 mt-6 px-1 text-sm font-semibold text-zinc-500">Superserie</div>
+          <div className="grid grid-cols-3 gap-2">
+            {(
+              [
+                ['no', 'Nessuna'],
+                ['alcune', 'Alcune'],
+                ['tutte', 'Tutta la scheda'],
+              ] as const
+            ).map(([v, n]) => (
+              <Scelta key={v} attivo={(r.superserie ?? 'no') === v} onClick={() => set({ superserie: v, coppieSuperserie: v === 'alcune' ? (r.coppieSuperserie ?? 2) : undefined })}>
+                {n}
+              </Scelta>
+            ))}
+          </div>
+          {r.superserie === 'alcune' && (
+            <>
+              <div className="mb-2 mt-3 px-1 text-xs font-semibold uppercase tracking-wide text-zinc-500">Coppie per seduta</div>
+              <div className="grid grid-cols-3 gap-2">
+                {[1, 2, 3].map((n) => (
+                  <Scelta key={n} attivo={(r.coppieSuperserie ?? 2) === n} onClick={() => set({ coppieSuperserie: n })}>
+                    {n}
+                  </Scelta>
+                ))}
+              </div>
+            </>
+          )}
+          <div className="mt-2 px-1 text-xs text-zinc-500">Due esercizi di fila senza pausa, di solito muscoli antagonisti. Il recupero arriva dopo il secondo.</div>
           <div className="mb-2 mt-6 px-1 text-sm font-semibold text-zinc-500">Zone su cui concentrarti</div>
           <div className="grid grid-cols-2 gap-2">
             {(Object.keys(NOMI_FOCUS) as Focus[]).map((f) => (
@@ -269,6 +321,9 @@ export function QuestionarioPage() {
             <Badge>{r.giorni.length} giorni</Badge>
             <Badge>{testoDurata(r.durataMin)}</Badge>
             <Badge>{NOMI_SUDDIVISIONI[r.suddivisione ?? 'auto']}</Badge>
+            {r.eserciziPerSeduta && <Badge>{r.eserciziPerSeduta} esercizi</Badge>}
+            {r.superserie === 'tutte' && <Badge>Tutto in superserie</Badge>}
+            {r.superserie === 'alcune' && <Badge>{r.coppieSuperserie ?? 2} superserie</Badge>}
             {(r.sport ?? []).map((x) => (
               <Badge key={x.tipo} tone="blue">
                 {x.tipo}
@@ -285,6 +340,7 @@ export function QuestionarioPage() {
             </Card>
           )}
           <AnteprimaProgramma programma={programma} aperta={seduta} onApri={setSeduta} />
+          <VolumeGruppi volume={volumeSettimanaleGruppi(programma)} target={volumeTarget(r.obiettivi[0], r.livello)} />
           <Button variant="primary" big className="mt-6 w-full" onClick={() => crea(true)}>
             Attiva questa scheda
           </Button>
@@ -294,7 +350,7 @@ export function QuestionarioPage() {
         </div>
       )}
 
-      {passo < PASSI.length - 1 && (
+      {passo < ultimo && (
         <div className="mt-6 flex gap-2">
           {passo > 0 && (
             <Button big className="flex-1" onClick={() => setPasso(passo - 1)}>
@@ -302,7 +358,7 @@ export function QuestionarioPage() {
             </Button>
           )}
           <Button variant="primary" big className="flex-[2]" disabled={!valido[passoId]} onClick={() => setPasso(passo + 1)}>
-            {passo === PASSI.length - 2 ? 'Genera scheda' : 'Avanti'}
+            {passo === ultimo - 1 ? 'Genera scheda' : 'Avanti'}
           </Button>
         </div>
       )}
@@ -426,5 +482,68 @@ function AltriSport({ r, set }: { r: Risposte; set: Imposta }) {
         ))}
       </div>
     </div>
+  )
+}
+
+/** Suddivisione libera: per ogni giorno si sceglie cosa allenare. */
+function Composizione({ r, set }: { r: Risposte; set: Imposta }) {
+  const comp = r.composizione ?? {}
+  return (
+    <div className="space-y-3">
+      <div className="px-1 text-sm text-zinc-500">Per ogni giorno scegli gruppi muscolari o stili di allenamento</div>
+      {r.giorni.map((g) => {
+        const scelti = comp[g] ?? []
+        return (
+          <Card key={g} className="p-3">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="text-lg font-semibold">{NOMI_GIORNI[g]}</span>
+              <span className="truncate text-xs text-zinc-500">{scelti.map((c) => NOMI_COMPONENTI[c]).join(' + ')}</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {COMPONENTI.map((c) => (
+                <Chip key={c} active={scelti.includes(c)} onClick={() => set((x) => ({ composizione: { ...x.composizione, [g]: alterna(x.composizione?.[g] ?? [], c) } }))}>
+                  {NOMI_COMPONENTI[c]}
+                </Chip>
+              ))}
+            </div>
+            {!scelti.length && <div className="mt-2 text-xs font-medium text-red-600">Scegli almeno una voce</div>}
+          </Card>
+        )
+      })}
+    </div>
+  )
+}
+
+/** Serie settimanali per gruppo muscolare rispetto all'intervallo indicato per obiettivo e livello. */
+function VolumeGruppi({ volume, target }: { volume: Record<string, number>; target: [number, number] }) {
+  const gruppi = ELENCO_GRUPPI.filter((g) => g !== 'core' && volume[g] > 0)
+  if (!gruppi.length) return null
+  const max = Math.max(target[1] * 1.25, ...gruppi.map((g) => volume[g]))
+  return (
+    <Card className="mt-4 p-3">
+      <div className="flex items-baseline justify-between">
+        <span className="font-semibold">Serie settimanali</span>
+        <span className="text-xs text-zinc-500">
+          in grigio l'intervallo indicato
+        </span>
+      </div>
+      <div className="mt-2 space-y-1.5">
+        {gruppi.map((g) => {
+          const v = Math.round(volume[g] * 2) / 2
+          // braccia e polpacci: intervallo ridotto, lavorano gia' nei multiarticolari
+          const [min, mx] = target.map((x) => Math.round(x * FATTORE_GRUPPO[g]))
+          return (
+            <div key={g} className="flex items-center gap-2 text-sm">
+              <span className="w-24 shrink-0 text-zinc-600 dark:text-zinc-400">{GRUPPI[g].nome}</span>
+              <div className="relative h-2.5 flex-1 rounded-full bg-zinc-100 dark:bg-zinc-800">
+                <div className="absolute inset-y-0 rounded-full bg-zinc-300/70 dark:bg-zinc-600/60" style={{ left: `${(min / max) * 100}%`, width: `${((mx - min) / max) * 100}%` }} />
+                <div className="absolute inset-y-0.5 left-0 rounded-full bg-accent" style={{ width: `${(Math.min(v, max) / max) * 100}%` }} />
+              </div>
+              <span className="w-8 shrink-0 text-right tabular-nums font-semibold">{String(v).replace('.', ',')}</span>
+            </div>
+          )
+        })}
+      </div>
+    </Card>
   )
 }

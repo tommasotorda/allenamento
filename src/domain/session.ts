@@ -7,6 +7,7 @@ export interface StrutturaSeduta {
   core?: { variante: 'A' | 'B'; voci: Prescrizione[] }
   pista?: { esercizioId: string; testo: string; ripetute: number | null; scarico: boolean }
   attivita?: { tipo: string; durataMin: number }
+  riscaldamento: Prescrizione[]
   palestra: VocePalestra[]
   mobilita: Prescrizione[]
 }
@@ -14,7 +15,7 @@ export interface StrutturaSeduta {
 /** Seduta del giorno risolta per la settimana e la fase correnti, con gli sbloccabili attivi. */
 export function strutturaSeduta(programma: Programma, sedutaId: string, settimana: number, fase: Fase, sbloccati: string[]): StrutturaSeduta {
   const s = programma.sedute[sedutaId]
-  const out: StrutturaSeduta = { sedutaId, nome: s.nome, palestra: [], mobilita: s.mobilita ?? [] }
+  const out: StrutturaSeduta = { sedutaId, nome: s.nome, riscaldamento: s.riscaldamento ?? [], palestra: [], mobilita: s.mobilita ?? [] }
 
   if (s.core) {
     const v = varianteCore(programma, settimana)
@@ -63,3 +64,18 @@ export function nomeSedutaLog(log: { templateId: string; nomeSeduta?: string }, 
 
 /** "calcio + padel" -> "Calcio + padel" */
 export const nomeAttivita = (tipo: string) => tipo.charAt(0).toUpperCase() + tipo.slice(1)
+
+/** Etichette delle superserie in un elenco di voci: "A1", "A2"... e se la voce apre la coppia. */
+export function etichetteSuperserie(voci: VocePalestra[]): Map<number, { etichetta: string; ultimo: boolean }> {
+  const out = new Map<number, { etichetta: string; ultimo: boolean }>()
+  const perGruppo = new Map<string, number[]>()
+  voci.forEach((v, i) => {
+    if ('circuito' in v || !v.superserie) return
+    perGruppo.set(v.superserie, [...(perGruppo.get(v.superserie) ?? []), i])
+  })
+  for (const [g, idx] of perGruppo) {
+    if (idx.length < 2) continue
+    idx.forEach((i, k) => out.set(i, { etichetta: `${g}${k + 1}`, ultimo: k === idx.length - 1 }))
+  }
+  return out
+}

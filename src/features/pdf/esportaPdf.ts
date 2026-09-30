@@ -84,6 +84,7 @@ function vociDelGiorno(piano: Piano, sedutaId: string, settimana: number, fase: 
   const s = strutturaSeduta(p, sedutaId, settimana, fase, sbloccati)
   const voci: Voce[] = []
   const testi: Giorno['testi'] = []
+  for (const v of s.riscaldamento) voci.push({ blocco: 'Riscaldamento', p: v })
   if (p.sedute[sedutaId].core) {
     for (const [v, lista] of [['A', p.blocco_core.varianteA], ['B', p.blocco_core.varianteB]] as const) {
       for (const x of lista) voci.push({ blocco: `Core · variante ${v} (settimane ${v === 'A' ? 'dispari' : 'pari'})`, p: x })
@@ -327,7 +328,7 @@ function rigaEsercizioTesto(doc: jsPDF, x: number, y: number, larghezza: number,
   doc.text(t(testoPrescrizione(p, fase, e)), x, y + 11)
   doc.setFontSize(9)
   doc.setTextColor(GRIGIO)
-  const extra = [p.recuperoSec ? `Recupero ${formatSec(p.recuperoSec)}` : null, p.superserieCon ? `Superserie con ${esercizio(p.superserieCon).nome}` : null, p.alternativa ? `Alternativa: ${esercizio(p.alternativa).nome}` : null]
+  const extra = [p.superserie ? `Superserie ${p.superserie}` : null, p.recuperoSec ? `Recupero ${formatSec(p.recuperoSec)}` : p.superserie ? 'Subito il successivo' : null, p.superserieCon ? `Superserie con ${esercizio(p.superserieCon).nome}` : null, p.alternativa ? `Alternativa: ${esercizio(p.alternativa).nome}` : null]
     .filter(Boolean)
     .join(' · ')
   if (extra) doc.text(t(extra), x, y + 16.5, { maxWidth: larghezza })

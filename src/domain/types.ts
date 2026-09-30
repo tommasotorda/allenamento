@@ -35,7 +35,7 @@ export type Schema =
 
 export type Attrezzo =
   | 'manubri' | 'kettlebell' | 'bilanciere' | 'trap-bar' | 'panca' | 'sbarra' | 'elastico' | 'cavo' | 'slitta'
-  | 'palla-medica' | 'trx' | 'box' | 'landmine' | 'battle-rope' | 'slider' | 'panca-iperestensioni' | 'tappetino'
+  | 'palla-medica' | 'trx' | 'box' | 'landmine' | 'battle-rope' | 'slider' | 'panca-iperestensioni' | 'tappetino' | 'parallele'
 
 export type Zona = 'ginocchia' | 'schiena' | 'spalle' | 'polsi'
 
@@ -52,6 +52,8 @@ export interface Prescrizione {
   serieExtraSx?: number
   alternativa?: string
   superserieCon?: string
+  /** superserie: gli esercizi con la stessa lettera si alternano (A1, A2), il recupero dopo l'ultimo */
+  superserie?: string
   sostituisce?: string
 }
 
@@ -80,6 +82,8 @@ export interface Seduta {
   mobilita?: Prescrizione[]
   /** inizia con il blocco core (varianti A/B a settimane alterne) */
   core?: boolean
+  /** mobilita' e attivazione prima del lavoro principale */
+  riscaldamento?: Prescrizione[]
 }
 
 export type GiornoId = 'lun' | 'mar' | 'mer' | 'gio' | 'ven' | 'sab' | 'dom'

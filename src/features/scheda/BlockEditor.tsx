@@ -5,6 +5,7 @@ import { Badge, Button, Card, ExerciseThumb, SectionTitle } from '../../componen
 import { aggiornaProgramma } from '../../db/repositories'
 import { esercizio } from '../../domain/data'
 import {
+  alternaSuperserie,
   bloccoModificato,
   conVoci,
   leggiIntervallo,
@@ -16,6 +17,7 @@ import {
   type Blocco,
 } from '../../domain/editing'
 import { testoPrescrizione } from '../../domain/progression'
+import { etichetteSuperserie } from '../../domain/session'
 import { isCircuito, type Circuito, type Esercizio, type Prescrizione, type VocePalestra } from '../../domain/types'
 import type { Ciclo } from '../../hooks'
 import { ExercisePicker } from './ExercisePicker'
@@ -52,6 +54,8 @@ export function BlockEditor({ titolo, blocco, c }: { titolo: string; blocco: Blo
     await aggiornaProgramma(c.piano.id, ripristinaBlocco(c.piano, blocco))
   }
 
+  const ss = etichetteSuperserie(voci)
+  const conSuperserie = blocco.tipo === 'palestra'
   const idsPresenti = voci.flatMap((v) => (isCircuito(v) ? v.esercizi : [v.esercizioId]))
 
   const scegli = (es: Esercizio) => {
@@ -116,6 +120,8 @@ export function BlockEditor({ titolo, blocco, c }: { titolo: string; blocco: Blo
               onGiu={i < voci.length - 1 ? () => sposta(i, 1) : undefined}
               onSostituisci={() => setScelta({ modo: 'sostituisci', indice: i })}
               onRimuovi={() => rimuovi(i)}
+              ss={ss.get(i)?.etichetta}
+              onSuperserie={conSuperserie && (v.superserie || (voci[i + 1] && !isCircuito(voci[i + 1]))) ? () => salva(alternaSuperserie(voci, i)) : undefined}
             />
           ),
         )}
@@ -167,9 +173,13 @@ function VoceEditor({
   onGiu,
   onSostituisci,
   onRimuovi,
+  ss,
+  onSuperserie,
 }: {
   p: Prescrizione
   c: Ciclo
+  ss?: string
+  onSuperserie?: () => void
   aperta: boolean
   onApri: () => void
   onChange: (p: Prescrizione) => void
@@ -185,7 +195,10 @@ function VoceEditor({
       <button type="button" onClick={onApri} className="flex w-full items-center gap-3 text-left">
         <ExerciseThumb id={es.id} className="size-12" />
         <div className="min-w-0 flex-1">
-          <div className="truncate font-semibold">{es.nome}</div>
+          <div className="flex items-center gap-1.5">
+            {ss && <Badge tone="blue">{ss}</Badge>}
+            <span className="truncate font-semibold">{es.nome}</span>
+          </div>
           <div className="text-sm text-zinc-500">{testoPrescrizione(p, c.fase, es)}</div>
         </div>
         <Icon name="chevron" className={`size-5 shrink-0 text-zinc-400 transition-transform ${aperta ? 'rotate-90' : ''}`} />
@@ -201,6 +214,11 @@ function VoceEditor({
             </Button>
             <IconBtn icon="trash" label="Rimuovi" onClick={onRimuovi} danger />
           </div>
+          {onSuperserie && (
+            <Button variant="ghost" className="mt-2 h-10 w-full text-sm" onClick={onSuperserie}>
+              {p.superserie ? 'Sciogli superserie' : 'Superserie con il successivo'}
+            </Button>
+          )}
         </div>
       )}
     </Card>

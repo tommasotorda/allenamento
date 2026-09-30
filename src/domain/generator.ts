@@ -2,9 +2,10 @@
  * Generatore di schede: dalle risposte del questionario (o da un profilo) costruisce un Programma.
  * Deterministico: stesse risposte, stessa scheda.
  */
-import { esercizi } from './data'
+import { esercizi, esercizio } from './data'
 import { espandi, type MuscoloId } from './muscles'
-import type { Attrezzo, Circuito, Esercizio, Fase, GiornoId, Obiettivo, Prescrizione, Programma, Schema, Seduta, VocePalestra, Zona } from './types'
+import { bilanciaVolume, creaSuperserie, priorita, riscaldamentoPer } from './programmazione'
+import { isCircuito, type Attrezzo, type Circuito, type Esercizio, type Fase, type GiornoId, type Obiettivo, type Prescrizione, type Programma, type Schema, type Seduta, type VocePalestra, type Zona } from './types'
 
 export interface Risposte {
   /** in ordine di priorita' (il primo decide le fasi e gli esercizi principali) */
@@ -21,6 +22,13 @@ export interface Risposte {
   suddivisione?: Suddivisione
   /** altri sport praticati durante la settimana */
   sport?: Sport[]
+  /** esercizi per seduta (oltre a riscaldamento, core e defaticamento); assente = in base alla durata */
+  eserciziPerSeduta?: number
+  /** superserie: nessuna, alcune coppie per seduta, oppure tutta la scheda */
+  superserie?: 'no' | 'alcune' | 'tutte'
+  coppieSuperserie?: number
+  /** suddivisione libera: cosa allenare in ciascun giorno */
+  composizione?: Partial<Record<GiornoId, Componente[]>>
   corsa: boolean
   evitare: Zona[]
   focus: Focus[]
@@ -37,7 +45,25 @@ export interface Sport {
   durataMin: number
 }
 
-export type Suddivisione = 'auto' | 'fullbody' | 'sup-inf' | 'ppl' | 'gruppi'
+export type Suddivisione = 'auto' | 'fullbody' | 'sup-inf' | 'ppl' | 'gruppi' | 'libera'
+
+export type Componente = 'petto' | 'schiena' | 'spalle' | 'bicipiti' | 'tricipiti' | 'quadricipiti' | 'femorali-glutei' | 'polpacci' | 'core' | 'fullbody' | 'potenza' | 'condizionamento' | 'mobilita'
+
+export const NOMI_COMPONENTI: Record<Componente, string> = {
+  petto: 'Petto',
+  schiena: 'Schiena',
+  spalle: 'Spalle',
+  bicipiti: 'Bicipiti',
+  tricipiti: 'Tricipiti',
+  quadricipiti: 'Quadricipiti',
+  'femorali-glutei': 'Femorali e glutei',
+  polpacci: 'Polpacci',
+  core: 'Core',
+  fullbody: 'Full body',
+  potenza: 'Potenza',
+  condizionamento: 'Condizionamento',
+  mobilita: 'Mobilità e yoga',
+}
 
 export const NOMI_SUDDIVISIONI: Record<Suddivisione, string> = {
   auto: 'Automatica',
@@ -45,6 +71,7 @@ export const NOMI_SUDDIVISIONI: Record<Suddivisione, string> = {
   'sup-inf': 'Superiore / inferiore',
   ppl: 'Spinta / Tirata / Gambe',
   gruppi: 'Gruppi muscolari',
+  libera: 'Libera',
 }
 
 export type Focus = 'catena-posteriore' | 'schiena-spalle' | 'core' | 'gambe' | 'parte-superiore'
@@ -92,6 +119,7 @@ export const NOMI_ATTREZZI: Record<Attrezzo, string> = {
   slider: 'Slider',
   'panca-iperestensioni': 'Panca iperestensioni',
   tappetino: 'Tappetino',
+  parallele: 'Parallele',
 }
 
 // ---------- disponibilita' degli esercizi ----------
@@ -235,6 +263,33 @@ const SCHIENA_BI: Modello = { nome: 'Schiena e bicipiti', slot: [P('tirata-verti
 const SPALLE_CORE: Modello = { nome: 'Spalle e core', slot: [P('spinta-verticale'), Mu('deltoide-anteriore'), Mu('deltoide-posteriore'), A('scapole'), Mu('trapezio-alto'), A('anti-rotazione'), A('anti-estensione'), A('anti-flessione-laterale'), A('spinta-verticale'), Mu('deltoide-posteriore')] }
 const BRACCIA: Modello = { nome: 'Braccia', slot: [Mu('bicipite'), Mu('tricipite'), Mu('bicipite'), Mu('tricipite'), Mu('avambraccio-flessori'), A('trasporto'), Mu('bicipite'), Mu('tricipite'), A('anti-estensione'), A('rotazione')] }
 
+const SLOT_COMPONENTI: Record<Exclude<Componente, 'mobilita'>, Slot[]> = {
+  petto: [P('spinta-orizzontale'), A('spinta-orizzontale'), Mu('pettorale-alto'), Mu('pettorale-basso', 'pettorale-alto')],
+  schiena: [P('tirata-verticale'), P('tirata-orizzontale'), A('tirata-orizzontale'), Mu('gran-dorsale'), A('scapole')],
+  spalle: [P('spinta-verticale'), Mu('deltoide-anteriore'), Mu('deltoide-posteriore'), A('scapole')],
+  bicipiti: [Mu('bicipite'), Mu('bicipite'), Mu('avambraccio-flessori')],
+  tricipiti: [Mu('tricipite'), Mu('tricipite'), Mu('tricipite')],
+  quadricipiti: [P('squat'), A('affondo'), Mu('retto-femorale', 'vasto-mediale'), A('squat')],
+  'femorali-glutei': [P('hinge'), Mu('bicipite-femorale', 'semitendinoso'), Mu('grande-gluteo'), A('hinge')],
+  polpacci: [A('polpacci'), A('polpacci')],
+  core: [A('anti-estensione'), A('anti-rotazione'), A('anti-flessione-laterale'), A('rotazione')],
+  fullbody: TOTAL_A.slot,
+  potenza: [A('pliometria', 'balistico'), A('balistico'), A('pliometria')],
+  condizionamento: COND.slot,
+}
+
+/** Modello di una seduta composta liberamente: prima i fondamentali di ogni componente, poi gli altri a rotazione. */
+export function modelloComposto(comp: Componente[]): Modello | null {
+  const parti = comp.filter((c): c is Exclude<Componente, 'mobilita'> => c !== 'mobilita')
+  if (!parti.length) return null
+  const liste = parti.map((c) => SLOT_COMPONENTI[c])
+  const principali = liste.flatMap((l) => l.filter((x) => x.ruolo === 'principale'))
+  const resto = liste.map((l) => l.filter((x) => x.ruolo !== 'principale'))
+  const alterni: Slot[] = []
+  for (let i = 0; resto.some((l) => i < l.length); i++) for (const l of resto) if (l[i]) alterni.push(l[i])
+  return { nome: comp.map((c) => NOMI_COMPONENTI[c]).join(' + '), slot: [...principali, ...alterni] }
+}
+
 /** Sedute in base alla suddivisione scelta; i modelli ripetuti prendono una lettera. */
 export function modelliPer(n: number, sudd: Suddivisione = 'auto'): Modello[] {
   const ciclo = (base: Modello[]) => Array.from({ length: n }, (_, i) => base[i % base.length])
@@ -292,13 +347,19 @@ class Selettore {
     if (slot.ruolo === 'principale' && e.schemi[0] === slot.schemi[0]) s += 1.5
     if (slot.schemi.includes(e.schemi[0])) s += 1
     if (slot.muscoli) s += slot.muscoli.filter((m) => espandi(e.muscoli)[m] === 3).length - Object.values(espandi(e.muscoli)).filter((l) => l === 3).length * 0.3
+    // negli slot per muscolo si preferisce l'esercizio dedicato (isolamento) al multiarticolare
+    if (slot.muscoli && e.schemi.includes('isolamento')) s += 2.5
     // per forza e massa i principali sono i fondamentali, non gli esercizi esplosivi
     if (slot.ruolo === 'principale' && ['forza', 'massa'].includes(r.obiettivi[0]) && e.categoria === 'forza') {
       s += 2
       if (e.attrezzi.some((g) => g.includes('bilanciere') || g.includes('trap-bar'))) s += 1
     }
+    // i fondamentali sono multiarticolari con carico, non lavori per le scapole o di isolamento
+    if (slot.ruolo === 'principale' && e.schemi.some((x) => x === 'scapole' || x === 'isolamento')) s -= 3
     if (e.categoria === 'potenza' && !r.obiettivi.includes('potenza')) s -= 1.5
     if (e.impatto) s -= slot.schemi.includes('pliometria') ? 1 : 3
+    // un solo fondamentale pesante sulla colonna per seduta: da complementare si preferiscono varianti piu' leggere
+    if (slot.ruolo === 'accessorio' && e.attrezzi.some((g) => g.includes('bilanciere') || g.includes('trap-bar')) && e.schemi.some((x) => x === 'squat' || x === 'hinge')) s -= 3
     if (r.corpoLibero !== false && r.attrezzi.length > 0 && aCorpoLibero(e)) s += 0.5
     s -= Math.abs(e.livello - r.livello) * 0.5
     for (const fo of r.focus) if (e.schemi.some((x) => FOCUS_SCHEMI[fo].includes(x))) s += 1
@@ -356,7 +417,8 @@ export function generaProgramma(r: Risposte): Programma {
   const secondario = r.obiettivi[1] ?? primario
   const sel = new Selettore(r)
   const soloMobilita = r.obiettivi.length > 0 && r.obiettivi.every((o) => o === 'mobilita' || o === 'stabilita') && r.obiettivi.includes('mobilita')
-  const nSlot = SLOT_PER_DURATA[r.durataMin]
+  const nSlot = r.eserciziPerSeduta ?? SLOT_PER_DURATA[r.durataMin]
+  const principali = new Set<Prescrizione>()
   const sedute: Record<string, Seduta> = {}
   const settimana: Programma['settimana'] = []
 
@@ -364,7 +426,9 @@ export function generaProgramma(r: Risposte): Programma {
   const sportDel = (g: GiornoId) => (r.sport ?? []).filter((x) => x.giorni.includes(g))
   giorni.forEach((giorno, i) => {
     const id = `s${i + 1}`
-    const modello = soloMobilita && i % 2 === 1 ? null : ms[i % ms.length]
+    const composizione = r.suddivisione === 'libera' ? (r.composizione?.[giorno] ?? ['fullbody']) : null
+    const modello = composizione ? modelloComposto(composizione) : soloMobilita && i % 2 === 1 ? null : ms[i % ms.length]
+    const conMobilita = soloMobilita || r.obiettivi.includes('mobilita') || !!composizione?.includes('mobilita')
     // attrezzi del giorno; se lo stesso giorno c'e' uno sport, niente salti e un esercizio in meno
     const sportOggi = sportDel(giorno)
     const ctx = { ...r, ...(r.attrezziGiorno?.[giorno] ?? {}), senzaImpatto: sportOggi.length > 0 }
@@ -387,11 +451,19 @@ export function generaProgramma(r: Risposte): Programma {
       // esplosivi in apertura e circuito finale occupano il posto di un esercizio ciascuno
       const conCircuito = r.obiettivi.includes('resistenza') && modello !== COND && r.durataMin >= 45
       const posti = Math.max(3, nSlot - palestra.length - (conCircuito ? 1 : 0) - (sportOggi.length ? 1 : 0))
-      for (const slot of modello.slot.slice(0, posti)) {
+      // si scorrono gli slot finche' la seduta ha il numero di esercizi richiesto; al secondo giro sono complementari
+      const totale = palestra.length + posti
+      for (let k = 0; palestra.length < totale && k < modello.slot.length * 2; k++) {
+        const base = modello.slot[k % modello.slot.length]
+        const slot: Slot = k < modello.slot.length ? base : { ...base, ruolo: 'accessorio' }
         const e = sel.scegli(slot, esclusi, undefined, ctx)
         if (!e) continue
-        aggiungi(prescrivi(e, slot.ruolo === 'principale' ? primario : secondario, slot.ruolo, r.livello))
+        const p = prescrivi(e, slot.ruolo === 'principale' ? primario : secondario, slot.ruolo, r.livello)
+        if (slot.ruolo === 'principale') principali.add(p)
+        aggiungi(p)
       }
+      // ordine: esplosivi, fondamentali, complementari, isolamento, trasporti, core
+      palestra.sort((a, b) => (isCircuito(a) || isCircuito(b) ? 0 : priorita(esercizio(a.esercizioId), principali.has(a)) - priorita(esercizio(b.esercizioId), principali.has(b))))
       // la resistenza chiude con un circuito
       if (conCircuito) {
         const scelti = [A('balistico', 'locomozione'), A('anti-estensione', 'anti-rotazione'), A('trasporto', 'cardio')]
@@ -407,14 +479,15 @@ export function generaProgramma(r: Risposte): Programma {
 
     // defaticamento: mobilita', stretching e yoga per i muscoli usati
     const lunga = r.durataMin >= 90 ? 2 : 0
-    const quanti = (soloMobilita ? 7 : r.obiettivi.includes('mobilita') ? 4 : 2) + lunga
-    const categorie = soloMobilita || r.obiettivi.includes('mobilita') ? ['stretching', 'yoga', 'mobilita'] : ['stretching', 'mobilita']
+    const quanti = (soloMobilita || (composizione && !modello) ? 7 : conMobilita ? 4 : 2) + lunga
+    const categorie = conMobilita ? ['stretching', 'yoga', 'mobilita'] : ['stretching', 'mobilita']
     const recupero = sel.scegliRecupero(Object.keys(muscoliSeduta).length ? muscoliSeduta : { 'erettori-spinali': 2, femorali: 2, 'grande-gluteo': 2 }, quanti, categorie, esclusi, ctx)
     const mobilita = recupero.map((e) => prescrivi(e, 'mobilita', 'accessorio', r.livello)).map((p) => ({ ...p, serie: p.serie && p.serie > 2 ? 2 : p.serie, recuperoSec: undefined }))
 
-    const nome = modello ? (soloMobilita ? 'Forza e controllo' : modello.nome) : 'Mobilità e yoga'
+    const nome = modello ? (soloMobilita && !composizione ? 'Forza e controllo' : modello.nome) : 'Mobilità e yoga'
     const seduta: Seduta = { nome, palestra, mobilita, core: !!modello && r.durataMin >= 45 }
     if (sportOggi.length) seduta.attivita = attivitaDi(sportOggi)
+    if (palestra.length) seduta.riscaldamento = riscaldamentoPer(palestra, (e) => disponibile(e, ctx), esclusi)
     // corsa: Zona 2 nella prima seduta, lavoro di qualita' in una seduta a meta' settimana
     if (r.corsa) {
       const n = giorni.length
@@ -463,7 +536,16 @@ export function generaProgramma(r: Risposte): Programma {
     varianteB: variante([['anti-rotazione', 'locomozione'], ['anti-estensione'], ['anti-flessione-laterale', 'rotazione']]),
   }
 
-  return { settimana, fasi: fasiPer(primario), blocco_core, sedute }
+  const programma: Programma = { settimana, fasi: fasiPer(primario), blocco_core, sedute }
+  // volume settimanale per gruppo muscolare dentro gli intervalli dell'obiettivo
+  bilanciaVolume(programma, primario, r.livello, principali)
+  // superserie a richiesta
+  if (r.superserie && r.superserie !== 'no') {
+    for (const sd of Object.values(sedute)) {
+      if (sd.palestra?.length) sd.palestra = creaSuperserie(sd.palestra, r.superserie, r.coppieSuperserie ?? 1, principali)
+    }
+  }
+  return programma
 }
 
 const ORDINE_GIORNI: GiornoId[] = ['lun', 'mar', 'mer', 'gio', 'ven', 'sab', 'dom']

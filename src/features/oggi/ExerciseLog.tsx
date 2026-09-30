@@ -21,10 +21,12 @@ interface Props {
   serie: Serie[]
   lista?: Lista
   pos?: number
+  /** etichetta nella superserie (A1, A2...) */
+  superserie?: string
 }
 
 /** Blocco di un esercizio nella seduta in corso: intestazione e righe delle serie. */
-export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, lista, pos }: Props) {
+export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, lista, pos, superserie }: Props) {
   // l'alternativa e' scelta se ci sono gia' serie registrate con quell'esercizio
   const [usaAlt, setUsaAlt] = useState(() => !!p.alternativa && serie.some((s) => s.esercizioId === p.alternativa))
   const id = usaAlt && p.alternativa ? p.alternativa : p.esercizioId
@@ -79,7 +81,8 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
           </LinkEsercizio>
           <div className="text-sm text-zinc-500">{testoPrescrizione(p, fase, es)}</div>
           <div className="mt-1 flex flex-wrap gap-1">
-            {p.recuperoSec ? <Badge>rec {p.recuperoSec} s</Badge> : null}
+            {superserie && <Badge tone="blue">Superserie {superserie}</Badge>}
+            {p.recuperoSec ? <Badge>rec {p.recuperoSec} s</Badge> : superserie ? <Badge>subito il successivo</Badge> : null}
             {p.superserieCon && <Badge tone="blue">superserie: {esercizio(p.superserieCon).nome}</Badge>}
             {fatte > 0 && (
               <Badge tone={fatte >= righe.length ? 'green' : 'zinc'}>

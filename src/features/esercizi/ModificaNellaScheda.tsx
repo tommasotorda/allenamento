@@ -38,7 +38,7 @@ export function ModificaNellaScheda({ stato, onLista }: Props) {
   const v = voci[idx]
   const fase = c && c.piano.id === piano.id ? c.fase : piano.programma.fasi[0]
   const salva = (nuove: VocePalestra[]) => aggiornaProgramma(piano.id, conVoci(piano.programma, blocco, nuove))
-  const nomeBlocco = blocco.tipo === 'core' ? `Core · variante ${blocco.variante}` : `${piano.programma.sedute[blocco.sedutaId]?.nome ?? ''} · ${blocco.tipo === 'palestra' ? 'palestra' : 'mobilità'}`
+  const nomeBlocco = blocco.tipo === 'core' ? `Core · variante ${blocco.variante}` : `${piano.programma.sedute[blocco.sedutaId]?.nome ?? ''} · ${{ palestra: 'palestra', mobilita: 'mobilità', riscaldamento: 'riscaldamento' }[blocco.tipo]}`
 
   const sostituisciCon = async (es: Esercizio) => {
     setScegli(false)

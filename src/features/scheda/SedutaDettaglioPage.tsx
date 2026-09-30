@@ -48,6 +48,7 @@ export function SedutaDettaglioPage() {
               <b className="text-zinc-900 dark:text-zinc-100">Pista:</b> {s.pista.testo}
             </Card>
           )}
+          <BlockEditor titolo="Riscaldamento" blocco={{ tipo: 'riscaldamento', sedutaId: g }} c={c} />
           <BlockEditor titolo="Palestra" blocco={{ tipo: 'palestra', sedutaId: g }} c={c} />
           <BlockEditor titolo="Mobilità e defaticamento" blocco={{ tipo: 'mobilita', sedutaId: g }} c={c} />
         </>

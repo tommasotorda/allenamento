@@ -2,10 +2,12 @@ import { describe, expect, it } from 'vitest'
 import { adatta, contestoDa, proposteAdattamento } from '../src/domain/adattamento'
 import { esercizio, programma as programmaJson } from '../src/domain/data'
 import { disponibile, generaProgramma, RISPOSTE_VUOTE, type Risposte } from '../src/domain/generator'
+import { espandi, type MuscoloId } from '../src/domain/muscles'
 import { creaPiano, pianoOriginale } from '../src/domain/plans'
+import { volumeSettimanaleGruppi, volumeTarget } from '../src/domain/programmazione'
 import { PROFILI } from '../src/domain/profili'
 import { strutturaSeduta } from '../src/domain/session'
-import { isCircuito, type Programma, type SedutaLog, type Serie } from '../src/domain/types'
+import { isCircuito, type Prescrizione, type Programma, type SedutaLog, type Serie } from '../src/domain/types'
 
 const ids = (p: Programma) =>
   Object.values(p.sedute).flatMap((s) => [...(s.palestra ?? []).flatMap((v) => (isCircuito(v) ? v.esercizi : [v.esercizioId])), ...(s.mobilita ?? []).map((v) => v.esercizioId)])
@@ -70,8 +72,9 @@ describe('generatore', () => {
     expect(ppl.settimana.map((x) => ppl.sedute[x.sedutaId].nome)).toEqual(['Spinta A', 'Tirata A', 'Gambe', 'Spinta B', 'Tirata B'])
     const gruppi = generaProgramma({ ...base, suddivisione: 'gruppi' })
     expect(gruppi.settimana.map((x) => gruppi.sedute[x.sedutaId].nome)).toEqual(['Petto e tricipiti', 'Schiena e bicipiti', 'Gambe', 'Spalle e core', 'Braccia'])
-    const braccia = gruppi.sedute[gruppi.settimana[4].sedutaId].palestra!.map((v) => (v as { esercizioId: string }).esercizioId)
-    expect(braccia).toEqual(expect.arrayContaining(['curl_manubri', 'pushdown_tricipiti']))
+    const braccia = gruppi.sedute[gruppi.settimana[4].sedutaId].palestra!.map((v) => esercizio((v as { esercizioId: string }).esercizioId))
+    const isola = (m: string) => braccia.some((e) => e.schemi.includes('isolamento') && espandi(e.muscoli)[m as MuscoloId] === 3)
+    expect(isola('bicipite') && isola('tricipite')).toBe(true)
     // l'isolamento compare solo con suddivisioni che lo prevedono
     expect(ids(generaProgramma({ ...base, suddivisione: 'fullbody' })).some((id) => esercizio(id).schemi.includes('isolamento'))).toBe(false)
   })
@@ -99,6 +102,48 @@ describe('generatore', () => {
     const sab = p.sedute[p.settimana[2].sedutaId]
     expect(sab).toMatchObject({ nome: 'Calcio', attivita: { tipo: 'calcio' }, palestra: [], core: false })
     expect(sab.mobilita!.length).toBeGreaterThan(0)
+  })
+
+  const completa: Risposte = { ...RISPOSTE_VUOTE, obiettivi: ['massa'], livello: 2, durataMin: 60, attrezzi: ['manubri', 'bilanciere', 'panca', 'sbarra', 'cavo', 'elastico'], giorni: ['lun', 'mer', 'ven'] }
+  const voci = (p: Programma) => Object.values(p.sedute).flatMap((s) => (s.palestra ?? []).filter((v) => !isCircuito(v)) as Prescrizione[])
+
+  it('composizione libera: ogni giorno allena quello che si sceglie', () => {
+    const p = generaProgramma({ ...completa, suddivisione: 'libera', composizione: { lun: ['petto', 'tricipiti'], mer: ['schiena', 'bicipiti'], ven: ['quadricipiti', 'femorali-glutei', 'polpacci'] } })
+    expect(p.settimana.map((x) => p.sedute[x.sedutaId].nome)).toEqual(['Petto + Tricipiti', 'Schiena + Bicipiti', 'Quadricipiti + Femorali e glutei + Polpacci'])
+    const lun = p.sedute[p.settimana[0].sedutaId].palestra!.map((v) => esercizio((v as Prescrizione).esercizioId))
+    expect(lun.every((e) => !e.schemi.some((x) => ['squat', 'hinge', 'affondo', 'tirata-orizzontale', 'tirata-verticale'].includes(x)))).toBe(true)
+  })
+
+  it('numero di esercizi per seduta scelto', () => {
+    for (const n of [4, 8, 11]) {
+      const p = generaProgramma({ ...completa, eserciziPerSeduta: n })
+      for (const s of Object.values(p.sedute)) expect(s.palestra).toHaveLength(n)
+    }
+  })
+
+  it('superserie: tutta la scheda o alcune coppie, recupero dopo il secondo', () => {
+    const tutte = voci(generaProgramma({ ...completa, superserie: 'tutte' }))
+    expect(tutte.filter((v) => v.superserie).length).toBeGreaterThanOrEqual(tutte.length - 3)
+    const p = generaProgramma({ ...completa, superserie: 'alcune', coppieSuperserie: 2 })
+    for (const s of Object.values(p.sedute)) {
+      const v = s.palestra as Prescrizione[]
+      expect(v.filter((x) => x.superserie)).toHaveLength(4)
+      for (let i = 0; i + 1 < v.length; i++) if (v[i].superserie && v[i].superserie === v[i + 1].superserie) expect(v[i].recuperoSec).toBe(0)
+    }
+    expect(voci(generaProgramma(completa)).some((v) => v.superserie)).toBe(false)
+  })
+
+  it('riscaldamento specifico, fondamentali prima e volume nell\'intervallo', () => {
+    const p = generaProgramma({ ...completa, suddivisione: 'fullbody' })
+    for (const s of Object.values(p.sedute)) {
+      expect(s.riscaldamento!.length).toBeGreaterThan(0)
+      const primo = esercizio((s.palestra![0] as Prescrizione).esercizioId)
+      expect(primo.tipoRegistrazione).toBe('carico_ripetizioni')
+    }
+    const vol = volumeSettimanaleGruppi(p)
+    const [min] = volumeTarget('massa', 2)
+    for (const g of ['petto', 'schiena', 'quadricipiti'] as const) expect(vol[g], g).toBeGreaterThanOrEqual(min)
+    expect(vol.schiena).toBeGreaterThanOrEqual(vol.petto)
   })
 
   it('la corsa aggiunge la pista', () => {

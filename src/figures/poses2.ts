@@ -363,4 +363,97 @@ export const NUOVE_FIGURE: Record<string, FiguraDef> = {
     b: { ...IN_PIEDI, armN: [-95, 70], armF: [-93, 70] },
     props: (j) => [{ k: 'dumbbell', at: j.handN }],
   },
+  // ---------------- fondamentali ----------------
+  squat_bilanciere: {
+    a: { hip: [108, G - 69], torso: -90, armN: [110, -80], armF: [112, -80], ...piedi(118) },
+    b: { hip: [82, G - 34], torso: -58, head: -65, armN: [142, -48], armF: [144, -48], ...piedi(118) },
+    props: (j) => [{ k: 'plate', at: [j.shoulder[0] - 2, j.shoulder[1] + 1], r: 13 }],
+  },
+  front_squat: {
+    a: { hip: [110, G - 69], torso: -90, armN: [30, -150], armF: [32, -150], ...piedi(118) },
+    b: { hip: [90, G - 32], torso: -74, head: -78, armN: [46, -134], armF: [48, -134], ...piedi(118) },
+    props: (j) => [{ k: 'plate', at: [j.shoulder[0] + 6, j.shoulder[1] + 1], r: 13 }],
+  },
+  stacco_bilanciere: {
+    a: { hip: [96, G - 44], torso: -30, head: -22, armN: [90, 90], armF: [90, 90], ...piedi(122) },
+    b: { hip: [118, G - 69], torso: -90, armN: [92, 90], armF: [90, 90], ...piedi(122) },
+    props: (j) => [{ k: 'plate', at: j.handN, r: 13 }],
+  },
+  stacco_rumeno_bilanciere: {
+    a: { hip: [112, G - 68], torso: -90, armN: [95, 92], armF: [93, 92], legN: { ik: [118, G], foot: 0 }, legF: { ik: [116, G], foot: 0 } },
+    b: { hip: [96, G - 66], torso: -22, head: -15, armN: [90, 90], armF: [90, 90], legN: { ik: [118, G], foot: 0 }, legF: { ik: [116, G], foot: 0 } },
+    props: (j) => [{ k: 'plate', at: j.handN, r: 13 }],
+  },
+  panca_inclinata_manubri: {
+    a: { hip: [140, G - 40], torso: -150, head: -150, armN: { ik: [112, G - 76], bend: 1 }, armF: { ik: [110, G - 76], bend: 1 }, legN: { ik: [170, G], bend: -1, foot: 0 }, legF: { ik: [168, G], bend: -1, foot: 0 } },
+    b: { hip: [140, G - 40], torso: -150, head: -150, armN: { ik: [125, G - 104], bend: 1 }, armF: { ik: [123, G - 104], bend: 1 }, legN: { ik: [170, G], bend: -1, foot: 0 }, legF: { ik: [168, G], bend: -1, foot: 0 } },
+    back: () => [{ k: 'strap', from: [148, G - 36], to: [92, G - 68] }, { k: 'post', x: 130, top: G - 40 }],
+    props: (j) => [{ k: 'dumbbell', at: j.handN }],
+  },
+  dip_parallele: {
+    a: { hip: [118, 108], torso: -84, armN: { ik: [124, 112], bend: 1 }, armF: { ik: [122, 112], bend: 1 }, legN: [105, 150, 100], legF: [108, 152, 100] },
+    b: { hip: [114, 134], torso: -76, armN: { ik: [124, 112], bend: 1 }, armF: { ik: [122, 112], bend: 1 }, legN: [105, 150, 100], legF: [108, 152, 100] },
+    back: () => [{ k: 'bar', at: [124, 114], len: 22 }, { k: 'post', x: 104, top: 114 }, { k: 'post', x: 144, top: 114 }],
+  },
+  chin_up: {
+    thumb: 1,
+    a: { hip: [120, 118], torso: -90, armN: { ik: [120, 26], bend: 1 }, armF: { ik: [120, 26], bend: 1 }, legN: [95, 155, 100], legF: [99, 160, 100] },
+    b: { hip: [112, 72], torso: -86, armN: { ik: [120, 26], bend: 1 }, armF: { ik: [120, 26], bend: 1 }, legN: [95, 155, 100], legF: [99, 160, 100] },
+    back: () => [{ k: 'pullbar', at: [120, 26] }],
+  },
+  arnold_press: {
+    a: { ...IN_PIEDI, head: -85, armN: [80, -100], armF: [82, -100] },
+    b: { ...IN_PIEDI, head: -82, armN: [-92, -90], armF: [-90, -90] },
+    props: (j) => [{ k: 'dumbbell', at: j.handN }],
+  },
+  lento_manubri: {
+    a: { hip: [110, G - 40], torso: -92, armN: [60, -95], armF: [62, -95], legN: [2, 90], legF: [4, 90] },
+    b: { hip: [110, G - 40], torso: -92, armN: [-92, -90], armF: [-90, -90], legN: [2, 90], legF: [4, 90] },
+    back: () => [{ k: 'box', x1: 92, x2: 118, top: G - 36 }, { k: 'strap', from: [104, G - 36], to: [98, G - 96] }],
+    props: (j) => [{ k: 'dumbbell', at: j.handN }],
+  },
+  leg_press: {
+    a: { hip: [96, G - 30], torso: -140, head: -130, armN: [100, 20], armF: [100, 20], legN: { ik: [150, G - 70], bend: -1, foot: -40 }, legF: { ik: [148, G - 70], bend: -1, foot: -40 } },
+    b: { hip: [96, G - 30], torso: -140, head: -130, armN: [100, 20], armF: [100, 20], legN: { ik: [158, G - 78], bend: -1, foot: -40 }, legF: { ik: [156, G - 78], bend: -1, foot: -40 } },
+    back: (j) => [
+      { k: 'strap', from: [100, G - 24], to: [58, G - 62] },
+      { k: 'box', x1: 86, x2: 110, top: G - 26 },
+      { k: 'bar', at: [j.ankleN[0] + 4, j.ankleN[1] - 2], len: 14 },
+    ],
+  },
+  leg_extension: {
+    a: { hip: [100, G - 46], torso: -96, armN: [100, 30], armF: [100, 30], legN: [0, 95, 10], legF: [2, 95, 10] },
+    b: { hip: [100, G - 46], torso: -96, armN: [100, 30], armF: [100, 30], legN: [0, 5, -70], legF: [2, 5, -70] },
+    back: () => [{ k: 'box', x1: 84, x2: 138, top: G - 42 }, { k: 'strap', from: [92, G - 42], to: [86, G - 100] }],
+    props: (j) => [{ k: 'bar', at: j.ankleN, len: 6 }],
+  },
+  leg_curl: {
+    a: { hip: [110, G - 38], torso: 0, head: 5, armN: [110, 20], armF: [110, 20], legN: [180, 180, 180], legF: [178, 178, 180] },
+    b: { hip: [110, G - 38], torso: 0, head: 5, armN: [110, 20], armF: [110, 20], legN: [180, -80, -20], legF: [178, -82, -20] },
+    back: () => [{ k: 'bench', x1: 60, x2: 170, top: G - 33 }],
+    props: (j) => [{ k: 'bar', at: j.ankleN, len: 6 }],
+  },
+  nordic_curl: {
+    a: { hip: [100, G - 39], torso: -90, armN: [60, -120], armF: [60, -120], legN: { ik: [66, G - 3], bend: -1, foot: 180 }, legF: { ik: [64, G - 3], bend: -1, foot: 180 } },
+    b: { hip: [128, G - 22], torso: -28, head: -25, armN: [20, 30], armF: [22, 30], legN: { ik: [66, G - 3], bend: -1, foot: 180 }, legF: { ik: [64, G - 3], bend: -1, foot: 180 } },
+    back: () => [{ k: 'mat', x1: 40, x2: 225 }],
+  },
+  affondi_camminati: {
+    a: { hip: [98, G - 69], torso: -90, armN: [92, 92], armF: [92, 92], legN: { ik: [100, G], foot: 0 }, legF: { ik: [96, G], foot: 0 } },
+    b: { hip: [118, G - 38], torso: -88, armN: [92, 92], armF: [92, 92], legN: { ik: [140, G], foot: 0 }, legF: { ik: [74, G - 4], foot: 40 } },
+    props: (j) => [{ k: 'dumbbell', at: j.handN }],
+  },
+  pullover_manubrio: {
+    a: { hip: [140, G - 38], torso: 180, armN: [-84, -88], armF: [-84, -88], legN: { ik: [168, G], bend: -1, foot: 0 }, legF: { ik: [166, G], bend: -1, foot: 0 } },
+    b: { hip: [140, G - 38], torso: 180, armN: [192, 196], armF: [192, 196], legN: { ik: [168, G], bend: -1, foot: 0 }, legF: { ik: [166, G], bend: -1, foot: 0 } },
+    back: () => [{ k: 'bench', x1: 80, x2: 152, top: G - 33 }],
+    props: (j) => [{ k: 'dumbbell', at: j.handN }],
+  },
+  croci_cavo: {
+    front: true,
+    a: { hip: [120], torso: -90, armN: [-25, -15], armF: [-155, -165], legN: [86, 90], legF: [94, 90] },
+    b: { hip: [120], torso: -90, armN: [120, 160], armF: [60, 20], legN: [86, 90], legF: [94, 90] },
+    back: () => [{ k: 'post', x: 20, top: 16 }, { k: 'post', x: 220, top: 16 }],
+    props: (j) => [{ k: 'strap', from: [220, 26], to: j.handN }, { k: 'strap', from: [20, 26], to: j.handF }],
+  },
 }

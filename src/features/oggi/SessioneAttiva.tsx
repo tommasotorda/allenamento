@@ -4,7 +4,7 @@ import { Button, PageHeader, SectionTitle } from '../../components/ui'
 import { eliminaSeduta, terminaSeduta } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { faseDellaSettimana } from '../../domain/calendar'
-import { strutturaSeduta } from '../../domain/session'
+import { etichetteSuperserie, strutturaSeduta } from '../../domain/session'
 import { isCircuito, type SedutaLog } from '../../domain/types'
 import type { Ciclo } from '../../hooks'
 import { CircuitLog } from './CircuitLog'
@@ -41,11 +41,23 @@ function Contenuto({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo;
   const lista: Lista = { titolo: s.nome, voci: listaDaSeduta(suoPiano ? ciclo.programma : undefined, s), pianoId: suoPiano ? ciclo.piano.id : undefined }
   let k = 0
   const pos = () => k++
+  const ss = etichetteSuperserie(s.palestra)
   const comune = { sedutaId: seduta.id, data: seduta.data, fase, incrementoKg: inc, serie, lista }
 
   return (
     <div>
       <PageHeader title={s.nome} subtitle={`Settimana ${seduta.settimanaCiclo} · ${fase.nome}${fase.scarico ? ' · scarico' : ''}`} />
+
+      {s.riscaldamento.length > 0 && (
+        <>
+          <SectionTitle>Riscaldamento</SectionTitle>
+          <div className="space-y-3">
+            {s.riscaldamento.map((p) => (
+              <ExerciseLog key={p.esercizioId} p={p} {...comune} pos={pos()} />
+            ))}
+          </div>
+        </>
+      )}
 
       {s.core && (
         <>
@@ -80,7 +92,7 @@ function Contenuto({ seduta, ciclo, onFine }: { seduta: SedutaLog; ciclo: Ciclo;
               isCircuito(v) ? (
                 <CircuitLog key={`c${i}`} sedutaId={seduta.id} data={seduta.data} c={v} serie={serie} lista={lista} pos={v.esercizi.map(() => pos())} />
               ) : (
-                <ExerciseLog key={v.esercizioId} p={v} {...comune} pos={pos()} />
+                <ExerciseLog key={v.esercizioId} p={v} {...comune} pos={pos()} superserie={ss.get(i)?.etichetta} />
               ),
             )}
           </div>

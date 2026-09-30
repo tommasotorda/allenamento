@@ -16,9 +16,10 @@ App personale per seguire una scheda di allenamento, registrare le sedute e vede
 
 - **Oggi**: la seduta del giorno con serie precompilate dall'ultima volta, carico suggerito, RPE, timer di recupero, pista, circuiti a tempo e riepilogo finale. Si registra tutto con tap e stepper.
 - **Scheda**: la settimana e il ciclo di 12 settimane con le fasi (base, forza, scarichi, test). Ogni seduta si modifica: aggiungi, togli, sostituisci e riordina gli esercizi, cambia serie, ripetizioni, tempi e recuperi.
-- **Più schede**: crea una scheda dal **questionario** (obiettivi, livello, giorni, durata fino a 2 ore, attrezzatura, corpo libero, zone su cui concentrarti o da non sollecitare) o da un **profilo standard**. Puoi anche salvare le tue schede come profili.
+- **Più schede**: crea una scheda dal **questionario** (obiettivi, livello, giorni, durata fino a 2 ore, esercizi per seduta, suddivisione anche libera giorno per giorno, attrezzatura anche per singolo giorno, altri sport, superserie, zone su cui concentrarti o da non sollecitare) o da un **profilo standard**. Puoi anche salvare le tue schede come profili.
+- **Programmazione**: volume settimanale per gruppo muscolare in base a obiettivo e livello, tirate almeno quanto le spinte, fondamentali all'inizio, riscaldamento specifico, superserie tra antagonisti (A1/A2, recupero dopo il secondo).
 - **Adattamenti**: trasforma la scheda verso forza, massa, potenza, resistenza, mobilità o stabilità, anche combinate. L'app lo propone alla scadenza (12 settimane), dopo i test di metà ciclo, a metà delle sedute o quando il 1RM stimato cresce del 10%.
-- **Esercizi**: 102 esercizi (forza, funzionali, core, catena posteriore, schiena, potenza, pista, mobilità, stretching, yoga). Per ciascuno:
+- **Esercizi**: 124 esercizi (fondamentali con bilanciere e manubri, isolamento, forza, funzionali, core, catena posteriore, schiena, potenza, pista, mobilità, stretching, yoga). Per ciascuno:
   - animazione 3D che si ruota con il dito;
   - mappa dei muscoli coinvolti (primari, secondari, stabilizzatori);
   - esecuzione passo per passo e storico.

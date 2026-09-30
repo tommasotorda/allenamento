@@ -1,19 +1,22 @@
 import { Badge, Card, ExerciseThumb, SectionTitle } from '../../components/ui'
 import { esercizio } from '../../domain/data'
 import { testoPrescrizione } from '../../domain/progression'
-import { nomeAttivita, type StrutturaSeduta } from '../../domain/session'
+import { etichetteSuperserie, nomeAttivita, type StrutturaSeduta } from '../../domain/session'
 import { isCircuito, type Fase, type Prescrizione, type Programma } from '../../domain/types'
 import { LinkEsercizio, listaDaSeduta, type StatoLista } from '../esercizi/lista'
 
 type Lista = Omit<StatoLista, 'pos'>
 
-function Riga({ p, fase, lista, pos }: { p: Prescrizione; fase: Fase; lista: Lista; pos: number }) {
+function Riga({ p, fase, lista, pos, ss }: { p: Prescrizione; fase: Fase; lista: Lista; pos: number; ss?: string }) {
   const es = esercizio(p.esercizioId)
   return (
     <LinkEsercizio lista={lista} pos={pos} className="flex items-center gap-3 py-2">
       <ExerciseThumb id={es.id} className="size-14" />
       <div className="min-w-0 flex-1">
-        <div className="truncate font-semibold">{es.nome}</div>
+        <div className="flex items-center gap-1.5">
+          {ss && <Badge tone="blue">{ss}</Badge>}
+          <span className="truncate font-semibold">{es.nome}</span>
+        </div>
         <div className="text-sm text-zinc-500">{testoPrescrizione(p, fase, es)}</div>
         {(p.alternativa || p.superserieCon) && (
           <div className="mt-0.5 flex flex-wrap gap-1">
@@ -32,8 +35,19 @@ export function SessionPreview({ s, fase, programma, pianoId }: { s: StrutturaSe
   const lista: Lista = { titolo: s.nome, voci: listaDaSeduta(pianoId ? programma : undefined, s), pianoId }
   let k = 0
   const pos = () => k++
+  const ss = etichetteSuperserie(s.palestra)
   return (
     <div>
+      {s.riscaldamento.length > 0 && (
+        <>
+          <SectionTitle>Riscaldamento</SectionTitle>
+          <Card className="divide-y divide-zinc-100 py-1 dark:divide-zinc-800">
+            {s.riscaldamento.map((p) => (
+              <Riga key={p.esercizioId} p={p} fase={fase} lista={lista} pos={pos()} />
+            ))}
+          </Card>
+        </>
+      )}
       {s.core && (
         <>
           <SectionTitle>Core · variante {s.core.variante}</SectionTitle>
@@ -86,7 +100,7 @@ export function SessionPreview({ s, fase, programma, pianoId }: { s: StrutturaSe
                   ))}
                 </div>
               ) : (
-                <Riga key={v.esercizioId} p={v} fase={fase} lista={lista} pos={pos()} />
+                <Riga key={v.esercizioId} p={v} fase={fase} lista={lista} pos={pos()} ss={ss.get(i)?.etichetta} />
               ),
             )}
           </Card>

@@ -9,13 +9,13 @@ import type { Esercizio, Piano, Prescrizione, Programma, Seduta, VocePalestra } 
 import { clona } from './util'
 
 /** Blocchi modificabili: liste di esercizi di una seduta o una variante del core. */
-export type Blocco = { tipo: 'palestra' | 'mobilita'; sedutaId: string } | { tipo: 'core'; variante: 'A' | 'B' }
+export type Blocco = { tipo: 'palestra' | 'mobilita' | 'riscaldamento'; sedutaId: string } | { tipo: 'core'; variante: 'A' | 'B' }
 
 export function vociBlocco(p: Programma, b: Blocco): VocePalestra[] {
   if (b.tipo === 'core') return b.variante === 'A' ? p.blocco_core.varianteA : p.blocco_core.varianteB
   const s = p.sedute[b.sedutaId]
   if (!s) return []
-  return (b.tipo === 'palestra' ? s.palestra : s.mobilita) ?? []
+  return (b.tipo === 'palestra' ? s.palestra : b.tipo === 'mobilita' ? s.mobilita : s.riscaldamento) ?? []
 }
 
 /** Programma con il blocco sostituito da `voci`. */
@@ -114,4 +114,26 @@ export function suggerisciSostituti(id: string, esclusi: string[] = [], n = 6): 
     .filter((s) => s.punteggio > 0.25)
     .sort((a, b) => b.punteggio - a.punteggio)
     .slice(0, n)
+}
+
+/** Unisce in superserie la voce i con la successiva, oppure scioglie la superserie di cui fa parte. */
+export function alternaSuperserie(voci: VocePalestra[], i: number): VocePalestra[] {
+  const v = voci[i]
+  if (!v || 'circuito' in v) return voci
+  if (v.superserie) {
+    const g = v.superserie
+    const membri = voci.filter((x): x is Prescrizione => !('circuito' in x) && x.superserie === g)
+    const recupero = Math.max(0, ...membri.map((x) => x.recuperoSec ?? 0))
+    // sciolta la coppia, chi non aveva recupero riprende quello del gruppo
+    return voci.map((x) => ('circuito' in x || x.superserie !== g ? x : { ...x, superserie: undefined, recuperoSec: x.recuperoSec || recupero || undefined }))
+  }
+  const succ = voci[i + 1]
+  if (!succ || 'circuito' in succ) return voci
+  const usate = new Set(voci.flatMap((x) => ('circuito' in x || !x.superserie ? [] : [x.superserie])))
+  const lettera = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find((l) => !usate.has(l)) ?? 'Z'
+  // se la successiva e' gia' in una coppia, la voce si aggiunge a quella (tri-serie)
+  const g = succ.superserie ?? lettera
+  // si passa subito al successivo: il recupero resta solo sull'ultimo della coppia
+  const recupero = Math.max(v.recuperoSec ?? 0, succ.recuperoSec ?? 0) || undefined
+  return voci.map((x, k) => (k === i ? { ...v, superserie: g, recuperoSec: 0 } : k === i + 1 ? { ...succ, superserie: g, recuperoSec: succ.superserie ? succ.recuperoSec : recupero } : x))
 }

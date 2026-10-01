@@ -1,6 +1,6 @@
 // Tipi statici del programma e della libreria esercizi, piu' i record salvati in IndexedDB.
 
-export type Categoria = 'core' | 'forza' | 'ricostruzione' | 'potenza' | 'pista' | 'mobilita' | 'stretching' | 'yoga'
+export type Categoria = 'core' | 'forza' | 'ricostruzione' | 'potenza' | 'pista' | 'cardio' | 'mobilita' | 'stretching' | 'yoga'
 
 export type TipoRegistrazione = 'carico_ripetizioni' | 'ripetizioni' | 'tempo' | 'distanza' | 'pista'
 
@@ -35,7 +35,7 @@ export type Schema =
 
 export type Attrezzo =
   | 'manubri' | 'kettlebell' | 'bilanciere' | 'trap-bar' | 'panca' | 'sbarra' | 'elastico' | 'cavo' | 'slitta'
-  | 'palla-medica' | 'trx' | 'box' | 'landmine' | 'battle-rope' | 'slider' | 'panca-iperestensioni' | 'tappetino' | 'parallele'
+  | 'palla-medica' | 'trx' | 'box' | 'landmine' | 'battle-rope' | 'slider' | 'panca-iperestensioni' | 'tappetino' | 'parallele' | 'fitball' | 'macchine-cardio'
 
 export type Zona = 'ginocchia' | 'schiena' | 'spalle' | 'polsi'
 

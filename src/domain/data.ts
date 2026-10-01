@@ -27,7 +27,7 @@ export const NOMI_GIORNI: Record<GiornoId, string> = {
   dom: 'Domenica',
 }
 
-export const CATEGORIE = ['core', 'forza', 'ricostruzione', 'potenza', 'pista', 'mobilita', 'stretching', 'yoga'] as const
+export const CATEGORIE = ['core', 'forza', 'ricostruzione', 'potenza', 'pista', 'cardio', 'mobilita', 'stretching', 'yoga'] as const
 
 export const NOMI_CATEGORIE: Record<(typeof CATEGORIE)[number], string> = {
   core: 'Core',
@@ -35,6 +35,7 @@ export const NOMI_CATEGORIE: Record<(typeof CATEGORIE)[number], string> = {
   ricostruzione: 'Ricostruzione',
   potenza: 'Potenza',
   pista: 'Pista',
+  cardio: 'Cardio',
   mobilita: 'Mobilità',
   stretching: 'Stretching',
   yoga: 'Yoga',

@@ -16,7 +16,7 @@ import { AnteprimaProgramma } from './AnteprimaProgramma'
 import { RiepilogoCarico } from './RiepilogoCarico'
 
 const OBIETTIVI: Obiettivo[] = ['forza', 'massa', 'potenza', 'resistenza', 'mobilita', 'stabilita']
-const ATTREZZI: Attrezzo[] = ['manubri', 'kettlebell', 'bilanciere', 'panca', 'sbarra', 'elastico', 'cavo', 'trap-bar', 'palla-medica', 'box', 'trx', 'slitta', 'landmine', 'battle-rope', 'slider', 'panca-iperestensioni']
+const ATTREZZI: Attrezzo[] = ['manubri', 'kettlebell', 'bilanciere', 'panca', 'sbarra', 'elastico', 'cavo', 'trap-bar', 'palla-medica', 'box', 'trx', 'slitta', 'landmine', 'battle-rope', 'slider', 'panca-iperestensioni', 'fitball', 'macchine-cardio']
 const ZONE: [Zona, string][] = [
   ['ginocchia', 'Ginocchia'],
   ['schiena', 'Schiena'],

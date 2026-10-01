@@ -12,7 +12,7 @@ PWA personale per seguire la scheda settimanale e registrare i progressi. Un sol
 - `npx tsx scripts/preview-muscles.ts <id,id> <out.html>` – anteprima delle mappe muscolari
 - `npm run icons` – rigenera le icone PWA (solo macOS: usa Quick Look e sips)
 - `npx tsx scripts/prova-generatore.ts [id,id]` – stampa le schede generate dai profili standard
-- `python3 scripts/catalogo_meta.py` / `python3 scripts/catalogo_nuovi.py` – metadati del generatore ed esercizi aggiunti in `exercises.json`
+- `python3 scripts/catalogo_meta.py` / `python3 scripts/catalogo_nuovi.py` / `python3 scripts/catalogo_aggiunte.py` – metadati del generatore ed esercizi aggiunti in `exercises.json` (idempotenti)
 
 ## Stack
 
@@ -23,7 +23,7 @@ React 19 + TypeScript + Vite, Tailwind v4, Dexie (IndexedDB), React Router (Hash
 - `src/data/` – JSON statici: `exercises.json`, `program.json`, `tests.json`
 - `src/domain/` – logica pura e testata: calendario/ciclo, progressione, statistiche, struttura seduta, validazione, muscoli (`muscles.ts`), modifica dei blocchi e suggerimenti di sostituzione (`editing.ts`), piani (`plans.ts`), generatore (`generator.ts`), profili standard (`profili.ts`), adattamenti e proposte (`adattamento.ts`)
 - `src/db/` – schema Dexie, repository, backup (export/import JSON con foto in base64)
-- `src/figures/` – `engine.ts` + `poses.ts`: pose A e B di ogni esercizio (2D, cinematica diretta/inversa); `pose3d.ts` le porta in 3D per il visore; `muscleGeometry.ts` + `muscleMap.ts`: mappa muscolare stile Technogym
+- `src/figures/` – `engine.ts` + `poses.ts` (con `poses2.ts` e `poses3.ts` per gli esercizi aggiunti dopo): pose A e B di ogni esercizio (2D, cinematica diretta/inversa); `pose3d.ts` le porta in 3D per il visore; `muscleGeometry.ts` + `muscleMap.ts`: mappa muscolare stile Technogym
 - `src/features/` – schermate: oggi, scheda, progressi, esercizi, impostazioni, piani (questionario, le mie schede, profili), adattamento
 
 ## Scostamenti dalla specifica
@@ -58,6 +58,7 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 
 ## Generatore, profili e adattamenti
 
+- Categoria `cardio` per le macchine (tapis roulant, cyclette, air bike, vogatore: attrezzo `macchine-cardio`); attrezzo `fitball`. Gli addominali in flessione (crunch, V-up) hanno schema `isolamento`, così il blocco core automatico resta su esercizi di stabilità.
 - Ogni esercizio ha `schemi` di movimento, `attrezzi` (gruppi AND di alternative OR, `[]` = corpo libero), `livello`, `impatto`, `sollecita` (zone), `funzionale`.
 - `Risposte.corpoLibero`: se falso (e ci sono attrezzi) esclude gli esercizi di forza/potenza a corpo libero; se vero li preferisce leggermente. Assente = vero. Durate da 30 min a 2 ore (4-10 esercizi).
 - `generaProgramma(risposte)`: split in base ai giorni (total body, gambe/superiore, condizionamento), slot per schema scelti per disponibilità (attrezzi, livello, zone da evitare) e punteggio (funzionale, focus, obiettivo). Parametri e fasi dipendono dagli obiettivi (il primo per i principali e le fasi, il secondo per gli accessori); potenza aggiunge un esplosivo in apertura, resistenza un circuito finale, mobilità più stretching/yoga.

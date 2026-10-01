@@ -34,6 +34,14 @@ const PIANI: Record<string, Piano> = {
   stretch_adduttori: 'frontale',
   alzate_laterali: 'frontale',
   croci_cavo: 'frontale',
+  rematore_alto: 'frontale',
+  squat_sumo: 'frontale',
+  camminata_laterale_elastico: 'frontale',
+  cross_crunch: 'laterale',
+  skater_jump: 'frontale',
+  cossack_squat: 'frontale',
+  landmine_rotazione: 'frontale',
+  step_up_laterale: 'frontale',
 }
 
 export const NOMI_GIUNTI = [
@@ -125,6 +133,33 @@ function apriBraccia(g: Scheletro3D, t: number, da: V3, apertura: number) {
   }
 }
 
+/** Ruota i giunti indicati attorno all'asse che passa per `c` con direzione `asse`, di `gradi`. */
+function ruota(g: Scheletro3D, nomi: readonly Giunto[], c: V3, asse: V3, gradi: number) {
+  const k = norm(asse)
+  const a = (gradi * Math.PI) / 180
+  const cos = Math.cos(a)
+  const sin = Math.sin(a)
+  for (const n of nomi) {
+    const v: V3 = [g[n][0] - c[0], g[n][1] - c[1], g[n][2] - c[2]]
+    const kv = k[0] * v[0] + k[1] * v[1] + k[2] * v[2]
+    const x: V3 = [k[1] * v[2] - k[2] * v[1], k[2] * v[0] - k[0] * v[2], k[0] * v[1] - k[1] * v[0]]
+    g[n] = [0, 1, 2].map((i) => c[i] + v[i] * cos + x[i] * sin + k[i] * kv * (1 - cos)) as V3
+  }
+}
+
+const BUSTO = ['shN', 'elbowN', 'handN', 'shF', 'elbowF', 'handF', 'head', 'shoulder', 'mid'] as const
+const sub3 = (a: V3, b: V3): V3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]]
+/** Mani a terra piu' larghe (z > 0 lato vicino); il gomito sta a meta' tra spalla e mano, piu' in alto se il braccio e' piegato. */
+function maniLarghe(g: Scheletro3D, zN: number, zF: number) {
+  for (const [n, z] of [['N', zN], ['F', zF]] as const) {
+    const sh = g[`sh${n}`]
+    const h: V3 = [g[`hand${n}`][0], g[`hand${n}`][1], z]
+    const piega = Math.max(0, UA + FA - Math.hypot(...sub3(h, sh)))
+    g[`hand${n}`] = h
+    g[`elbow${n}`] = add(lerp3(sh, h, 0.5), [0, piega * 0.3, (z > 0 ? 1 : -1) * piega * 0.6])
+  }
+}
+
 /** Movimenti che non stanno in un piano: il braccio o la gamba ruotano fuori dal disegno. */
 const speciali: Record<string, (g: Scheletro3D, t: number) => void> = {
   // il braccio superiore si apre ad arco sopra il corpo, dall'avanti all'indietro
@@ -197,6 +232,72 @@ const speciali: Record<string, (g: Scheletro3D, t: number) => void> = {
     for (const n of ['ankleN', 'toeN', 'ankleF', 'toeF'] as const) g[n] = [g[n][0] + 0.32, g[n][1], g[n][2] * 0.3]
     for (const n of ['kneeN', 'kneeF'] as const) g[n] = [g[n][0] + 0.15, g[n][1] + 0.08, g[n][2]]
   },
+  // rotazione del busto da un lato all'altro attorno alla colonna
+  russian_twist(g, t) {
+    ruota(g, BUSTO, g.hip, sub3(g.shoulder, g.hip), 50 - 100 * t)
+  },
+  bicicletta(g, t) {
+    ruota(g, BUSTO, g.hip, sub3(g.shoulder, g.hip), 30 - 60 * t)
+  },
+  // braccia tese che ruotano con il busto, dal cavo verso l'esterno
+  twist_cavo(g, t) {
+    ruota(g, BUSTO, g.hip, [0, 1, 0], -45 + 85 * t)
+  },
+  // il braccio libero si allunga di lato, teso, con la mano a terra
+  plank_archer(g, t) {
+    const h: V3 = [g.shF[0], 0.12, g.shF[2] - 0.36]
+    g.handF = lerp3(g.handF, h, t)
+    g.elbowF = lerp3(g.elbowF, lerp3(g.shF, h, 0.5), t)
+  },
+  // il manubrio passa sotto il corpo dal lato vicino a quello lontano
+  plank_pull_through(g, t) {
+    g.handF = [g.handF[0], g.handF[1], 0.15 - 0.45 * t]
+    g.elbowF = add(lerp3(g.shF, g.handF, 0.5), [0, 0.05, 0])
+  },
+  // i piedi si aprono e si chiudono
+  plank_jack(g, t) {
+    for (const [n, s] of [['N', 1], ['F', -1]] as const) {
+      g[`knee${n}`] = add(g[`knee${n}`], [0, 0, s * 0.1 * t])
+      g[`ankle${n}`] = add(g[`ankle${n}`], [0, 0, s * 0.22 * t])
+      g[`toe${n}`] = add(g[`toe${n}`], [0, 0, s * 0.22 * t])
+    }
+  },
+  push_up_larghi(g) {
+    maniLarghe(g, 0.42, -0.42)
+  },
+  push_up_diamante(g) {
+    maniLarghe(g, 0.04, -0.04)
+  },
+  // mani molto larghe: si scende verso la mano vicina, l'altro braccio resta teso
+  push_up_arciere(g, t) {
+    const sposta: V3 = [0, 0, 0.14 * t]
+    for (const n of ['hip', 'mid', 'shoulder', 'head', 'shN', 'shF', 'hipN', 'hipF'] as const) g[n] = add(g[n], sposta)
+    maniLarghe(g, 0.5, -0.55)
+    g.elbowF = lerp3(g.shF, g.handF, 0.5)
+  },
+  // il ginocchio sale di lato verso il gomito
+  push_up_spiderman(g, t) {
+    for (const [n, z] of [['kneeN', 0.38], ['ankleN', 0.3], ['toeN', 0.3]] as const) {
+      const p = g[n]
+      g[n] = [p[0], Math.max(p[1], 0.06), p[2] + z * t]
+    }
+  },
+  // il kettlebell gira attorno alla testa, poi sale sopra la testa
+  halo_spinta(g, t) {
+    if (t >= 0.5) return
+    const u = t / 0.5
+    const a = 2 * Math.PI * u
+    const c = add(g.head, [0, 0.02, 0])
+    const m: V3 = add(c, [0.24 * Math.cos(a), 0, 0.24 * Math.sin(a)])
+    g.handN = add(m, [0, 0, 0.04])
+    g.handF = add(m, [0, 0, -0.04])
+    g.elbowN = add(lerp3(g.shN, g.handN, 0.5), [0.04, -0.08, 0.08])
+    g.elbowF = add(lerp3(g.shF, g.handF, 0.5), [0.04, -0.08, -0.08])
+  },
+  // la pianta del piede ruota verso l'esterno
+  eversione_caviglia(g, t) {
+    g.toeN = add(g.toeN, [0, -0.02 * t, 0.07 * t])
+  },
   // 90/90: da seduti le gambe stanno sul pavimento, il disegno le mostra viste dall'alto
   anche_90_90(g) {
     // seduti a terra: il bacino scende al pavimento, le gambe (disegnate viste dall'alto) si stendono sul suolo
@@ -235,7 +336,7 @@ const centroMani = (g: Scheletro3D): V3 => scale(add(g.handN, g.handF), 0.5)
 export function oggetti3D(id: string, t: number, g: Scheletro3D, j2d: Joints, def: FiguraDef, piano: Piano): Oggetto3D[] {
   const props: Prop[] = [...(def.back?.(j2d, t) ?? []), ...(def.props?.(j2d, t) ?? [])]
   const out: Oggetto3D[] = []
-  const manoUnica = id === 'suitcase_carry' || id === 'rematore_manubrio' || id === 'landmine_press' || id === 'turkish_get_up'
+  const manoUnica = id === 'suitcase_carry' || id === 'rematore_manubrio' || id === 'landmine_press' || id === 'turkish_get_up' || id === 'push_press_kettlebell' || id === 'strappo_manubrio'
   const maniInsieme = Math.hypot(j2d.handN[0] - j2d.handF[0], j2d.handN[1] - j2d.handF[1]) < 3
   const P = (p: Vec) => punto(piano, j2d, g, p)
   const lato = piano === 'sagittale'

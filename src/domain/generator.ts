@@ -120,6 +120,8 @@ export const NOMI_ATTREZZI: Record<Attrezzo, string> = {
   'panca-iperestensioni': 'Panca iperestensioni',
   tappetino: 'Tappetino',
   parallele: 'Parallele',
+  fitball: 'Fitball',
+  'macchine-cardio': 'Macchine cardio',
 }
 
 // ---------- disponibilita' degli esercizi ----------
@@ -342,7 +344,7 @@ export function ripartisci(n: number, conPalestra: boolean, conMobilita: boolean
 
 // ---------- scelta degli esercizi ----------
 
-const PALESTRA_CATEGORIE = new Set(['forza', 'potenza', 'core', 'ricostruzione'])
+const PALESTRA_CATEGORIE = new Set(['forza', 'potenza', 'core', 'ricostruzione', 'cardio'])
 
 class Selettore {
   private usati = new Map<string, number>()

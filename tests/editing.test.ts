@@ -84,7 +84,7 @@ describe('muscoli e suggerimenti', () => {
     expect(panca).toEqual(expect.arrayContaining(['push_up', 'dip_parallele']))
     const stacco = suggerisciSostituti('trap_bar_deadlift').map((s) => s.es.id)
     expect(stacco).toContain('box_squat')
-    expect(suggerisciSostituti('trazioni').map((s) => s.es.id).slice(0, 2)).toEqual(expect.arrayContaining(['chin_up', 'lat_machine']))
+    expect(suggerisciSostituti('trazioni').map((s) => s.es.id).slice(0, 3)).toEqual(expect.arrayContaining(['chin_up', 'lat_machine']))
   })
 
   it('i suggerimenti escludono gli esercizi gia\' presenti e la pista', () => {

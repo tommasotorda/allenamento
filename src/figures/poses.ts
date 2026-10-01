@@ -4,6 +4,7 @@
  */
 import { G, add, lerpV, type FiguraDef, type Joints, type Pose, type Vec } from './engine'
 import { NUOVE_FIGURE } from './poses2'
+import { FIGURE_AGGIUNTE } from './poses3'
 
 /** Passo di corsa/camminata: A con gamba vicina avanti, B con gamba vicina dietro. */
 function falcata(opts: { lean: number; ampiezza: number; braccia: 'corsa' | 'pesi' | 'avanti' | 'dietro'; x?: number }): { a: Pose; b: Pose } {
@@ -343,4 +344,4 @@ const BASE: Record<string, FiguraDef> = {
   },
 }
 
-export const FIGURE: Record<string, FiguraDef> = { ...BASE, ...NUOVE_FIGURE }
+export const FIGURE: Record<string, FiguraDef> = { ...BASE, ...NUOVE_FIGURE, ...FIGURE_AGGIUNTE }

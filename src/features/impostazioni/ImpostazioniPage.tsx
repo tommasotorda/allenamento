@@ -257,6 +257,13 @@ export function ImpostazioniPage() {
           </Button>
         )}
       </Card>
+
+      <p className="mt-8 px-1 text-center text-xs text-zinc-400">
+        Allenamento · © 2026 Tommaso Torda ·{' '}
+        <a href="https://github.com/tommasotorda/allenamento" className="underline" target="_blank" rel="noreferrer">
+          licenza Apache 2.0
+        </a>
+      </p>
     </div>
   )
 }

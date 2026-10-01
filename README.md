@@ -20,7 +20,7 @@ App personale per seguire una scheda di allenamento, registrare le sedute e vede
 - **Carico**: per ogni scheda, serie settimanali per gruppo muscolare con slider per ritoccarle prima di attivarla (o dopo, nella scheda Carico) e mappa dei muscoli colorata secondo la quota di lavoro che ricevono.
 - **Programmazione**: volume settimanale per gruppo muscolare in base a obiettivo e livello, tirate almeno quanto le spinte, fondamentali all'inizio, riscaldamento specifico, superserie tra antagonisti (A1/A2, recupero dopo il secondo).
 - **Adattamenti**: trasforma la scheda verso forza, massa, potenza, resistenza, mobilità o stabilità, anche combinate. L'app lo propone alla scadenza (12 settimane), dopo i test di metà ciclo, a metà delle sedute o quando il 1RM stimato cresce del 10%.
-- **Esercizi**: 124 esercizi (fondamentali con bilanciere e manubri, isolamento, forza, funzionali, core, catena posteriore, schiena, potenza, pista, mobilità, stretching, yoga). Per ciascuno:
+- **Esercizi**: 185 esercizi (fondamentali con bilanciere e manubri, isolamento, forza, funzionali, addominali, piegamenti, catena posteriore, schiena, potenza, cardio alle macchine, pista, ginocchio e caviglia, mobilità, stretching, yoga). Per ciascuno:
   - animazione 3D che si ruota con il dito;
   - mappa dei muscoli coinvolti (primari, secondari, stabilizzatori);
   - esecuzione passo per passo e storico.
@@ -65,3 +65,13 @@ Ogni push sul branch `main` esegue test e build e pubblica su GitHub Pages con G
 
 - Immagini, animazioni e mappe muscolari sono generate dal codice: niente immagini di terze parti.
 - Programmi, parametri e coinvolgimento muscolare degli esercizi sono indicativi e non sostituiscono il parere di un professionista.
+
+## Licenza
+
+Copyright 2026 Tommaso Torda. Distribuito con licenza [Apache 2.0](LICENSE).
+
+Puoi usare, modificare e ridistribuire il codice per qualunque scopo, anche commerciale. Se ridistribuisci l'app o un lavoro derivato devi:
+
+- includere la licenza ([LICENSE](LICENSE)) e il file [NOTICE](NOTICE), che cita l'autore originale;
+- mantenere gli avvisi di copyright e di attribuzione, compresi i crediti mostrati nell'app (Impostazioni);
+- indicare in modo evidente i file che hai modificato.

@@ -1,6 +1,8 @@
 {
   "name": "allenamento-app",
   "private": true,
+  "license": "Apache-2.0",
+  "author": "Tommaso Torda",
   "version": "0.0.0",
   "type": "module",
   "scripts": {

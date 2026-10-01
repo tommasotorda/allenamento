@@ -5,12 +5,13 @@ import { Badge, Button, Card } from '../../components/ui'
 import { aggiornaProgramma } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizio } from '../../domain/data'
-import { conVoci, sostituisci, vociBlocco } from '../../domain/editing'
+import { alternaSuperserie, conVoci, sostituisci, vociBlocco } from '../../domain/editing'
 import { testoPrescrizione } from '../../domain/progression'
+import { etichetteSuperserie } from '../../domain/session'
 import { isCircuito, type Esercizio, type VocePalestra } from '../../domain/types'
 import { useCiclo } from '../../hooks'
 import { ExercisePicker } from '../scheda/ExercisePicker'
-import { PrescrizioneForm } from '../scheda/BlockEditor'
+import { PrescrizioneForm } from '../scheda/PrescrizioneForm'
 import type { StatoLista, VoceLista } from './lista'
 
 interface Props {
@@ -50,13 +51,29 @@ export function ModificaNellaScheda({ stato, onLista }: Props) {
     )
   }
 
+  const stessoBlocco = (x: VoceLista) => JSON.stringify(x.blocco) === JSON.stringify(blocco)
+  // scambia la voce con la precedente o la successiva del blocco; le voci della lista seguono il nuovo indice
+  const sposta = async (d: -1 | 1) => {
+    const j = idx + d
+    if (j < 0 || j >= voci.length) return
+    const n = [...voci]
+    ;[n[idx], n[j]] = [n[j], n[idx]]
+    await salva(n)
+    onLista(
+      stato.voci.map((x) => (!stessoBlocco(x) ? x : x.indice === idx ? { ...x, indice: j } : x.indice === j ? { ...x, indice: idx } : x)),
+      stato.pos,
+    )
+  }
+  const succ = voci[idx + 1]
+  const puoSuperserie = blocco.tipo === 'palestra' && !isCircuito(v) && (!!v.superserie || (!!succ && !isCircuito(succ)))
+  const ss = etichetteSuperserie(voci).get(idx)?.etichetta
+
   const rimuovi = async () => {
     setConferma(false)
     const svuotaCircuito = isCircuito(v) && v.esercizi.length <= 1
     const nuove = isCircuito(v) && !svuotaCircuito ? voci.map((x, k) => (k === idx ? { ...v, esercizi: v.esercizi.filter((_, j) => j !== voce.sub) } : x)) : voci.filter((_, k) => k !== idx)
     await salva(nuove)
     // le voci successive dello stesso blocco scalano di una posizione
-    const stessoBlocco = (x: VoceLista) => JSON.stringify(x.blocco) === JSON.stringify(blocco)
     const tolta = !isCircuito(v) || svuotaCircuito
     const resto = stato.voci
       .filter((_, k) => k !== stato.pos)
@@ -78,8 +95,9 @@ export function ModificaNellaScheda({ stato, onLista }: Props) {
         <div className="min-w-0">
           <div className="text-xs font-semibold uppercase tracking-wide text-zinc-500">Nella scheda</div>
           <div className="truncate text-sm text-zinc-500">
-            {piano.nome} · {nomeBlocco}
+            {piano.nome} · {nomeBlocco} · {idx + 1} di {voci.length}
           </div>
+          {ss && <Badge tone="blue">superserie {ss}</Badge>}
           <div className="mt-1 text-lg font-semibold">{isCircuito(v) ? `Circuito · ${v.giri} giri · ${v.lavoroSec} s / ${v.pausaSec} s` : testoPrescrizione(v, fase, es)}</div>
           {!isCircuito(v) && v.recuperoSec ? <Badge>recupero {v.recuperoSec} s</Badge> : null}
         </div>
@@ -113,6 +131,19 @@ export function ModificaNellaScheda({ stato, onLista }: Props) {
           </Button>
         )}
       </div>
+      <div className="mt-2 flex gap-2">
+        <Button className="h-10 flex-1 px-2 text-sm" disabled={idx === 0} onClick={() => sposta(-1)}>
+          <Icon name="back" className="size-5 rotate-90" /> Prima
+        </Button>
+        <Button className="h-10 flex-1 px-2 text-sm" disabled={idx === voci.length - 1} onClick={() => sposta(1)}>
+          <Icon name="chevron" className="size-5 rotate-90" /> Dopo
+        </Button>
+      </div>
+      {puoSuperserie && !isCircuito(v) && (
+        <Button variant="ghost" className="mt-2 h-10 w-full text-sm" onClick={() => salva(alternaSuperserie(voci, idx))}>
+          {v.superserie ? 'Sciogli superserie' : `Superserie con ${esercizio((succ as { esercizioId: string }).esercizioId).nome}`}
+        </Button>
+      )}
       {scegli && <ExercisePicker titolo={`Sostituisci ${es.nome}`} sostituisci={voce.id} esclusi={presenti} onScegli={sostituisciCon} onChiudi={() => setScegli(false)} />}
     </Card>
   )

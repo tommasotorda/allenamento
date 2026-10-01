@@ -1,7 +1,7 @@
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
-import { Icon, type IconName } from '../../components/Icon'
+import { lazy, Suspense, useEffect, useRef, useState, type ReactNode } from 'react'
+import { Icon } from '../../components/Icon'
 import { MuscleMap } from '../../components/MuscleMap'
-import { Badge, Button, Card, SectionTitle } from '../../components/ui'
+import { Badge, Card, SectionTitle } from '../../components/ui'
 import { esercizio, NOMI_CATEGORIE } from '../../domain/data'
 import { espandi, MUSCOLI, perLivello, type Livello } from '../../domain/muscles'
 import type { Esercizio } from '../../domain/types'
@@ -70,14 +70,17 @@ interface Props {
   pos: number
   onPos: (pos: number) => void
   onChiudi: () => void
-  azione: { etichetta: string; icona: IconName; disabilitato: (id: string) => boolean; onClick: (es: Esercizio) => void }
+  /** contenuto sotto il visore (es. la voce nella scheda) */
+  pannello?: (es: Esercizio) => ReactNode
+  /** barra fissa in fondo (azioni) */
+  piede?: (es: Esercizio) => ReactNode
 }
 
 /**
  * Anteprima di un esercizio sopra il selettore: visore 3D, muscoli ed esecuzione, con
  * frecce, tastiera e swipe per scorrere l'elenco. Chiudendola il selettore resta com'era.
  */
-export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, azione }: Props) {
+export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, pannello, piede }: Props) {
   const es = esercizio(ids[pos])
   const [dir, setDir] = useState<1 | -1 | 0>(0)
   const corpo = useRef<HTMLDivElement>(null)
@@ -98,6 +101,8 @@ export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, azione }: Props)
       if (e.key === 'Escape') return onChiudi()
       if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return
       if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return
+      const el = document.activeElement as HTMLElement | null
+      if (el && (el.isContentEditable || ['INPUT', 'TEXTAREA', 'SELECT'].includes(el.tagName))) return
       e.preventDefault()
       e.stopPropagation()
       vaiRef.current(pos + (e.key === 'ArrowRight' ? 1 : -1))
@@ -124,7 +129,6 @@ export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, azione }: Props)
     if (ok) vai(pos + (dx < 0 ? 1 : -1))
   }
 
-  const disabilitato = azione.disabilitato(es.id)
   return (
     <div className="pt-safe fixed inset-0 z-[60] flex flex-col bg-zinc-50 dark:bg-zinc-950" role="dialog" aria-modal="true" aria-label={es.nome}>
       <div className="mx-auto flex w-full max-w-2xl items-center gap-2 px-4 pb-2 pt-3">
@@ -153,6 +157,7 @@ export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, azione }: Props)
       <div ref={corpo} className="mx-auto w-full max-w-2xl flex-1 overflow-y-auto px-4 pb-4" onTouchStart={onTouchStart} onTouchEnd={onTouchEnd}>
         <div key={es.id} className={dir === 1 ? 'entra-da-destra' : dir === -1 ? 'entra-da-sinistra' : ''}>
           <Visore id={es.id} />
+          {pannello?.(es)}
           <SectionTitle>Muscoli coinvolti</SectionTitle>
           <MuscoliCoinvolti es={es} />
           {es.attrezzatura.length > 0 && (
@@ -170,11 +175,7 @@ export function AnteprimaEsercizio({ ids, pos, onPos, onChiudi, azione }: Props)
         </div>
       </div>
 
-      <div className="pb-safe mx-auto w-full max-w-2xl border-t border-zinc-200 px-4 pt-3 pb-3 dark:border-zinc-800">
-        <Button variant="primary" big className="w-full" disabled={disabilitato} onClick={() => azione.onClick(es)}>
-          <Icon name={azione.icona} className="size-5" /> {disabilitato ? 'Già nel blocco' : azione.etichetta}
-        </Button>
-      </div>
+      {piede && <div className="pb-safe mx-auto w-full max-w-2xl border-t border-zinc-200 px-4 pt-3 pb-3 empty:hidden dark:border-zinc-800">{piede(es)}</div>}
     </div>
   )
 }

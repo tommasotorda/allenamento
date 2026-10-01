@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { Icon } from '../../components/Icon'
-import { Chip, ExerciseThumb } from '../../components/ui'
+import { Button, Card, Chip, ExerciseThumb } from '../../components/ui'
 import { CATEGORIE, esercizi, esercizio, NOMI_CATEGORIE } from '../../domain/data'
-import { suggerisciSostituti } from '../../domain/editing'
+import { prescrizioneDefault, suggerisciSostituti } from '../../domain/editing'
 import { AnteprimaEsercizio } from '../esercizi/AnteprimaEsercizio'
 import { MUSCOLI } from '../../domain/muscles'
-import type { Categoria, Esercizio } from '../../domain/types'
+import type { Categoria, Esercizio, Prescrizione } from '../../domain/types'
+import { PrescrizioneForm } from './PrescrizioneForm'
+import { indiceVoce, VoceInSeduta, type SedutaInModifica } from './VoceInSeduta'
 
 interface Props {
   titolo: string
@@ -15,6 +17,11 @@ interface Props {
   esclusi: string[]
   onScegli: (es: Esercizio) => void
   onChiudi: () => void
+  /**
+   * Blocco a cui si aggiunge: dall'anteprima si aggiunge con le specifiche scelte restando
+   * nell'anteprima, e le voci gia' presenti si modificano, spostano e collegano in superserie.
+   */
+  seduta?: SedutaInModifica
 }
 
 /**
@@ -22,13 +29,19 @@ interface Props {
  * Il tasto a destra sceglie subito; toccando la riga si apre l'anteprima (3D, muscoli, esecuzione)
  * sopra il selettore, che resta com'era quando la si chiude.
  */
-export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiudi }: Props) {
+export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiudi, seduta }: Props) {
   const [cat, setCat] = useState<Categoria | null>(sostituisci ? esercizio(sostituisci).categoria : null)
   const suggeriti = sostituisci ? suggerisciSostituti(sostituisci, esclusi) : []
   const lista = esercizi.filter((e) => e.categoria !== 'pista' && (!cat || e.categoria === cat) && e.id !== sostituisci)
   // ordine di scorrimento nell'anteprima: suggeriti, poi la libreria filtrata
   const ordine = [...new Set([...suggeriti.map((x) => x.es.id), ...lista.map((e) => e.id)])]
   const [anteprima, setAnteprima] = useState<number | null>(null)
+  // specifiche dell'esercizio che si sta aggiungendo dall'anteprima, finche' non si conferma
+  const [bozza, setBozza] = useState<Prescrizione | null>(null)
+  const apriAnteprima = (p: number | null) => {
+    setBozza(null)
+    setAnteprima(p)
+  }
 
   // blocca lo scorrimento della pagina sotto
   useEffect(() => {
@@ -43,7 +56,7 @@ export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiud
     const presente = esclusi.includes(e.id)
     return (
       <div key={e.id} className="flex items-center gap-1">
-        <button type="button" onClick={() => setAnteprima(ordine.indexOf(e.id))} className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-2 py-2 text-left active:bg-zinc-100 dark:active:bg-zinc-800" aria-label={`Anteprima di ${e.nome}`}>
+        <button type="button" onClick={() => apriAnteprima(ordine.indexOf(e.id))} className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-2 py-2 text-left active:bg-zinc-100 dark:active:bg-zinc-800" aria-label={`Anteprima di ${e.nome}`}>
           <ExerciseThumb id={e.id} className={`size-14 ${presente ? 'opacity-40' : ''}`} />
           <div className={`min-w-0 flex-1 ${presente ? 'opacity-40' : ''}`}>
             <div className="font-semibold">{e.nome}</div>
@@ -110,9 +123,45 @@ export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiud
         <AnteprimaEsercizio
           ids={ordine}
           pos={anteprima}
-          onPos={setAnteprima}
-          onChiudi={() => setAnteprima(null)}
-          azione={{ etichetta: sostituisci ? 'Sostituisci con questo' : 'Aggiungi alla scheda', icona: sostituisci ? 'swap' : 'plus', disabilitato: (id) => esclusi.includes(id), onClick: onScegli }}
+          onPos={apriAnteprima}
+          onChiudi={() => apriAnteprima(null)}
+          pannello={(es) =>
+            bozza?.esercizioId === es.id ? (
+              <Card className="mt-3 p-3 ring-2 ring-accent">
+                <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-zinc-500">Da aggiungere</div>
+                <PrescrizioneForm p={bozza} onChange={setBozza} />
+              </Card>
+            ) : seduta ? (
+              <VoceInSeduta id={es.id} seduta={seduta} />
+            ) : null
+          }
+          piede={(es) => {
+            if (bozza?.esercizioId === es.id && seduta)
+              return (
+                <div className="flex gap-2">
+                  <Button big className="flex-1" onClick={() => setBozza(null)}>
+                    Annulla
+                  </Button>
+                  <Button
+                    variant="primary"
+                    big
+                    className="flex-[2]"
+                    onClick={async () => {
+                      await seduta.salva([...seduta.voci, bozza])
+                      setBozza(null)
+                    }}
+                  >
+                    <Icon name="check" className="size-5" /> Conferma
+                  </Button>
+                </div>
+              )
+            if (esclusi.includes(es.id) || (seduta && indiceVoce(seduta.voci, es.id) >= 0)) return null
+            return (
+              <Button variant="primary" big className="w-full" onClick={() => (seduta && !sostituisci ? setBozza(prescrizioneDefault(es)) : onScegli(es))}>
+                <Icon name={sostituisci ? 'swap' : 'plus'} className="size-5" /> {sostituisci ? 'Sostituisci con questo' : 'Aggiungi alla scheda'}
+              </Button>
+            )
+          }}
         />
       )}
     </div>

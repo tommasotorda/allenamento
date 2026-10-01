@@ -85,6 +85,8 @@ Aggiungendo un esercizio a `exercises.json` servono `esecuzione`, `muscoli` e la
 
 Chi apre un esercizio passa nello stato della navigazione una lista (`features/esercizi/lista.tsx`): swipe/frecce scorrono tra le voci (`navigate` con `replace`, così "indietro" torna alla lista). Le voci con `blocco`/`indice` e `pianoId` si modificano da `ModificaNellaScheda` (specifiche con `PrescrizioneForm`, sostituzione, rimozione). Sul visore 3D lo scorrimento vale solo se rapido, altrimenti il trascinamento ruota la figura.
 
+Nel selettore degli esercizi (`ExercisePicker`, usato dagli editor dei blocchi e dalla scheda libera) il tasto a destra aggiunge o sostituisce subito; toccando la riga si apre `AnteprimaEsercizio` (visore 3D, muscoli, esecuzione) come livello sopra il selettore, con frecce/tastiera/swipe sull'elenco visibile. Non cambia pagina, quindi chiudendola filtro e scorrimento restano. Visore, muscoli ed esecuzione sono componenti condivisi con la pagina esercizio.
+
 ## Deploy
 
 GitHub Actions (`.github/workflows/deploy.yml`) pubblica su GitHub Pages a ogni push su `main`. Il repo si chiama `allenamento`, quindi l'app sta in `/allenamento/` (`BASE_PATH` impostato dal workflow; diventerebbe `/` con un repo `<utente>.github.io`).

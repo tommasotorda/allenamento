@@ -3,6 +3,7 @@ import { Icon } from '../../components/Icon'
 import { Chip, ExerciseThumb } from '../../components/ui'
 import { CATEGORIE, esercizi, esercizio, NOMI_CATEGORIE } from '../../domain/data'
 import { suggerisciSostituti } from '../../domain/editing'
+import { AnteprimaEsercizio } from '../esercizi/AnteprimaEsercizio'
 import { MUSCOLI } from '../../domain/muscles'
 import type { Categoria, Esercizio } from '../../domain/types'
 
@@ -16,11 +17,18 @@ interface Props {
   onChiudi: () => void
 }
 
-/** Selettore a schermo intero: suggerimenti per muscoli coinvolti e libreria filtrabile. */
+/**
+ * Selettore a schermo intero: suggerimenti per muscoli coinvolti e libreria filtrabile.
+ * Il tasto a destra sceglie subito; toccando la riga si apre l'anteprima (3D, muscoli, esecuzione)
+ * sopra il selettore, che resta com'era quando la si chiude.
+ */
 export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiudi }: Props) {
   const [cat, setCat] = useState<Categoria | null>(sostituisci ? esercizio(sostituisci).categoria : null)
   const suggeriti = sostituisci ? suggerisciSostituti(sostituisci, esclusi) : []
   const lista = esercizi.filter((e) => e.categoria !== 'pista' && (!cat || e.categoria === cat) && e.id !== sostituisci)
+  // ordine di scorrimento nell'anteprima: suggeriti, poi la libreria filtrata
+  const ordine = [...new Set([...suggeriti.map((x) => x.es.id), ...lista.map((e) => e.id)])]
+  const [anteprima, setAnteprima] = useState<number | null>(null)
 
   // blocca lo scorrimento della pagina sotto
   useEffect(() => {
@@ -31,17 +39,30 @@ export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiud
     }
   }, [])
 
-  const riga = (e: Esercizio, extra?: React.ReactNode) => (
-    <button key={e.id} type="button" onClick={() => onScegli(e)} disabled={esclusi.includes(e.id)} className="flex w-full items-center gap-3 rounded-xl px-2 py-2 text-left active:bg-zinc-100 disabled:opacity-40 dark:active:bg-zinc-800">
-      <ExerciseThumb id={e.id} className="size-14" />
-      <div className="min-w-0 flex-1">
-        <div className="font-semibold">{e.nome}</div>
-        <div className="text-xs text-zinc-500">{NOMI_CATEGORIE[e.categoria]}</div>
-        {extra}
+  const riga = (e: Esercizio, extra?: React.ReactNode) => {
+    const presente = esclusi.includes(e.id)
+    return (
+      <div key={e.id} className="flex items-center gap-1">
+        <button type="button" onClick={() => setAnteprima(ordine.indexOf(e.id))} className="flex min-w-0 flex-1 items-center gap-3 rounded-xl px-2 py-2 text-left active:bg-zinc-100 dark:active:bg-zinc-800" aria-label={`Anteprima di ${e.nome}`}>
+          <ExerciseThumb id={e.id} className={`size-14 ${presente ? 'opacity-40' : ''}`} />
+          <div className={`min-w-0 flex-1 ${presente ? 'opacity-40' : ''}`}>
+            <div className="font-semibold">{e.nome}</div>
+            <div className="text-xs text-zinc-500">{NOMI_CATEGORIE[e.categoria]}</div>
+            {extra}
+          </div>
+        </button>
+        <button
+          type="button"
+          onClick={() => onScegli(e)}
+          disabled={presente}
+          className="flex size-12 shrink-0 items-center justify-center rounded-xl bg-accent/10 text-accent active:bg-accent/20 disabled:opacity-30"
+          aria-label={`${sostituisci ? 'Sostituisci con' : 'Aggiungi'} ${e.nome}`}
+        >
+          <Icon name={sostituisci ? 'swap' : 'plus'} className="size-5" />
+        </button>
       </div>
-      <Icon name={sostituisci ? 'swap' : 'plus'} className="size-5 shrink-0 text-accent" />
-    </button>
-  )
+    )
+  }
 
   return (
     <div className="pt-safe fixed inset-0 z-50 flex flex-col bg-zinc-50 dark:bg-zinc-950" role="dialog" aria-modal="true" aria-label={titolo}>
@@ -85,6 +106,15 @@ export function ExercisePicker({ titolo, sostituisci, esclusi, onScegli, onChiud
         </div>
         <div className="rounded-2xl bg-white p-1 ring-1 ring-zinc-900/5 dark:bg-zinc-900 dark:ring-white/10">{lista.map((e) => riga(e))}</div>
       </div>
+      {anteprima !== null && ordine[anteprima] && (
+        <AnteprimaEsercizio
+          ids={ordine}
+          pos={anteprima}
+          onPos={setAnteprima}
+          onChiudi={() => setAnteprima(null)}
+          azione={{ etichetta: sostituisci ? 'Sostituisci con questo' : 'Aggiungi alla scheda', icona: sostituisci ? 'swap' : 'plus', disabilitato: (id) => esclusi.includes(id), onClick: onScegli }}
+        />
+      )}
     </div>
   )
 }

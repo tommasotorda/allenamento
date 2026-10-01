@@ -1,26 +1,16 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { lazy, Suspense, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { MuscleMap } from '../../components/MuscleMap'
 import { Icon } from '../../components/Icon'
 import { Badge, Button, Card, formatData, PageHeader, SectionTitle } from '../../components/ui'
 import { aggiungiFoto, eliminaFoto } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizi, NOMI_CATEGORIE } from '../../domain/data'
-import { espandi, MUSCOLI, perLivello, type Livello } from '../../domain/muscles'
 import type { FotoEsercizio } from '../../domain/types'
 import { riassunto } from '../oggi/SetRow'
 import type { StatoLista, VoceLista } from './lista'
 import { ModificaNellaScheda } from './ModificaNellaScheda'
-
-// three.js e' pesante: il visore si carica solo aprendo un esercizio
-const Viewer3D = lazy(() => import('./Viewer3D'))
-
-const LIVELLI: [Livello, string, string][] = [
-  [3, 'Primari', 'bg-[#ff3b30]'],
-  [2, 'Secondari', 'bg-[#c0322b]'],
-  [1, 'Stabilizzatori', 'bg-[#7a2e29]'],
-]
+import { Esecuzione, MuscoliCoinvolti, Visore } from './AnteprimaEsercizio'
 
 function FotoThumb({ f }: { f: FotoEsercizio }) {
   const [url, setUrl] = useState<string>()
@@ -138,11 +128,7 @@ export function EsercizioPage() {
         </div>
       )}
 
-      <Card className="p-2">
-        <Suspense fallback={<div className="aspect-square w-full rounded-xl bg-zinc-100 dark:bg-zinc-900 sm:aspect-[4/3]" />}>
-          <Viewer3D id={es.id} />
-        </Suspense>
-      </Card>
+      <Visore id={es.id} />
 
       {lista?.pianoId && (
         <ModificaNellaScheda
@@ -156,24 +142,7 @@ export function EsercizioPage() {
       )}
 
       <SectionTitle>Muscoli coinvolti</SectionTitle>
-      <Card>
-        <MuscleMap id={es.id} className="mx-auto aspect-[204/204] w-full max-w-sm" />
-        <div className="mt-3 space-y-2">
-          {LIVELLI.map(([l, nome, colore]) => {
-            const ms = perLivello(espandi(es.muscoli), l)
-            if (!ms.length) return null
-            return (
-              <div key={l} className="flex gap-2 text-sm">
-                <span className={`mt-1 size-3 shrink-0 rounded-sm ${colore}`} />
-                <div>
-                  <span className="font-semibold">{nome}: </span>
-                  <span className="text-zinc-600 dark:text-zinc-400">{ms.map((m) => MUSCOLI[m].nome).join(', ')}</span>
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </Card>
+      <MuscoliCoinvolti es={es} />
 
       {foto.length > 0 && (
         <div className="mt-3 grid grid-cols-3 gap-2">
@@ -217,16 +186,7 @@ export function EsercizioPage() {
       )}
 
       <SectionTitle>Esecuzione</SectionTitle>
-      <Card>
-        <ol className="space-y-3">
-          {es.esecuzione.map((p, i) => (
-            <li key={i} className="flex gap-3">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent/15 text-sm font-bold text-accent-strong dark:text-accent">{i + 1}</span>
-              <span className="pt-0.5">{p}</span>
-            </li>
-          ))}
-        </ol>
-      </Card>
+      <Esecuzione es={es} />
 
       {perData.size > 0 && (
         <>

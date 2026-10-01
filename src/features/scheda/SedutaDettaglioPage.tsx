@@ -3,10 +3,12 @@ import { Link, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { Button, Card, PageHeader } from '../../components/ui'
 import { aggiornaProgramma, iniziaSeduta, sedutaAperta } from '../../db/repositories'
 import { NOMI_GIORNI } from '../../domain/data'
+import { spostaVoce } from '../../domain/editing'
 import { elencoSedute, strutturaSeduta } from '../../domain/session'
 import type { Seduta } from '../../domain/types'
 import { useCiclo, type Ciclo } from '../../hooks'
 import { BlockEditor } from './BlockEditor'
+import { TrascinaProvider } from './Trascina'
 import { SessionPreview } from './SessionPreview'
 
 export function SedutaDettaglioPage() {
@@ -35,7 +37,7 @@ export function SedutaDettaglioPage() {
       />
 
       {modifica ? (
-        <>
+        <TrascinaProvider onSposta={(da, a) => aggiornaProgramma(c.piano.id, spostaVoce(c.programma, da, a))}>
           <ImpostaSeduta c={c} sedutaId={g} />
           {sed.core && (
             <>
@@ -51,7 +53,7 @@ export function SedutaDettaglioPage() {
           <BlockEditor titolo="Riscaldamento" blocco={{ tipo: 'riscaldamento', sedutaId: g }} c={c} />
           <BlockEditor titolo="Palestra" blocco={{ tipo: 'palestra', sedutaId: g }} c={c} />
           <BlockEditor titolo="Mobilità e defaticamento" blocco={{ tipo: 'mobilita', sedutaId: g }} c={c} />
-        </>
+        </TrascinaProvider>
       ) : (
         <>
           <Button

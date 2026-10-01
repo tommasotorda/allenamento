@@ -110,3 +110,29 @@ export function valoriPrecompilati(
   if (opts.caricoApplicato != null) out.caricoKg = opts.caricoApplicato
   return out
 }
+
+/** Gli esercizi a carico, a ripetizioni o a tempo si possono prescrivere sia a ripetizioni sia a tempo. */
+export const puoAlternareMisura = (es: Esercizio) => es.tipoRegistrazione === 'carico_ripetizioni' || es.tipoRegistrazione === 'ripetizioni' || es.tipoRegistrazione === 'tempo'
+
+/** Misura con cui si registra l'esercizio: quella scelta nella prescrizione, se diversa da quella di base. */
+export function modoRegistrazione(es: Esercizio, p?: Prescrizione): Esercizio['tipoRegistrazione'] {
+  if (!p || !puoAlternareMisura(es)) return es.tipoRegistrazione
+  if (p.ripetizioni === undefined && p.durataSec !== undefined) return 'tempo'
+  if (p.ripetizioni !== undefined && es.tipoRegistrazione === 'tempo') return 'ripetizioni'
+  return es.tipoRegistrazione
+}
+
+/** Misura delle serie gia' registrate (storico), dai valori salvati. */
+export function modoDaSerie(es: Esercizio, serie: Pick<Serie, 'ripetizioni' | 'durataSec'>[]): Esercizio['tipoRegistrazione'] {
+  if (!puoAlternareMisura(es) || !serie.length) return es.tipoRegistrazione
+  if (serie.every((s) => s.ripetizioni === null && s.durataSec !== null)) return 'tempo'
+  if (es.tipoRegistrazione === 'tempo' && serie.every((s) => s.ripetizioni !== null && s.durataSec === null)) return 'ripetizioni'
+  return es.tipoRegistrazione
+}
+
+/** Prescrizione passata all'altra misura (ripetizioni <-> tempo), mantenendo serie e recupero. */
+export function conMisura(p: Prescrizione, misura: 'ripetizioni' | 'tempo'): Prescrizione {
+  const lato = perLato(p) ? ' per lato' : ''
+  const { ripetizioni: _r, durataSec: _d, rpe, ...resto } = p
+  return misura === 'tempo' ? { ...resto, durataSec: lato ? `30${lato}` : 30 } : { ...resto, ripetizioni: `10${lato}`, ...(rpe && rpe !== 'fase' ? { rpe } : {}) }
+}

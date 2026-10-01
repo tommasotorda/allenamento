@@ -6,7 +6,7 @@ import { Badge, Button, Card, ExerciseThumb, numIt } from '../../components/ui'
 import { azzeraMemoria, chiaveEs, eliminaSerie, salvaSerieRicordando, serieUltimaSeduta, uuid } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizio } from '../../domain/data'
-import { caricoSuggerito, serieEffettive, testoPrescrizione, valoriPrecompilati } from '../../domain/progression'
+import { caricoSuggerito, modoRegistrazione, serieEffettive, testoPrescrizione, valoriPrecompilati } from '../../domain/progression'
 import type { Fase, Prescrizione, Serie } from '../../domain/types'
 import { riassunto, SetRow, type Bozza } from './SetRow'
 import { usePendente } from './registro'
@@ -31,6 +31,8 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
   const [usaAlt, setUsaAlt] = useState(() => !!p.alternativa && serie.some((s) => s.esercizioId === p.alternativa))
   const id = usaAlt && p.alternativa ? p.alternativa : p.esercizioId
   const es = esercizio(id)
+  // a ripetizioni o a tempo, come scelto nella scheda
+  const modo = modoRegistrazione(es, p)
   const mie = serie.filter((s) => s.esercizioId === id)
   const precedenti = useLiveQuery(() => serieUltimaSeduta(id, sedutaId), [id, sedutaId]) ?? []
   const timer = useRestTimer()
@@ -46,7 +48,11 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
   const [confermaReset, setConfermaReset] = useState(false)
   const suggerito = caricoSuggerito(precedenti, incrementoKg)
   const conRpe = es.categoria !== 'mobilita'
-  const iniziale = (numero: number): Bozza => valoriPrecompilati(numero, { memoria, precedenti, p, fase, caricoApplicato })
+  const iniziale = (numero: number): Bozza => {
+    const b = valoriPrecompilati(numero, { memoria, precedenti, p, fase, caricoApplicato })
+    // si registra solo la misura scelta (la memoria puo' avere l'altra)
+    return modo === 'tempo' ? { ...b, ripetizioni: null } : modo === 'ripetizioni' || modo === 'carico_ripetizioni' ? { ...b, durataSec: null } : b
+  }
 
   // valori attuali delle righe non confermate (anche se modificate a mano)
   const bozze = useRef(new Map<number, Bozza>())
@@ -61,11 +67,11 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
   usePendente(
     `es:${p.esercizioId}`,
     primaBozza
-      ? { titolo: es.nome, dettaglio: `${daRegistrare.length} ${daRegistrare.length === 1 ? 'serie' : 'serie'} · ${riassunto(es.tipoRegistrazione, primaBozza)}`, salva: registraTutte }
+      ? { titolo: es.nome, dettaglio: `${daRegistrare.length} ${daRegistrare.length === 1 ? 'serie' : 'serie'} · ${riassunto(modo, primaBozza)}`, salva: registraTutte }
       : null,
   )
   const caricoAttuale = primaBozza?.caricoKg ?? null
-  const mostraSuggerito = es.tipoRegistrazione === 'carico_ripetizioni' && suggerito !== null && caricoAttuale !== null && suggerito > caricoAttuale && !!daRegistrare.length
+  const mostraSuggerito = modo === 'carico_ripetizioni' && suggerito !== null && caricoAttuale !== null && suggerito > caricoAttuale && !!daRegistrare.length
 
   const fatte = righe.filter((r) => mie.some((s) => s.numero === r.numero)).length
 
@@ -104,7 +110,8 @@ export function ExerciseLog({ sedutaId, data, p, fase, incrementoKg, serie, list
             <SetRow
               key={`${id}-${r.numero}`}
               etichetta={r.etichetta}
-              tipo={es.tipoRegistrazione}
+              tipo={modo}
+              conCarico={es.tipoRegistrazione === 'carico_ripetizioni'}
               iniziale={iniziale(r.numero)}
               salvata={salvata}
               incrementoKg={incrementoKg}

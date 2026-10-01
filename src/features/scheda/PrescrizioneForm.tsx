@@ -1,4 +1,5 @@
 import { Button } from '../../components/ui'
+import { conMisura, modoRegistrazione, puoAlternareMisura } from '../../domain/progression'
 import { Stepper } from '../../components/Stepper'
 import { esercizio } from '../../domain/data'
 import { leggiIntervallo, scriviIntervallo } from '../../domain/editing'
@@ -10,8 +11,25 @@ export function PrescrizioneForm({ p, onChange }: { p: Prescrizione; onChange: (
   const reps = leggiIntervallo(p.ripetizioni)
   const durata = leggiIntervallo(p.durataSec)
   const set = (patch: Partial<Prescrizione>) => onChange({ ...p, ...patch })
+  const misura = modoRegistrazione(es, p) === 'tempo' ? 'tempo' : 'ripetizioni'
   return (
     <div>
+      {puoAlternareMisura(es) && (
+        <div className="mb-3 grid grid-cols-2 gap-1 rounded-xl bg-zinc-200 p-1 dark:bg-zinc-800" role="radiogroup" aria-label="Misura">
+          {(['ripetizioni', 'tempo'] as const).map((m) => (
+            <button
+              key={m}
+              type="button"
+              role="radio"
+              aria-checked={misura === m}
+              onClick={() => misura !== m && onChange(conMisura(p, m))}
+              className={`h-9 rounded-lg text-sm font-semibold ${misura === m ? 'bg-white shadow-sm dark:bg-zinc-950' : 'text-zinc-600 dark:text-zinc-400'}`}
+            >
+              {m === 'ripetizioni' ? 'Ripetizioni' : 'A tempo'}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="grid grid-cols-2 justify-items-center gap-y-3">
         <Stepper label="serie" value={p.serie ?? 1} onChange={(v) => set({ serie: v ?? 1 })} step={1} min={1} max={12} />
         <Stepper label="recupero" unit="sec" value={p.recuperoSec ?? null} onChange={(v) => set({ recuperoSec: v ?? undefined })} step={15} max={600} start={60} />
@@ -53,7 +71,7 @@ export function PrescrizioneForm({ p, onChange }: { p: Prescrizione; onChange: (
           />
         </label>
       )}
-      {es.tipoRegistrazione === 'carico_ripetizioni' && (
+      {es.tipoRegistrazione === 'carico_ripetizioni' && misura === 'ripetizioni' && (
         <label className="mt-2 flex items-center justify-between rounded-xl bg-zinc-100 px-3 py-2 text-sm font-medium dark:bg-zinc-800">
           RPE e ripetizioni della fase
           <input type="checkbox" className="size-5 accent-orange-500" checked={p.rpe === 'fase'} onChange={(e) => set({ rpe: e.target.checked ? 'fase' : undefined })} />

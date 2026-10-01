@@ -6,6 +6,7 @@ import { Button, Card, formatData, PageHeader, SectionTitle } from '../../compon
 import { aggiornaSeduta, eliminaSeduta, eliminaSerie, salvaSerie } from '../../db/repositories'
 import { db } from '../../db/schema'
 import { esercizio, programma } from '../../domain/data'
+import { modoDaSerie } from '../../domain/progression'
 import { nomeAttivita, nomeSedutaLog } from '../../domain/session'
 import type { SedutaLog } from '../../domain/types'
 import { useImpostazioni } from '../../hooks'
@@ -81,6 +82,7 @@ export function SedutaStoricoPage() {
       <div className="space-y-3">
         {[...perEsercizio.entries()].map(([eid, ss]) => {
           const es = esercizio(eid)
+          const modo = modoDaSerie(es, ss)
           return (
             <Card key={eid} className="p-3">
               <div className="mb-2 font-semibold">{es.nome}</div>
@@ -90,7 +92,8 @@ export function SedutaStoricoPage() {
                     <SetRow
                       key={s.id}
                       etichetta={`${s.numero}${s.lato ? ` ${s.lato}` : ''}`}
-                      tipo={es.tipoRegistrazione}
+                      tipo={modo}
+                      conCarico={es.tipoRegistrazione === 'carico_ripetizioni'}
                       iniziale={s}
                       salvata={s}
                       incrementoKg={imp.incrementoCaricoKg}
@@ -104,7 +107,7 @@ export function SedutaStoricoPage() {
                         {s.numero}
                         {s.lato ? ` ${s.lato}` : ''}
                       </span>
-                      <span>{riassunto(es.tipoRegistrazione, s)}</span>
+                      <span>{riassunto(modo, s)}</span>
                     </div>
                   ),
                 )}

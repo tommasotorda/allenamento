@@ -137,3 +137,91 @@ export function alternaSuperserie(voci: VocePalestra[], i: number): VocePalestra
   const recupero = Math.max(v.recuperoSec ?? 0, succ.recuperoSec ?? 0) || undefined
   return voci.map((x, k) => (k === i ? { ...v, superserie: g, recuperoSec: 0 } : k === i + 1 ? { ...succ, superserie: g, recuperoSec: succ.superserie ? succ.recuperoSec : recupero } : x))
 }
+
+// ---------- spostamenti e superserie ----------
+
+export const chiaveBlocco = (b: Blocco) => (b.tipo === 'core' ? `core:${b.variante}` : `${b.tipo}:${b.sedutaId}`)
+const isCirc = (v: VocePalestra): v is Exclude<VocePalestra, Prescrizione> => 'circuito' in v
+
+/** Toglie la voce dalla sua superserie: se era senza recupero riprende `recupero` (o quello di default). */
+function senzaSuperserie(v: Prescrizione, recupero?: number): Prescrizione {
+  return { ...v, superserie: undefined, recuperoSec: v.recuperoSec || recupero || prescrizioneDefault(esercizio(v.esercizioId)).recuperoSec }
+}
+
+/**
+ * Riporta le superserie in uno stato coerente dopo uno spostamento: i membri di un gruppo
+ * devono essere consecutivi (resta il tratto piu' lungo, gli altri escono), un gruppo di un
+ * solo esercizio si scioglie, il recupero sta solo sull'ultimo del gruppo.
+ */
+export function normalizzaSuperserie(voci: VocePalestra[]): VocePalestra[] {
+  const out = [...voci]
+  const gruppi = new Map<string, number[]>()
+  out.forEach((v, i) => {
+    if (!isCirc(v) && v.superserie) gruppi.set(v.superserie, [...(gruppi.get(v.superserie) ?? []), i])
+  })
+  for (const idx of gruppi.values()) {
+    const membri = idx.map((i) => out[i] as Prescrizione)
+    const recupero = Math.max(0, ...membri.map((x) => x.recuperoSec ?? 0)) || undefined
+    // tratti di indici consecutivi; vince il piu' lungo (a parita' il primo)
+    const tratti: number[][] = []
+    for (const i of idx) {
+      const t = tratti.at(-1)
+      if (t && t.at(-1) === i - 1) t.push(i)
+      else tratti.push([i])
+    }
+    const tieni = tratti.reduce((a, b) => (b.length > a.length ? b : a))
+    for (const i of idx) if (tieni.length < 2 || !tieni.includes(i)) out[i] = senzaSuperserie(out[i] as Prescrizione, recupero)
+    if (tieni.length >= 2) tieni.forEach((i, k) => (out[i] = { ...(out[i] as Prescrizione), recuperoSec: k === tieni.length - 1 ? recupero : 0 }))
+  }
+  return out
+}
+
+/**
+ * Sposta una voce, anche da un blocco a un altro. `a.indice` e' la posizione di inserimento
+ * nella lista di destinazione com'era prima dello spostamento. Uscendo dal blocco la voce
+ * lascia la superserie; i circuiti restano nel blocco palestra.
+ */
+export function spostaVoce(p: Programma, da: { blocco: Blocco; indice: number }, a: { blocco: Blocco; indice: number }): Programma {
+  const sorgente = vociBlocco(p, da.blocco)
+  const v = sorgente[da.indice]
+  if (!v) return p
+  const stesso = chiaveBlocco(da.blocco) === chiaveBlocco(a.blocco)
+  if (stesso) {
+    const dest = a.indice > da.indice ? a.indice - 1 : a.indice
+    if (dest === da.indice) return p
+    const n = sorgente.filter((_, k) => k !== da.indice)
+    n.splice(dest, 0, v)
+    return conVoci(p, da.blocco, normalizzaSuperserie(n))
+  }
+  if (isCirc(v) && a.blocco.tipo !== 'palestra') return p
+  const recuperoGruppo = (g: string) => Math.max(0, ...sorgente.map((x) => (!isCirc(x) && x.superserie === g ? (x.recuperoSec ?? 0) : 0))) || undefined
+  const mossa = isCirc(v) || !v.superserie ? v : senzaSuperserie(v, recuperoGruppo(v.superserie))
+  const tolta = conVoci(p, da.blocco, normalizzaSuperserie(sorgente.filter((_, k) => k !== da.indice)))
+  const n = [...vociBlocco(tolta, a.blocco)]
+  n.splice(Math.min(a.indice, n.length), 0, mossa)
+  return conVoci(tolta, a.blocco, normalizzaSuperserie(n))
+}
+
+/**
+ * Superserie scelta dall'utente: `origine` e `altri` diventano un unico gruppo, messi in fila
+ * dalla posizione del primo e nell'ordine in cui compaiono. Chi era nel gruppo e non e' piu'
+ * scelto esce; con meno di due esercizi il gruppo si scioglie.
+ */
+export function impostaSuperserie(voci: VocePalestra[], origine: number, altri: number[]): VocePalestra[] {
+  const o = voci[origine]
+  if (!o || isCirc(o)) return voci
+  const scelti = [...new Set([origine, ...altri])].filter((i) => voci[i] && !isCirc(voci[i])).sort((a, b) => a - b)
+  const vecchio = o.superserie
+  // gli ex membri non piu' scelti escono dal gruppo
+  let out = voci.map((v, i) => (!isCirc(v) && vecchio && v.superserie === vecchio && !scelti.includes(i) ? senzaSuperserie(v) : v))
+  if (scelti.length < 2) return normalizzaSuperserie(out.map((v, i) => (i === origine && !isCirc(v) ? senzaSuperserie(v) : v)))
+  const usate = new Set(out.flatMap((v, i) => (isCirc(v) || !v.superserie || scelti.includes(i) ? [] : [v.superserie])))
+  const lettera = vecchio && !usate.has(vecchio) ? vecchio : ('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('').find((l) => !usate.has(l)) ?? 'Z')
+  const recupero = Math.max(0, ...scelti.map((i) => (out[i] as Prescrizione).recuperoSec ?? 0)) || undefined
+  const gruppo = scelti.map((i) => ({ ...(out[i] as Prescrizione), superserie: lettera, recuperoSec: recupero }))
+  const resto = out.filter((_, i) => !scelti.includes(i))
+  // il gruppo prende il posto del primo scelto
+  const inizio = resto.length - out.slice(scelti[0]).filter((_, k) => !scelti.includes(scelti[0] + k)).length
+  out = [...resto.slice(0, inizio), ...gruppo, ...resto.slice(inizio)]
+  return normalizzaSuperserie(out)
+}

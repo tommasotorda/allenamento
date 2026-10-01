@@ -13,6 +13,8 @@ interface Props {
   salvata?: Serie
   incrementoKg: number
   conRpe: boolean
+  /** esercizio con peso: il carico si registra anche quando si lavora a tempo */
+  conCarico?: boolean
   onConferma: (b: Bozza) => void
   onElimina?: () => void
   /** valori attuali della riga (anche se non ancora confermata) */
@@ -20,7 +22,7 @@ interface Props {
 }
 
 /** Riga di una serie: precompilata, si conferma con un tap. */
-export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRpe, onConferma, onElimina, onBozza }: Props) {
+export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRpe, conCarico, onConferma, onElimina, onBozza }: Props) {
   const [b, setB] = useState<Bozza>(salvata ?? iniziale)
   useEffect(() => {
     onBozza?.(b)
@@ -56,7 +58,7 @@ export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRp
   }
 
   const campi: React.ReactNode[] = []
-  if (tipo === 'carico_ripetizioni' || tipo === 'distanza') {
+  if (tipo === 'carico_ripetizioni' || tipo === 'distanza' || (tipo === 'tempo' && conCarico)) {
     campi.push(<Stepper key="kg" label="kg" value={b.caricoKg} onChange={set('caricoKg')} step={incrementoKg} decimals={2} start={20} />)
   }
   if (tipo === 'carico_ripetizioni' || tipo === 'ripetizioni') {
@@ -100,13 +102,13 @@ export function SetRow({ etichetta, tipo, iniziale, salvata, incrementoKg, conRp
   )
 }
 
+/** Riassunto di una serie dai valori registrati (a ripetizioni o a tempo, con o senza carico). */
 export function riassunto(tipo: TipoRegistrazione, s: Bozza): string {
   const p: string[] = []
   const kg = s.caricoKg !== null ? `${String(s.caricoKg).replace('.', ',')} kg` : null
-  if (tipo === 'carico_ripetizioni') p.push([kg, s.ripetizioni !== null ? `${s.ripetizioni} rip` : s.durataSec !== null ? `${s.durataSec} s` : null].filter(Boolean).join(' × '))
-  if (tipo === 'ripetizioni' && s.ripetizioni !== null) p.push(`${s.ripetizioni} rip`)
-  if (tipo === 'tempo' && s.durataSec !== null) p.push(`${s.durataSec} s`)
+  const misura = tipo === 'tempo' && s.durataSec !== null ? `${s.durataSec} s` : s.ripetizioni !== null ? `${s.ripetizioni} rip` : s.durataSec !== null ? `${s.durataSec} s` : null
   if (tipo === 'distanza') p.push([s.distanzaM !== null ? `${s.distanzaM} m` : null, kg].filter(Boolean).join(' · '))
+  else p.push([kg, misura].filter(Boolean).join(' × '))
   if (s.rpe !== null) p.push(`RPE ${String(s.rpe).replace('.', ',')}`)
   return p.filter(Boolean).join(' · ') || '—'
 }
